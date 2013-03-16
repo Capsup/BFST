@@ -1,13 +1,14 @@
 package MapDraw;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import XMLParser.*;
-import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -19,10 +20,9 @@ import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JTextField;
 
-import com.jogamp.newt.event.MouseListener;
 import com.jogamp.opengl.util.Animator;
 
-public class MapDraw extends Frame implements GLEventListener, java.awt.event.MouseListener, MouseMotionListener 
+public class MapDraw extends Frame implements GLEventListener, MouseListener, MouseMotionListener 
 {	
 	private int width;
 	private int height;
@@ -30,7 +30,6 @@ public class MapDraw extends Frame implements GLEventListener, java.awt.event.Mo
 	
 	public MapDraw( int iWidth, int iHeight )
 	{
-		XMLParser.makeDataSet();
 	    GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
 	    
 	    glCapabilities.setDoubleBuffered( true );
@@ -41,6 +40,7 @@ public class MapDraw extends Frame implements GLEventListener, java.awt.event.Mo
 	    //panel.addMouseListener( this );
 	    panel.addMouseListener( this );
 	    panel.addMouseMotionListener( this );
+	    //panel.setDefaultCloseOperation( WindowClosingMode.DISPOSE_ON_CLOSE );
 	    
 	    add( panel, BorderLayout.CENTER );
 	    
@@ -70,35 +70,15 @@ public class MapDraw extends Frame implements GLEventListener, java.awt.event.Mo
 		
 		gl2.glLoadIdentity();
 		if( translation != null )
-			gl2.glTranslatef( translation.x, 0, translation.y );
+			gl2.glTranslatef( translation.x, -translation.y, 0 );
 		
-		ArrayList<Edge> edges = XMLParser.getEdgeList();
-		
-		gl2.glBegin( GL.GL_LINE_STRIP);
-			int x, y;
-			Node node;
-			for(Edge e : edges){
-				gl2.glColor3f( 255, 0, 0 );
-				node = XMLParser.nodeSearch(e.getFromNodeID());
-				x = node.getXCoord();
-				y = node.getYCoord();
-				gl2.glVertex2f( x, y );
-				gl2.glColor3f( 255, 0, 0 );
-				node = XMLParser.nodeSearch(e.getToNodeID());
-				x = node.getXCoord();
-				y = node.getYCoord();
-				gl2.glVertex2f( x, y );
-			}
-		
-		
-		/*
+		gl2.glBegin( GL.GL_TRIANGLES );
 			gl2.glColor3f( 255, 0, 0 );
 			gl2.glVertex2f( 0.0f, 0.0f );
 			gl2.glColor3f( 0, 255, 0 );
 			gl2.glVertex2f( 800f, 0.0f );
 			gl2.glColor3f( 0, 0, 255 );
 			gl2.glVertex2f( 400f, 600f );
-			*/
 		gl2.glEnd();
     }
 
@@ -134,12 +114,32 @@ public class MapDraw extends Frame implements GLEventListener, java.awt.event.Mo
 	    
     }
 
+	MouseEvent lastMouseEvent;
+	MouseEvent originalEvent;
+	
 	@Override
     public void mouseDragged( MouseEvent arg0 )
     {
-	    int x = arg0.getX(), y = arg0.getY();
+	    int xPos = arg0.getXOnScreen(), yPos = arg0.getYOnScreen();
 	    
-	    //translation = new Point( x, y );
+	    int xDiff = xPos - originalEvent.getXOnScreen(), yDiff = yPos - originalEvent.getYOnScreen();
+	    
+	    if( translation == null )
+	    	translation = new Point( xDiff, yDiff );
+	    else {
+			translation = new Point( translation.x + xDiff, translation.y + yDiff );
+		}
+	    
+	    try
+        {
+	        new Robot().mouseMove( originalEvent.getXOnScreen(), originalEvent.getYOnScreen() );
+        }
+        catch( AWTException exception )
+        {
+	        exception.printStackTrace();
+        }
+	    
+	    System.out.println(translation);
     }
 
 	@Override
@@ -153,8 +153,6 @@ public class MapDraw extends Frame implements GLEventListener, java.awt.event.Mo
     public void mouseClicked( MouseEvent e )
     {
 	    // TODO Auto-generated method stub
-	    
-		translation = new Point( 1, 0);
     }
 
 	@Override
@@ -175,19 +173,28 @@ public class MapDraw extends Frame implements GLEventListener, java.awt.event.Mo
     public void mousePressed( MouseEvent e )
     {
 	    // TODO Auto-generated method stub
-	    
+	    originalEvent = e;
     }
 
 	@Override
     public void mouseReleased( MouseEvent e )
     {
 	    // TODO Auto-generated method stub
-	    
+	    try
+        {
+	        new Robot().mouseMove( originalEvent.getXOnScreen(), originalEvent.getYOnScreen() );
+        }
+        catch( AWTException exception )
+        {
+	        exception.printStackTrace();
+        }
     }
 	
 	public static void main( String[] args )
 	{
 		MapDraw mapDraw = new MapDraw( 800, 600 );
 		mapDraw.setVisible( true );	
+		
+		
 	}
 }
