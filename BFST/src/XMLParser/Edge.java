@@ -1,3 +1,4 @@
+package XMLParser;
 public class Edge 
 {
 	private int fromNodeID;
