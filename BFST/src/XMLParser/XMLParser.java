@@ -59,11 +59,16 @@ public class XMLParser
 	}
 
 	public static ArrayList<Edge> getEdgeList(){
-		return edgeList;
+		ArrayList<Edge> newEdgeList = new ArrayList<Edge>();
+		for(Edge e : edgeList)
+			if(e.getTyp() < 5) 
+				newEdgeList.add(e);
+		
+		return newEdgeList;
 	}
 	
 	public static Node nodeSearch(int i){
-		int id = Collections.binarySearch(nodeList, new Node(0,3,0,0));
+		int id = Collections.binarySearch(nodeList, new Node(0,i,0,0));
 		return id >= 0 ?  nodeList.get(id) : new Node(0,-1,0,0);
 	}
 
@@ -207,7 +212,7 @@ public class XMLParser
 			return list;
 
 		list = new ArrayList<Object>();
-		int arc = 0, id = 0, x = 0, y = 0, fnode = 0, tnode = 0, length = 0;
+		int arc = 0, id = 0, x = 0, y = 0, fnode = 0, tnode = 0, length = 0, typ = 0;
 
 		while( input.hasNext() )
 		{
@@ -243,6 +248,8 @@ public class XMLParser
 						tnode = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "LENGTH" ) )
 						length = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+					else if (name.equals ( "TYP") )
+						typ = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 				}
 			}
 
@@ -252,7 +259,7 @@ public class XMLParser
 				if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_node_unload.xml" ) )
 					list.add( new Node( arc, id, x, y ) );
 				else if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_unload.xml" ) )
-					list.add( new Edge( fnode, tnode, length ) );
+					list.add( new Edge( fnode, tnode, length, typ ) );
 			}
 		}
 

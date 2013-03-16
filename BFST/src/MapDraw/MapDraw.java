@@ -9,6 +9,8 @@ import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import XMLParser.*;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -30,6 +32,8 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	
 	public MapDraw( int iWidth, int iHeight )
 	{
+		translation = new Point( -266, 5940);
+		XMLParser.makeDataSet();
 	    GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
 	    
 	    glCapabilities.setDoubleBuffered( true );
@@ -71,6 +75,29 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		gl2.glLoadIdentity();
 		if( translation != null )
 			gl2.glTranslatef( translation.x, -translation.y, 0 );
+		
+		ArrayList<Edge> edges = XMLParser.getEdgeList();
+		
+		gl2.glBegin( GL.GL_LINES);
+			int x, y;
+			Node node;
+			for(Edge e : edges){
+				node = XMLParser.nodeSearch(e.getFromNodeID());
+				
+				x = node.getXCoord();
+				y = node.getYCoord();
+				//if((x < translation.x && x+WIDTH > translation.x) && (y < translation.y && y+HEIGHT > translation.y)){
+				gl2.glColor3f( 255, 0, 0 );
+				gl2.glVertex2f( x/1000.f, y/1000.f );
+				gl2.glColor3f( 255, 0, 0 );
+				node = XMLParser.nodeSearch(e.getToNodeID());
+				x = node.getXCoord();
+				y = node.getYCoord();
+				gl2.glVertex2f( x/1000.0f, y/1000.0f );
+				//}
+			}
+		gl2.glEnd();
+		
 		
 		gl2.glBegin( GL.GL_TRIANGLES );
 			gl2.glColor3f( 255, 0, 0 );
