@@ -65,7 +65,7 @@ public class XMLParser
 	public static ArrayList<Edge> getEdgeList(){
 		ArrayList<Edge> newEdgeList = new ArrayList<Edge>();
 		for(Edge e : edgeList)
-			//if(e.getTyp() < 2) 
+			if(e.getTyp() < 6) 
 				newEdgeList.add(e);
 		
 		return newEdgeList;
