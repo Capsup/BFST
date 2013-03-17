@@ -30,6 +30,14 @@ public class XMLParser
 	private static ArrayList<Node> nodeList;
 	private static ArrayList<Edge> edgeList;
 
+	/*
+	public static void main(String[] args){
+		try{
+			XMLParser p = new XMLParser();
+		//	p.convertToXML( "C:\\Users\\Jacob\\Desktop\\krak-data\\kdv_node_unload" );
+			p.convertToXML( "C:\\Users\\Jacob\\Desktop\\krak-data\\kdv_unload" );
+		}catch(Exception e){}
+	}*/
 	public static void makeDataSet()
 	{
 		try
@@ -42,13 +50,9 @@ public class XMLParser
 
 			edgeList = parser.getElements();
 
-			Comparator<Object> nodeComparator = new Comparator<Object>() {
-				public int compare(Object a, Object b) {		
-					return ((Node) a).compareTo((Node) b);
-				}
-			};
-
-			Collections.sort(nodeList, nodeComparator);
+	
+			Collections.sort(nodeList);
+			Collections.sort(edgeList);
 
 		
 		}
@@ -61,7 +65,7 @@ public class XMLParser
 	public static ArrayList<Edge> getEdgeList(){
 		ArrayList<Edge> newEdgeList = new ArrayList<Edge>();
 		for(Edge e : edgeList)
-			if(e.getTyp() < 5) 
+			//if(e.getTyp() < 2) 
 				newEdgeList.add(e);
 		
 		return newEdgeList;
@@ -70,6 +74,11 @@ public class XMLParser
 	public static Node nodeSearch(int i){
 		int id = Collections.binarySearch(nodeList, new Node(0,i,0,0));
 		return id >= 0 ?  nodeList.get(id) : new Node(0,-1,0,0);
+	}
+	
+	public static Edge edgeSearch(int i){
+		int id = Collections.binarySearch(edgeList, new Edge(0,i,0,0));
+		return id >= 0 ?  edgeList.get(id) : new Edge(0,-1,0,0);
 	}
 
 	public XMLParser()
@@ -102,7 +111,9 @@ public class XMLParser
 			Scanner scanner = new Scanner( file );
 
 			String sNameString = scanner.nextLine();
+			sNameString.replaceAll("[#]*","");
 			sNames = sNameString.split( " " );
+			//sNames = sNameString.split( "," );
 
 			int i = 0;
 			while( scanner.hasNextLine() )
@@ -140,7 +151,10 @@ public class XMLParser
 	public void convertToXML( String sPath ) throws Exception
 	{
 		loadFile( sPath + ".txt" );
-
+		
+		for( int j = 0; j < sNames.length; j++ )
+			System.out.println(j + ": " +sNames[j]);
+		
 		// Create a XMLOutputFactory
 		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 		// Create XMLEventWriter
@@ -169,7 +183,8 @@ public class XMLParser
 
 			for( int j = 0; j < sNames.length; j++ )
 			{
-				createNode( eventWriter, sNames[j], data[j] );
+				if(j == 0 || j == 1 || j == 5)
+					createNode( eventWriter, sNames[j], data[j] );
 			}
 
 			eventWriter.add( eventFactory.createDTD( "\t" ) );
@@ -181,6 +196,7 @@ public class XMLParser
 		eventWriter.add( end );
 		eventWriter.add( eventFactory.createEndDocument() );
 		eventWriter.close();
+		System.out.println("done");
 	}
 
 	private void createNode( XMLEventWriter eventWriter, String name, String value ) throws XMLStreamException
@@ -212,7 +228,9 @@ public class XMLParser
 			return list;
 
 		list = new ArrayList<Object>();
-		int arc = 0, id = 0, x = 0, y = 0, fnode = 0, tnode = 0, length = 0, typ = 0;
+		int arc = 0, id = 0, fnode = 0, tnode = 0, typ = 0;
+		float x = 0, y = 0;
+		double length = 0;
 
 		while( input.hasNext() )
 		{
@@ -236,9 +254,9 @@ public class XMLParser
 					else if( name.equals( "KDV-ID" ) )
 						id = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "X-COORD" ) )
-						x = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+						x = ( float ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "Y-COORD" ) )
-						y = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+						y = ( float ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 				}
 				else if( filePath.contains( "kdv_unload.xml" ) )
 				{
@@ -247,7 +265,7 @@ public class XMLParser
 					else if( name.equals( "TNODE" ) )
 						tnode = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "LENGTH" ) )
-						length = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+						length =  Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if (name.equals ( "TYP") )
 						typ = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 				}

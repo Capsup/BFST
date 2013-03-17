@@ -79,33 +79,27 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		ArrayList<Edge> edges = XMLParser.getEdgeList();
 		
 		gl2.glBegin( GL.GL_LINES);
-			int x, y;
+			float r = 0, g = 0, b = 0;
+			float x, y;
 			Node node;
 			for(Edge e : edges){
+				r = 0; g = 0; b = 0;
+				if(e.getTyp() == 1) r = 255;
+				else if(e.getTyp() < 5) b = 255;
+				else if(e.getTyp() == 8) g = 255;
 				node = XMLParser.nodeSearch(e.getFromNodeID());
-				
 				x = node.getXCoord();
 				y = node.getYCoord();
-				//if((x < translation.x && x+WIDTH > translation.x) && (y < translation.y && y+HEIGHT > translation.y)){
-				gl2.glColor3f( 255, 0, 0 );
+				
+				gl2.glColor3f( r, g ,b);
 				gl2.glVertex2f( x/1000.f, y/1000.f );
-				gl2.glColor3f( 255, 0, 0 );
+				gl2.glColor3f( r, g, b );
+				
 				node = XMLParser.nodeSearch(e.getToNodeID());
 				x = node.getXCoord();
 				y = node.getYCoord();
 				gl2.glVertex2f( x/1000.0f, y/1000.0f );
-				//}
 			}
-		gl2.glEnd();
-		
-		
-		gl2.glBegin( GL.GL_TRIANGLES );
-			gl2.glColor3f( 255, 0, 0 );
-			gl2.glVertex2f( 0.0f, 0.0f );
-			gl2.glColor3f( 0, 255, 0 );
-			gl2.glVertex2f( 800f, 0.0f );
-			gl2.glColor3f( 0, 0, 255 );
-			gl2.glVertex2f( 400f, 600f );
 		gl2.glEnd();
     }
 
@@ -121,7 +115,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
     {
 		GL2 gl = arg0.getGL().getGL2();
 		
-		gl.glClearColor( 0, 0, 0, 0 );
+		gl.glClearColor( 255, 255, 255, 0 );
 		gl.glMatrixMode( gl.GL_PROJECTION );
 		gl.glLoadIdentity();
 		

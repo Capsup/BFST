@@ -2,12 +2,12 @@ package XMLParser;
 import java.awt.Dimension;
 public class Node implements Comparable<Node>
 {
-	private int ARC;
+	private float ARC;
 	private int id;
-	private int xCoord;
-	private int yCoord;
+	private float xCoord;
+	private float yCoord;
 	
-	public Node(int ARC, int id, int xCoord, int yCoord)
+	public Node(float ARC, int id, float xCoord, float yCoord)
 	{
 		this.ARC = ARC;
 		this.id = id;
@@ -20,30 +20,27 @@ public class Node implements Comparable<Node>
 	}
 	
 	//ARC
-	public int getARC()
+	public float getARC()
 	{
 		return ARC;
 	}
 	
 	//ID
-	public int getID()
+	public float getID()
 	{
 		return id;
 	}
 	
 	//Coordinates
-	public int getXCoord()
+	public float getXCoord()
 	{
 		return xCoord;
 	}
 	
-	public int getYCoord()
+	public float getYCoord()
 	{
 		return yCoord;
 	}
 	
-	public Dimension GetCoords()
-	{
-		return new Dimension(getXCoord(), getYCoord());
-	}
+
 }
