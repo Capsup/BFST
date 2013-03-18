@@ -40,8 +40,8 @@ public class MapDrawCanvas extends JFrame {
 				node = XMLParser.nodeSearch(e.getToNodeID());
 				int x2 = (int)node.getXCoord();
 				int y2 = (int)node.getYCoord();
-				
-				g.drawLine(x/250-266*4,(y/250-5940*4)*-1+500*4, x2/250-266*4, (y/250-5940*4)*-1+500*4);
+				int zoomFactor = 2;
+				g.drawLine(x/1000*zoomFactor-266*zoomFactor,(y/500-5940*zoomFactor)*-1+500*zoomFactor, x2/500-266*zoomFactor, (y/500-5940*zoomFactor)*-1+500*zoomFactor);
 			}
 		}
 	}
