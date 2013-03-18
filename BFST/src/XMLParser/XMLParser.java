@@ -40,13 +40,14 @@ public class XMLParser
 	}*/
 	public static void makeDataSet()
 	{
+		String path = ("" + XMLParser.class.getResource("")).replaceAll("file:/","").replaceAll("/","\\\\\\\\");
 		try
 		{
-			XMLParser parser = new XMLParser( "kdv_node_unload.xml" );
+			XMLParser parser = new XMLParser(path + "kdv_node_unload.xml" );
 
 			nodeList = parser.getElements();
 
-			parser.loadFile( "kdv_unload.xml" );
+			parser.loadFile(path + "kdv_unload.xml" );
 
 			edgeList = parser.getElements();
 
