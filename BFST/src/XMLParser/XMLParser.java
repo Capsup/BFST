@@ -42,11 +42,11 @@ public class XMLParser
 	{
 		try
 		{
-			XMLParser parser = new XMLParser( "C:\\Users\\Jacob\\Desktop\\krak\\kdv_node_unload.xml" );
+			XMLParser parser = new XMLParser( "\\kdv_node_unload.xml" );
 
 			nodeList = parser.getElements();
 
-			parser.loadFile( "C:\\Users\\Jacob\\Desktop\\krak\\kdv_unload.xml" );
+			parser.loadFile( "\\kdv_unload.xml" );
 
 			edgeList = parser.getElements();
 
