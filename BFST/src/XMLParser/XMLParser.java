@@ -50,7 +50,7 @@ public class XMLParser
 	{
 		ArrayList<Edge> newEdgeList = new ArrayList<Edge>();
 		for( Edge e : edgeList )
-			if( e.getTyp() < 100 )
+			if( e.getTyp() < 12 )
 				newEdgeList.add( e );
 
 		return newEdgeList;

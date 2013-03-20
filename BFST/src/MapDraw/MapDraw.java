@@ -36,13 +36,21 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	private Point2D.Double translation;
 	private double scale = 1;
 	private Point curMousePos;
+	private static float[] zoomLevel;
+	private static int currentZoomLevel = 0;
+	
+	static{
+		zoomLevel = new float[30];
+		for(int i = 0; i < zoomLevel.length; i++)
+			zoomLevel[i] = 1.5f * (float) Math.pow(0.75f, i);
+	}
 
-	private double widthFactor, heightFactor;
+	//private double widthFactor, heightFactor;
 
 	public MapDraw( int iWidth, int iHeight )
 	{
 		// translation = new Point(0,0);
-		translation = new Point2D.Double( -266, 5940 );
+		translation = new Point2D.Double(-266, 5940);
 		curMousePos = new Point( 0, 0 );
 		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
 
@@ -67,8 +75,6 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		this.setSize( new Dimension( iWidth, iHeight ) );
 		width = iWidth;
 		height = iHeight;
-		widthFactor = 1.340481241524519;
-		heightFactor = 1.0053609311433895;
 
 		JTextField textField = new JTextField();
 		textField.setText( "TESTER" );
@@ -95,7 +101,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 			// gl2.glTranslatef( -(curMousePos.x - width / 2), -(curMousePos.y - height / 2), 0 );
 			gl2.glTranslatef( width / 2, height / 2, 0 );
 			// gl2.glTranslatef( curMousePos.x, curMousePos.y, 0 );
-			gl2.glOrtho( 0, widthFactor, 0, heightFactor, -1, 1 );
+			gl2.glOrtho( 0, zoomLevel[currentZoomLevel] * (800/600), 0, zoomLevel[currentZoomLevel], -1, 1 );
 			// gl2.glTranslatef( -curMousePos.x, -curMousePos.y, 0 );
 			gl2.glTranslatef( -width / 2, -height / 2, 0 );
 			// gl2.glTranslatef( (curMousePos.x + width / 2), (curMousePos.y + height / 2), 0 );
@@ -118,44 +124,33 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		gl2.glBegin( GL.GL_LINES );
 		float r = 0, g = 0, b = 0;
 		
-		int x = 740000;
+		double zoomFactor = ((translation.getX()) - (width-(width*zoomLevel[currentZoomLevel])/4)) / 2;
+		int xs = XMLParser.edgeSearch(edges, zoomFactor * -1000);
+		System.out.println(zoomFactor * -1000);
+		//int xe = XMLParser.edgeSearch(edges, (translation.getX() + width*-1)*-1000);
 		
-		int xs = XMLParser.edgeSearch(edges, x);
 		xs = xs > 0 ? xs : -xs;
-		
+		//xe = xe > 0 ? xe : -xe;
+		int count = 0;
 		for(int i = xs; i < edges.size(); i++)
 		{
-			r = 0; g = 0; b = 0;
-			
-			if( edges.get(i).getTyp() == 1 ) r = 255;
-			else if( edges.get(i).getTyp() < 5 ) b = 255;
-			else if( edges.get(i).getTyp() == 8 ) g = 255;			
-			
-			gl2.glColor3f( r, g, b );
-			gl2.glVertex2d( edges.get(i).getXFrom() / 1000.f,  edges.get(i).getYFrom() / 1000.f );
-			gl2.glColor3f( r, g, b );
-			gl2.glVertex2d( edges.get(i).getXTo() / 1000.f,  edges.get(i).getYTo() / 1000.f );
+			count++;
+			if(edges.get(i).getTyp() < 5){
+				r = 0; g = 0; b = 0;
+				
+				if( edges.get(i).getTyp() == 1 ) r = 255;
+				else if( edges.get(i).getTyp() < 5 ) b = 255;
+				else if( edges.get(i).getTyp() == 8 ) g = 255;	
+				
+				
+				gl2.glColor3f( r, g, b );
+				gl2.glVertex2d( edges.get(i).getXFrom() / 1000.0,  edges.get(i).getYFrom() / 1000.0 );
+				gl2.glColor3f( r, g, b );
+				gl2.glVertex2d( edges.get(i).getXTo() / 1000.0,  edges.get(i).getYTo() / 1000.0 );
+			}
 		}
 		gl2.glEnd();
-
-		/*
-		 * gl2.glBegin( GL.GL_TRIANGLES ); gl2.glColor3f( 255, 0, 0 ); gl2.glVertex2f( 0.0f, 0.0f ); gl2.glColor3f( 0, 255, 0 ); gl2.glVertex2f( 800f,
-		 * 0.0f ); gl2.glColor3f( 0, 0, 255 ); gl2.glVertex2f( 400f, 600f ); gl2.glEnd();
-		 */
-
-		/*
-		 * gl2.glLineWidth( 10f ); gl2.glBegin( GL.GL_LINES );
-		 * 
-		 * for( Edge edge : XMLParser.getEdgeList() ) { // Node testNode = XMLParser.nodeSearch( edge.getToNodeID() );
-		 * 
-		 * //Edge edge = XMLParser.getEdgeList().get( 1 ); //Node fNode = XMLParser.nodeSearch( edge.getToNodeID() ); //Node tNode =
-		 * XMLParser.nodeSearch( edge.getFromNodeID() );
-		 * 
-		 * gl2.glColor3f( 255, 255, 0 ); gl2.glVertex2f( XMLParser.nodeSearch( edge.getFromNodeID() ).getXCoord(), XMLParser.nodeSearch(
-		 * edge.getFromNodeID() ).getYCoord() ); //gl2.glVertex2f( fNode.getXCoord(), fNode.getYCoord() ); gl2.glColor3f( 255, 0, 255 );
-		 * //gl2.glVertex2f( tNode.getXCoord(), tNode.getYCoord() ); gl2.glVertex2f( XMLParser.nodeSearch( edge.getToNodeID() ).getXCoord(),
-		 * XMLParser.nodeSearch( edge.getToNodeID() ).getYCoord() ); } gl2.glEnd();
-		 */
+		//System.out.println(count);
 	}
 
 	@Override
@@ -201,7 +196,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	{
 		int xPos = arg0.getXOnScreen(), yPos = arg0.getYOnScreen();
 
-		double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * widthFactor ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * heightFactor );
+		double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * (zoomLevel[currentZoomLevel] * 800/600) ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * zoomLevel[currentZoomLevel] );
 
 		if( translation == null )
 			translation = new Point2D.Double( xDiff, yDiff );
@@ -278,13 +273,11 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 		if( e.getUnitsToScroll() < 0 )
 		{
-			widthFactor *= 0.75f;
-			heightFactor *= 0.75f;
+			currentZoomLevel -= currentZoomLevel > 0 ? 1 : 0;
 		}
 		else
 		{
-			widthFactor *= 1.33f;
-			heightFactor *= 1.33f;
+			currentZoomLevel += currentZoomLevel < zoomLevel.length-1 ? 1 : 0;
 		}
 
 		// width += -1 * e.getUnitsToScroll();
