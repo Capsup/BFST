@@ -37,6 +37,8 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	private double scale = 1;
 	private Point curMousePos;
 	
+	private double widthFactor, heightFactor;
+	
 	public MapDraw( int iWidth, int iHeight )
 	{
 		//translation = new Point(0,0);
@@ -65,6 +67,8 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	    this.setSize( new Dimension(iWidth, iHeight) );
 	    width = iWidth;
 	    height = iHeight;
+	    widthFactor = 1.340481241524519;
+	    heightFactor = 1.0053609311433895;
 	    
 	    JTextField textField = new JTextField();
 	    textField.setText( "TESTER" );
@@ -85,12 +89,29 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		
 		gl2.glLoadIdentity();
 		
-		//gl2.glTranslatef( -(curMousePos.x - width / 2), -(curMousePos.y - height / 2), 0 );
 		
-		if( scale > 1 )
-			gl2.glScaled( scale, scale, 1 );
 		
-		//gl2.glTranslatef( (curMousePos.x + width / 2), (curMousePos.y + height / 2), 0 );
+		//if( scale > 1 )
+		{
+			//gl2.glMatrixMode( gl2.GL_PROJECTION );
+			//gl2.glTranslatef( -(curMousePos.x - width / 2), -(curMousePos.y - height / 2), 0 );
+			gl2.glTranslatef( width/2, height/2, 0 );
+			//gl2.glTranslatef( curMousePos.x, curMousePos.y, 0 );
+			gl2.glOrtho( 0, widthFactor, 0, heightFactor, -1, 1 );
+			//gl2.glTranslatef( -curMousePos.x, -curMousePos.y, 0 );
+			gl2.glTranslatef( -width/2, -height/2, 0 );
+			//gl2.glTranslatef( (curMousePos.x + width / 2), (curMousePos.y + height / 2), 0 );
+			//double aspectRatio = 1;
+			
+			System.out.println(widthFactor + ", " + heightFactor);
+			
+			//gl2.glMatrixMode( gl2.GL_PROJECTION );
+			//GLU glu = new GLU();
+			//glu.gluOrtho2D( 0.0f, width, 0.0f, height );
+			
+		}
+		
+		//gl2.glMatrixMode( gl2.GL_MODELVIEW );
 		
 		gl2.glTranslatef( translation.x, -translation.y, 0 );
 	
@@ -120,7 +141,7 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
 				gl2.glVertex2f( x/1000.0f, y/1000.0f );
 			}
 		gl2.glEnd();
-		
+
 		/*gl2.glBegin( GL.GL_TRIANGLES );
 			gl2.glColor3f( 255, 0, 0 );
 			gl2.glVertex2f( 0.0f, 0.0f );
@@ -167,8 +188,9 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
 		gl.glMatrixMode( gl.GL_PROJECTION );
 		gl.glLoadIdentity();
 		
-		GLU glu = new GLU();
-		glu.gluOrtho2D( 0.0f, width, 0.0f, height );
+		//GLU glu = new GLU();
+		//glu.gluOrtho2D( 0.0f, width, 0.0f, height );
+		gl.glOrtho(0, width, 0, height, -1, 1);
 		//glu.gluOrtho2D( -width/2, -height/2, width/2, height/2 );
 		//glu.gluPerspective( 50.0 * scale, (float) width / (float) height, 1, 1000 );
 		
@@ -217,7 +239,7 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
     public void mouseMoved( MouseEvent arg0 )
     {
 	    // TODO Auto-generated method stub
-	    curMousePos = arg0.getLocationOnScreen();
+	    curMousePos = arg0.getPoint();
     }
 
 	@Override
@@ -264,7 +286,21 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
 	@Override
     public void mouseWheelMoved( MouseWheelEvent e )
     {
-	    scale += ( -1 * e.getUnitsToScroll() );
+	    //scale += ( -1 * e.getUnitsToScroll() );
+		
+		if( e.getUnitsToScroll() < 0 )
+		{
+			widthFactor *= 0.75f;
+			heightFactor *= 0.75f;
+		}
+		else 
+		{
+			widthFactor *= 1.33f;
+			heightFactor *= 1.33f;
+		}
+	    
+	    //width += -1 * e.getUnitsToScroll();
+	    //height += -1 * e.getUnitsToScroll();
 	    
 	    /*double xDiff = width * e.getUnitsToScroll() / 2;
 	    double yDiff = height * e.getUnitsToScroll() / 2;
@@ -273,7 +309,7 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
 	    
 	    
 	    
-	    System.out.println(scale);
+	    //System.out.println(scale);
     }
 	
 	public static void main( String[] args )
