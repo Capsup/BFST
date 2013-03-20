@@ -99,8 +99,12 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
 		
 		gl2.glBegin( GL.GL_LINES);
 			float r = 0, g = 0, b = 0;
-			float x, y;
-			Node node;
+			int x = 742000;
+			Edge edge = XMLParser.edgeSearch(x);
+			
+			//xs = edge.getXFrom() > 0 ? edge.getXFrom() : edges.get((int)-edge.getXFrom()).getXFrom();
+			
+
 			for(Edge e : edges){
 				r = 0; g = 0; b = 0;
 				if(e.getTyp() == 1) r = 255;

@@ -34,7 +34,7 @@ public class XMLParser
 	public static void main(String[] args){
 		makeDataSet();
 		if (edgeList == null) System.out.println("list is empty");
-		System.out.println(edgeList.get(50).getXFrom());
+		System.out.println(edgeSearch(742000).getXFrom());
 	
 	}
 	
@@ -77,9 +77,9 @@ public class XMLParser
 		return id >= 0 ?  nodeList.get(id) : new Node(0,-1,0,0);
 	}
 	
-	public static Edge edgeSearch(int i){
-		int id = Collections.binarySearch(edgeList, new Edge(0,i,0,0,0,0,0,0));
-		return id >= 0 ?  edgeList.get(id) : new Edge(0,-1,0,0,0,0,0,0);
+	public static Edge edgeSearch(double i){
+		int id = Collections.binarySearch(edgeList, new Edge(0,0,0,0,i,0,0,0));
+		return id >= 0 ?  edgeList.get(id) : new Edge(0,0,0,0,id,0,0,0);
 	}
 
 	public XMLParser()
