@@ -4,10 +4,10 @@ public class Node implements Comparable<Node>
 {
 	private float ARC;
 	private int id;
-	private float xCoord;
-	private float yCoord;
+	private double xCoord;
+	private double yCoord;
 	
-	public Node(float ARC, int id, float xCoord, float yCoord)
+	public Node(float ARC, int id, double xCoord, double yCoord)
 	{
 		this.ARC = ARC;
 		this.id = id;
@@ -32,12 +32,12 @@ public class Node implements Comparable<Node>
 	}
 	
 	//Coordinates
-	public float getXCoord()
+	public double getXCoord()
 	{
 		return xCoord;
 	}
 	
-	public float getYCoord()
+	public double getYCoord()
 	{
 		return yCoord;
 	}
