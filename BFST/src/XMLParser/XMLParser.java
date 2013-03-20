@@ -1,5 +1,6 @@
 package XMLParser;
 
+import java.awt.print.Printable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,13 +26,13 @@ public class XMLParser
 
 	public static void makeDataSet()
 	{
-		String path = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" );
+		String path = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ");
 		try
 		{
 			XMLParser parser = new XMLParser();
 
 			// nodeList = parser.getElements();
-
+			
 			parser.loadFile( path + "kdv_unload.xml" );
 
 			edgeList = parser.getElements();
