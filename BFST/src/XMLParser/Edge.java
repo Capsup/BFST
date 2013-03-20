@@ -31,7 +31,7 @@ public class Edge implements Comparable<Edge>
 	public double getYTo(){return yTo;}
 	public double getXFrom(){return xFrom;}
 	public double getYFrom(){return yFrom;}
-	
+
 	public int getTyp(){
 		return typ;
 	}

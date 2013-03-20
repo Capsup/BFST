@@ -44,7 +44,7 @@ public class XMLParser
 		try
 		{
 			XMLParser parser = new XMLParser();
-
+ 
 			//nodeList = parser.getElements();
 
 			parser.loadFile(path + "kdv_unload.xml" );
