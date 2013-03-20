@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -20,10 +21,11 @@ public class XMLParser
 	String[] sData;
 	private XMLEventReader input;
 	private String filePath;
-	// private ArrayList list;
 	private static ArrayList<Node> nodeList;
 	private static ArrayList<Edge> edgeList;
-
+	private static ArrayList<Edge> edgeListTo;
+	//private static ArrayList<Edge> edgeListY;
+	//private static ArrayList<Edge> edgeListYTo;
 	public static void makeDataSet()
 	{
 		String path = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ");
@@ -39,6 +41,33 @@ public class XMLParser
 
 			// Collections.sort(nodeList);
 			Collections.sort( edgeList );
+			
+			
+			Comparator<Edge> egdeToComperator = new Comparator<Edge>() {
+				public int compare(Edge e1, Edge e2) {
+					return e1.getXTo() == e2.getXTo() ? 0 : ( e1.getXTo() > e2.getXTo() ? 1 : -1 );
+				}
+			};
+
+			Comparator<Edge> egdeYComperator = new Comparator<Edge>() {
+				public int compare(Edge e1, Edge e2) {
+					return e1.getYFrom() == e2.getYFrom() ? 0 : ( e1.getYFrom() > e2.getYFrom() ? 1 : -1 );
+				}
+			};
+
+			Comparator<Edge> egdeYToComperator = new Comparator<Edge>() {
+				public int compare(Edge e1, Edge e2) {
+					return e1.getYTo() == e2.getYTo() ? 0 : ( e1.getYTo() > e2.getYTo() ? 1 : -1 );
+				}
+			};
+			
+			
+			
+			
+			edgeListTo = edgeList;
+			Collections.sort (edgeListTo, egdeToComperator);
+			//Collections.sort (edgeListY, egdeYComperator);
+			//Collections.sort (edgeListYTo, egdeYToComperator);
 
 		}
 		catch( Exception e )
@@ -46,16 +75,28 @@ public class XMLParser
 			System.out.println( e );
 		}
 	}
+	
+	
 
 	public static ArrayList<Edge> getEdgeList()
 	{
-		ArrayList<Edge> newEdgeList = new ArrayList<Edge>();
-		for( Edge e : edgeList )
-			if( e.getTyp() < 12 )
-				newEdgeList.add( e );
-
-		return newEdgeList;
+		return edgeList;
 	}
+	
+	public static ArrayList<Edge> getEdgeListTo()
+	{
+		return edgeListTo;
+	}
+	
+	/*public static ArrayList<Edge> getEdgeListY()
+	{
+		return edgeListY;
+	}
+	
+	public static ArrayList<Edge> getEdgeListYTo()
+	{
+		return edgeListYTo;
+	}*/
 
 	public static Node nodeSearch( int i )
 	{

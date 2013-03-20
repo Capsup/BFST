@@ -36,16 +36,22 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	private Point2D.Double translation;
 	private double scale = 1;
 	private Point curMousePos;
-	private static float[] zoomLevel;
+	private static double[] zoomLevel;
 	private static int currentZoomLevel = 0;
 	
 	static{
-		zoomLevel = new float[30];
+		zoomLevel = new double[30];
 		for(int i = 0; i < zoomLevel.length; i++)
-			zoomLevel[i] = 1.5f * (float) Math.pow(0.75f, i);
+			zoomLevel[i] = 1.5 * Math.pow(0.75f, i);
 	}
-
-	//private double widthFactor, heightFactor;
+	
+	public double getWidthFactor(){
+		return (800/600)*getHeightFactor();
+	}
+	
+	public double getHeightFactor(){
+		return zoomLevel[currentZoomLevel];
+	}
 
 	public MapDraw( int iWidth, int iHeight )
 	{
@@ -101,7 +107,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 			// gl2.glTranslatef( -(curMousePos.x - width / 2), -(curMousePos.y - height / 2), 0 );
 			gl2.glTranslatef( width / 2, height / 2, 0 );
 			// gl2.glTranslatef( curMousePos.x, curMousePos.y, 0 );
-			gl2.glOrtho( 0, zoomLevel[currentZoomLevel] * (800/600), 0, zoomLevel[currentZoomLevel], -1, 1 );
+			gl2.glOrtho( 0, getWidthFactor(), 0, getHeightFactor(), -1, 1 );
 			// gl2.glTranslatef( -curMousePos.x, -curMousePos.y, 0 );
 			gl2.glTranslatef( -width / 2, -height / 2, 0 );
 			// gl2.glTranslatef( (curMousePos.x + width / 2), (curMousePos.y + height / 2), 0 );
@@ -120,24 +126,50 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		gl2.glTranslated( translation.x, -translation.y, 0 );
 
 		ArrayList<Edge> edges = XMLParser.getEdgeList();
+		//ArrayList<Edge> edgesY = XMLParser.getEdgeListY();
 
 		gl2.glBegin( GL.GL_LINES );
-		float r = 0, g = 0, b = 0;
 		
-		double zoomFactor = ((translation.getX()) - (width-(width*zoomLevel[currentZoomLevel])/4)) / 2;
+		
+		int width = this.getWidth();
+		double zoomFactor = ((translation.getX()) - (width-(width*getWidthFactor())/2)/2);
 		int xs = XMLParser.edgeSearch(edges, zoomFactor * -1000);
-		System.out.println(zoomFactor * -1000);
-		//int xe = XMLParser.edgeSearch(edges, (translation.getX() + width*-1)*-1000);
-		
+		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), (zoomFactor - width*getWidthFactor()/2)*-1000);
 		xs = xs > 0 ? xs : -xs;
-		//xe = xe > 0 ? xe : -xe;
-		int count = 0;
-		for(int i = xs; i < edges.size(); i++)
+		xe = xe > 0 ? xe : -xe;
+		/*
+		int height = this.getHeight()+20;
+		zoomFactor = ((translation.getY()) - (height-(height*getHeightFactor())/2)/2);
+		int ys = XMLParser.edgeSearch(edgesY, zoomFactor * -1000);
+		int ye = XMLParser.edgeSearch(XMLParser.getEdgeListYTo(), (zoomFactor - height*getHeightFactor()/2)*-1000);
+		ys = ys > 0 ? ys : -ys;
+		ye = ye > 0 ? ye : -ye;
+		*/
+		
+
+		
+		for(int i = xs, r = 0, g = 0, b = 0; i < xe-1; i++, r = 0, g = 0, b = 0)
 		{
-			count++;
-			if(edges.get(i).getTyp() < 5){
-				r = 0; g = 0; b = 0;
+			int c = edges.get(i).getTyp();
+			boolean roadesToShow = c < 2;
+			if(currentZoomLevel < 3)
+				roadesToShow = c < 3;
+			else if(currentZoomLevel < 6)
+				roadesToShow = c < 4;
+			else if(currentZoomLevel < 9)
+				roadesToShow = c < 5;
+			else if(currentZoomLevel < 12)
+				roadesToShow = c < 6;
+			else if(currentZoomLevel < 15)
+				roadesToShow = c < 7;
+			else
+				roadesToShow = true;
+			
+			
+			
+			if(roadesToShow){
 				
+		
 				if( edges.get(i).getTyp() == 1 ) r = 255;
 				else if( edges.get(i).getTyp() < 5 ) b = 255;
 				else if( edges.get(i).getTyp() == 8 ) g = 255;	
@@ -150,7 +182,6 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 			}
 		}
 		gl2.glEnd();
-		//System.out.println(count);
 	}
 
 	@Override
@@ -196,7 +227,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	{
 		int xPos = arg0.getXOnScreen(), yPos = arg0.getYOnScreen();
 
-		double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * (zoomLevel[currentZoomLevel] * 800/600) ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * zoomLevel[currentZoomLevel] );
+		double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * getWidthFactor() ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * getHeightFactor() );
 
 		if( translation == null )
 			translation = new Point2D.Double( xDiff, yDiff );
@@ -273,12 +304,13 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 		if( e.getUnitsToScroll() < 0 )
 		{
-			currentZoomLevel -= currentZoomLevel > 0 ? 1 : 0;
+			currentZoomLevel += currentZoomLevel < zoomLevel.length-1 ? 1 : 0;
 		}
 		else
 		{
-			currentZoomLevel += currentZoomLevel < zoomLevel.length-1 ? 1 : 0;
+			currentZoomLevel -= currentZoomLevel > 0 ? 1 : 0;
 		}
+		System.out.println("Zoomlevel: " + (currentZoomLevel+1) + "/30");
 
 		// width += -1 * e.getUnitsToScroll();
 		// height += -1 * e.getUnitsToScroll();
