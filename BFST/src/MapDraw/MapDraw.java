@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
@@ -32,7 +33,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 {
 	private int width;
 	private int height;
-	private Point translation;
+	private Point2D.Double translation;
 	private double scale = 1;
 	private Point curMousePos;
 
@@ -41,7 +42,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	public MapDraw( int iWidth, int iHeight )
 	{
 		// translation = new Point(0,0);
-		translation = new Point( -266, 5940 );
+		translation = new Point2D.Double( -266, 5940 );
 		curMousePos = new Point( 0, 0 );
 		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
 
@@ -110,7 +111,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 		// gl2.glMatrixMode( gl2.GL_MODELVIEW );
 
-		gl2.glTranslatef( translation.x, -translation.y, 0 );
+		gl2.glTranslated( translation.x, -translation.y, 0 );
 
 		ArrayList<Edge> edges = XMLParser.getEdgeList();
 
@@ -201,15 +202,16 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 	{
 		int xPos = arg0.getXOnScreen(), yPos = arg0.getYOnScreen();
 
-		int xDiff = xPos - originalEvent.getXOnScreen(), yDiff = yPos - originalEvent.getYOnScreen();
+		double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * widthFactor ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * heightFactor );
 
 		if( translation == null )
-			translation = new Point( xDiff, yDiff );
+			translation = new Point2D.Double( xDiff, yDiff );
 		else
 		{
-			translation = new Point( translation.x + xDiff, translation.y + yDiff );
+			//translation = new Point( translation.x + xDiff, translation.y + yDiff );
+			translation = new Point2D.Double( translation.getX() + xDiff, translation.getY() + yDiff );
 		}
-
+ 
 		try
 		{
 			new Robot().mouseMove( originalEvent.getXOnScreen(), originalEvent.getYOnScreen() );
