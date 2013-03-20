@@ -120,7 +120,6 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		int x = 740000;
 		
 		int xs = XMLParser.edgeSearch(edges, x);
-		System.out.println(xs);
 		xs = xs > 0 ? xs : -xs;
 		
 		for(int i = xs; i < edges.size(); i++)
