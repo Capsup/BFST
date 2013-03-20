@@ -1,6 +1,5 @@
 package XMLParser;
 
-
 public class Node implements Comparable<Node>
 {
 	private float ARC;
