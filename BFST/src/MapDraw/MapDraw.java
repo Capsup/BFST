@@ -100,7 +100,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 			// gl2.glTranslatef( (curMousePos.x + width / 2), (curMousePos.y + height / 2), 0 );
 			// double aspectRatio = 1;
 
-			System.out.println( widthFactor + ", " + heightFactor );
+			//System.out.println( widthFactor + ", " + heightFactor );
 
 			// gl2.glMatrixMode( gl2.GL_PROJECTION );
 			// GLU glu = new GLU();
@@ -116,23 +116,25 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 		gl2.glBegin( GL.GL_LINES );
 		float r = 0, g = 0, b = 0;
-		float x, y;
-		Node node;
-		for( Edge e : edges )
+		
+		int x = 740000;
+		
+		int xs = XMLParser.edgeSearch(edges, x);
+		System.out.println(xs);
+		xs = xs > 0 ? xs : -xs;
+		
+		for(int i = xs; i < edges.size(); i++)
 		{
-			r = 0;
-			g = 0;
-			b = 0;
-			if( e.getTyp() == 1 )
-				r = 255;
-			else if( e.getTyp() < 5 )
-				b = 255;
-			else if( e.getTyp() == 8 )
-				g = 255;
+			r = 0; g = 0; b = 0;
+			
+			if( edges.get(i).getTyp() == 1 ) r = 255;
+			else if( edges.get(i).getTyp() < 5 ) b = 255;
+			else if( edges.get(i).getTyp() == 8 ) g = 255;			
+			
 			gl2.glColor3f( r, g, b );
-			gl2.glVertex2d( e.getXFrom() / 1000.f, ( float ) e.getYFrom() / 1000.f );
+			gl2.glVertex2d( edges.get(i).getXFrom() / 1000.f,  edges.get(i).getYFrom() / 1000.f );
 			gl2.glColor3f( r, g, b );
-			gl2.glVertex2d( e.getXTo() / 1000.f, ( float ) e.getYTo() / 1000.f );
+			gl2.glVertex2d( edges.get(i).getXTo() / 1000.f,  edges.get(i).getYTo() / 1000.f );
 		}
 		gl2.glEnd();
 
@@ -217,7 +219,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 			exception.printStackTrace();
 		}
 
-		System.out.println( translation );
+		//System.out.println( translation );
 	}
 
 	@Override

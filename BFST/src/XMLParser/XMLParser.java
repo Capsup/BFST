@@ -23,15 +23,6 @@ public class XMLParser
 	private static ArrayList<Node> nodeList;
 	private static ArrayList<Edge> edgeList;
 
-	public static void main( String[] args )
-	{
-		makeDataSet();
-		if( edgeList == null )
-			System.out.println( "list is empty" );
-		System.out.println( edgeList.get( 50 ).getXFrom() );
-
-	}
-
 	public static void makeDataSet()
 	{
 		String path = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" );
@@ -59,7 +50,7 @@ public class XMLParser
 	{
 		ArrayList<Edge> newEdgeList = new ArrayList<Edge>();
 		for( Edge e : edgeList )
-			if( e.getTyp() < 6 )
+			if( e.getTyp() < 100 )
 				newEdgeList.add( e );
 
 		return newEdgeList;
@@ -71,10 +62,10 @@ public class XMLParser
 		return id >= 0 ? nodeList.get( id ) : new Node( 0, -1, 0, 0 );
 	}
 
-	public static Edge edgeSearch( int i )
+	public static int edgeSearch( ArrayList<Edge> edges, double i )
 	{
-		int id = Collections.binarySearch( edgeList, new Edge( 0, i, 0, 0, 0, 0, 0, 0 ) );
-		return id >= 0 ? edgeList.get( id ) : new Edge( 0, -1, 0, 0, 0, 0, 0, 0 );
+		int id = Collections.binarySearch( edges, new Edge( 0, 0, 0, 0, i, 0, 0, 0 ) );
+		return id;
 	}
 
 	public XMLParser()
