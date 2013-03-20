@@ -127,18 +127,10 @@ ArrayList<Edge> edges = XMLParser.getEdgeList();
 				if(e.getTyp() == 1) r = 255;
 				else if(e.getTyp() < 5) b = 255;
 				else if(e.getTyp() == 8) g = 255;
-				node = XMLParser.nodeSearch(e.getFromNodeID());
-				x = node.getXCoord();
-				y = node.getYCoord();
-				
-				gl2.glColor3f( r, g ,b);
-				gl2.glVertex2f( x/1000.f, y/1000.f );
+								gl2.glColor3f( r, g ,b);
+				gl2.glVertex2d( e.getXFrom()/1000.f, (float) e.getYFrom()/1000.f );
 				gl2.glColor3f( r, g, b );
-				
-				node = XMLParser.nodeSearch(e.getToNodeID());
-				x = node.getXCoord();
-				y = node.getYCoord();
-				gl2.glVertex2f( x/1000.0f, y/1000.0f );
+				gl2.glVertex2d( e.getXTo()/1000.f, (float) e.getYTo()/1000.f );
 			}
 		gl2.glEnd();
 

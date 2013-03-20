@@ -26,40 +26,40 @@ public class XMLParser
 	String[] sData;
 	private XMLEventReader input;
 	private String filePath;
-	private ArrayList list;
+	//private ArrayList list;
 	private static ArrayList<Node> nodeList;
 	private static ArrayList<Edge> edgeList;
 
-	/*
+	
 	public static void main(String[] args){
-		try{
-			XMLParser p = new XMLParser();
-		//	p.convertToXML( "C:\\Users\\Jacob\\Desktop\\krak-data\\kdv_node_unload" );
-			p.convertToXML( "C:\\Users\\Jacob\\Desktop\\krak-data\\kdv_unload" );
-		}catch(Exception e){}
-	}*/
+		makeDataSet();
+		if (edgeList == null) System.out.println("list is empty");
+		System.out.println(edgeList.get(50).getXFrom());
+	
+	}
+	
 	public static void makeDataSet()
 	{
 		String path = ("" + XMLParser.class.getResource("")).replaceAll("file:/","").replaceAll("/","\\\\\\\\");
 		try
 		{
-			XMLParser parser = new XMLParser(path + "kdv_node_unload.xml" );
+			XMLParser parser = new XMLParser();
 
-			nodeList = parser.getElements();
+			//nodeList = parser.getElements();
 
 			parser.loadFile(path + "kdv_unload.xml" );
 
 			edgeList = parser.getElements();
 
 	
-			Collections.sort(nodeList);
+			//Collections.sort(nodeList);
 			Collections.sort(edgeList);
 
 		
 		}
 		catch( Exception e )
 		{
-			e.printStackTrace();
+			System.out.println(e);
 		}
 	}
 
@@ -78,8 +78,8 @@ public class XMLParser
 	}
 	
 	public static Edge edgeSearch(int i){
-		int id = Collections.binarySearch(edgeList, new Edge(0,i,0,0));
-		return id >= 0 ?  edgeList.get(id) : new Edge(0,-1,0,0);
+		int id = Collections.binarySearch(edgeList, new Edge(0,i,0,0,0,0,0,0));
+		return id >= 0 ?  edgeList.get(id) : new Edge(0,-1,0,0,0,0,0,0);
 	}
 
 	public XMLParser()
@@ -107,130 +107,22 @@ public class XMLParser
 
 		filePath = sPath;
 
-		if( !file.getPath().contains( "xml" ) )
-		{
-			Scanner scanner = new Scanner( file );
+		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-			String sNameString = scanner.nextLine();
-			sNameString.replaceAll("[#]*","");
-			sNames = sNameString.split( " " );
-			//sNames = sNameString.split( "," );
-
-			int i = 0;
-			while( scanner.hasNextLine() )
-			{
-				scanner.nextLine();
-				i++;
-			}
-
-			sData = new String[i];
-
-			scanner = new Scanner( file );
-			scanner.nextLine();
-
-			while( scanner.hasNextLine() )
-				sData[--i] = scanner.nextLine();
-		}
-		else
-		{
-			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
-			try
-			{
-				input = inputFactory.createXMLEventReader( new FileInputStream( file ) );
-			}
-			catch( XMLStreamException e )
-			{
-				e.printStackTrace();
-			}
-
-			list = null;
-		}
-
-	}
-
-	public void convertToXML( String sPath ) throws Exception
-	{
-		loadFile( sPath + ".txt" );
+		try{input = inputFactory.createXMLEventReader( new FileInputStream( file ) );
+		}catch( XMLStreamException e ){	e.printStackTrace();}
+		//list = null;
 		
-		for( int j = 0; j < sNames.length; j++ )
-			System.out.println(j + ": " +sNames[j]);
-		
-		// Create a XMLOutputFactory
-		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-		// Create XMLEventWriter
-		XMLEventWriter eventWriter = outputFactory.createXMLEventWriter( new FileOutputStream( sPath + ".xml" ) );
-		// Create a EventFactory
-		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-		XMLEvent end = eventFactory.createDTD( "\n" );
-		// Create and write Start Tag
-		StartDocument startDocument = eventFactory.createStartDocument();
-		eventWriter.add( startDocument );
-		eventWriter.add( end );
-
-		// Create config open tag
-		StartElement configStartElement = eventFactory.createStartElement( "", "", "elements" );
-		eventWriter.add( configStartElement );
-		eventWriter.add( end );
-
-		for( int i = 0; i < sData.length; i++ )
-		{
-			String[] data = sData[i].split( "," );
-
-			eventWriter.add( eventFactory.createDTD( "\t" ) );
-			configStartElement = eventFactory.createStartElement( "", "", "element" );
-			eventWriter.add( configStartElement );
-			eventWriter.add( end );
-
-			for( int j = 0; j < sNames.length; j++ )
-			{
-				if(j == 0 || j == 1 || j == 5)
-					createNode( eventWriter, sNames[j], data[j] );
-			}
-
-			eventWriter.add( eventFactory.createDTD( "\t" ) );
-			eventWriter.add( eventFactory.createEndElement( "", "", "element" ) );
-			eventWriter.add( end );
-		}
-
-		eventWriter.add( eventFactory.createEndElement( "", "", "elements" ) );
-		eventWriter.add( end );
-		eventWriter.add( eventFactory.createEndDocument() );
-		eventWriter.close();
-		System.out.println("done");
-	}
-
-	private void createNode( XMLEventWriter eventWriter, String name, String value ) throws XMLStreamException
-	{
-
-		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-		XMLEvent end = eventFactory.createDTD( "\n" );
-		XMLEvent tab = eventFactory.createDTD( "\t\t" );
-		// Create Start node
-		StartElement sElement = eventFactory.createStartElement( "", "", name );
-		eventWriter.add( tab );
-		eventWriter.add( sElement );
-		// Create Content
-		Characters characters = eventFactory.createCharacters( value );
-		eventWriter.add( characters );
-		// Create End node
-		EndElement eElement = eventFactory.createEndElement( "", "", name );
-		eventWriter.add( eElement );
-		eventWriter.add( end );
 
 	}
 
+	
+	
 	public ArrayList getElements() throws Exception
 	{
-		if( input == null )
-			return null;
-
-		if( list != null )
-			return list;
-
-		list = new ArrayList<Object>();
+		ArrayList<Edge> list = new ArrayList<Edge>();
 		int arc = 0, id = 0, fnode = 0, tnode = 0, typ = 0;
-		float x = 0, y = 0;
+		double x = 0, y = 0, yTo = 0, xTo = 0, yFrom = 0, xFrom = 0;
 		double length = 0;
 
 		while( input.hasNext() )
@@ -248,23 +140,28 @@ public class XMLParser
 				if( name.equals( "elements" ) )
 					continue;
 
-				if( filePath.contains( "kdv_node_unload.xml" ) )
+				/*if( filePath.contains( "kdv_node_unload.xml" ) )
 				{
 					if( name.equals( "ARC" ) )
 						arc = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "KDV-ID" ) )
 						id = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "X-COORD" ) )
-						x = ( float ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+						x =  Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "Y-COORD" ) )
-						y = ( float ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+						y =  Double.parseDouble( input.nextEvent().asCharacters().getData() );
 				}
-				else if( filePath.contains( "kdv_unload.xml" ) )
+				else*/ if( filePath.contains( "kdv_unload.xml" ) )
 				{
-					if( name.equals( "FNODE" ) )
-						fnode = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
-					else if( name.equals( "TNODE" ) )
-						tnode = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+					
+					if( name.equals( "xFrom" ) )
+						xFrom = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+					else if( name.equals( "yFrom" ) )
+						yFrom = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+					if( name.equals( "xTo" ) )
+						xTo = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
+					else if( name.equals( "yTo" ) )
+						yTo = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if( name.equals( "LENGTH" ) )
 						length =  Double.parseDouble( input.nextEvent().asCharacters().getData() );
 					else if (name.equals ( "TYP") )
@@ -275,11 +172,14 @@ public class XMLParser
 			if( event.isEndElement() )
 			{
 				EndElement element = event.asEndElement();
-				if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_node_unload.xml" ) )
+				/*if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_node_unload.xml" ) )
 					list.add( new Node( arc, id, x, y ) );
-				else if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_unload.xml" ) )
-					list.add( new Edge( fnode, tnode, length, typ ) );
+				else*/ 
+				if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_unload.xml" ) ){
+					list.add( new Edge( fnode, tnode, length, typ, xFrom, yFrom, xTo, yTo));
+				}
 			}
+				
 		}
 
 		return list;
