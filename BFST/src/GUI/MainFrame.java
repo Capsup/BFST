@@ -47,7 +47,7 @@ public class MainFrame extends JFrame
 		
 		//Map Panel <-- Add map class extending JPanel here
 		JPanel mapPanel = new MapDraw();
-		//mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		/*
 		//Lolz
@@ -74,7 +74,6 @@ public class MainFrame extends JFrame
 		
 		contentPane.add(mainPanel);
 		
-		validate();
 	}
 	
 	public static void main(String[] args)

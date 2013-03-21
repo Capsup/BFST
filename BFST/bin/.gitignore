@@ -1,6 +1,6 @@
 /MSTParse
 *.class
-/XMLParser
 /.gitignore
-/MapDraw
 /GUI
+/MapDraw
+/XMLParser

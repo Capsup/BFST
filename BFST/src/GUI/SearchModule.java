@@ -3,6 +3,7 @@ package GUI;
 import java.awt.BorderLayout;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -16,7 +17,9 @@ public class SearchModule extends JPanel{
 	
 	void makeContent()
 	{
-		setLayout(new BorderLayout());
+		JLabel headerLabel = new JLabel("Searching: ");
+		
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		JPanel fromPanel = new JPanel(new BorderLayout());
 		
@@ -34,8 +37,9 @@ public class SearchModule extends JPanel{
 		toPanel.add(toLabel, BorderLayout.NORTH);
 		toPanel.add(toSearchPanel, BorderLayout.CENTER);
 		
-		add(fromPanel, BorderLayout.NORTH);
-		add(toPanel, BorderLayout.CENTER);
+		add(headerLabel);
+		add(fromPanel);
+		add(toPanel);
 		
 	}
 }

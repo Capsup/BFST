@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -49,12 +50,21 @@ public class TranslationPanel extends JPanel{
 
 	private void makeContent()
 	{
-		setLayout(new BorderLayout());
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		JLabel headerLabel = new JLabel("Translation:");
+		headerLabel.setAlignmentX( CENTER_ALIGNMENT );
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		
+		JPanel upDownPanel = new JPanel();
+		upDownPanel.setLayout(new BorderLayout());
 		
 		JButton upButton = new JButton("^");
 		upButton.setActionCommand("Up");
 		
-		JButton downButton = new JButton("down");
+		JButton downButton = new JButton("Down");
 		downButton.setActionCommand("Down");
 		
 		JButton rightButton = new JButton(">");
@@ -70,9 +80,15 @@ public class TranslationPanel extends JPanel{
 		rightButton.addActionListener(listener);
 		leftButton.addActionListener(listener);
 		
-		add(upButton, BorderLayout.NORTH);
-		add(downButton, BorderLayout.SOUTH);
-		add(rightButton, BorderLayout.EAST);
-		add(leftButton, BorderLayout.WEST);
+		upDownPanel.add(upButton, BorderLayout.NORTH);
+		upDownPanel.add(downButton, BorderLayout.SOUTH);
+		
+		buttonPanel.add(upDownPanel, BorderLayout.CENTER);
+		buttonPanel.add(rightButton, BorderLayout.EAST);
+		buttonPanel.add(leftButton, BorderLayout.WEST);
+		
+		add(headerLabel);
+		add(buttonPanel);
+		
 	}
 }

@@ -1,5 +1,8 @@
 package MapDraw;
-public class ZoomLevel 
+
+import java.util.Observable;
+
+public class ZoomLevel extends Observable
 {
 	private static ZoomLevel instance;
 	private double[] zoomLevels;
@@ -34,17 +37,26 @@ public class ZoomLevel
 	public void setZoomLevel(int i)
 	{
 		currentZoomLevelIndex = i;
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	public void zoomIn()
 	{
 		if(currentZoomLevelIndex+1 < zoomLevels.length)
 			currentZoomLevelIndex++;
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	public void zoomOut()
 	{
 		if(currentZoomLevelIndex-1 >= 0)
 			currentZoomLevelIndex--;
+		
+		setChanged();
+		notifyObservers();
 	}
 }
