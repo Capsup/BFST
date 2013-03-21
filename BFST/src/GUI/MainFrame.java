@@ -14,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
+import MapDraw.MapDraw;
+
 
 public class MainFrame extends JFrame
 {	
@@ -44,9 +46,10 @@ public class MainFrame extends JFrame
 		menuPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		//Map Panel <-- Add map class extending JPanel here
-		//JPanel mapPanel = new JPanel();
-		//mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		JPanel mapPanel = new JPanel();
+		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
+		/*
 		//Lolz
 		JPanel mapPanel;
 		
@@ -64,6 +67,7 @@ public class MainFrame extends JFrame
 			// If no image is found, the panel will be initialized with no background image.
 			mapPanel = new JPanel();
 		}
+		*/
 		
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);
