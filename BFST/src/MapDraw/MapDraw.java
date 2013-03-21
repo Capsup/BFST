@@ -30,7 +30,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 {
 	private int width;
 	private int height;
-	private Point2D.Double translation;
 	//private double scale = 1;
 	private Point curMousePos;
 	
@@ -50,7 +49,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//setSize( new Dimension( iWidth, iHeight ) );
 		
 		//Start translation at the place where the map is inside our 3D world.
-		setTranslation(-266, 5940);
+		Translation.getInstance().setTranslation(-266, 5940);
 		curMousePos = new Point( 0, 0 );
 		
 		//Tell OpenGL that we're interested in the default profile, meaning we don't get any specific properties of the gl context.
@@ -163,12 +162,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	private void applyPanning(GL2 gl2)
 	{
-		gl2.glTranslated( translation.x, -translation.y, 0 );
+		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
 	private Rectangle getDrawEdges(ArrayList<Edge> edges)
 	{
-		double zoomFactor = ((translation.getX()) - (width-(width*getWidthFactor())/2)/2);
+		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2);
 		int xs = XMLParser.edgeSearch(edges, zoomFactor * -1000);
 		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), (zoomFactor - width*getWidthFactor()/2)*-1000);
 		xs = xs > 0 ? xs : -xs;
@@ -245,23 +244,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		// TODO Auto-generated method stub
 
 	}
-
-	public void translate(double dx, double dy)
-	{
-		if( translation == null )
-			translation = new Point2D.Double( dx, dy );
-		else
-		{
-			//Update the translation offset, so we can apply it to the stuff we draw later.
-			translation = new Point2D.Double( translation.getX() + dx, translation.getY() + dy );
-		}
-	}
-	
-	public void setTranslation(double x, double y)
-	{
-		translation = new Point2D.Double(x, y);
-	}
-	
 	
 	//Mouse events
 
@@ -277,7 +259,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
 		double xDiff = ( ( xPos - curMousePos.x ) * getWidthFactor() ) , yDiff = ( ( yPos - curMousePos.y ) * getHeightFactor() );
 		
-		translate(xDiff, yDiff);
+		Translation.getInstance().translate(xDiff, yDiff);
 		
 		//Rebase the current mouse position, so that the next time we drag the mouse, we will have a new starting point to offset from.
 		curMousePos.x = xPos;
