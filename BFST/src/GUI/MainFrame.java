@@ -21,8 +21,8 @@ public class MainFrame extends JFrame
 {	
 	public MainFrame()
 	{
-		setupFrame();
 		makeContent();
+		setupFrame();
 	}
 	
 	void setupFrame()
