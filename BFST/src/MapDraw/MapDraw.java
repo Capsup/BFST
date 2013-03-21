@@ -136,7 +136,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glBegin( GL.GL_LINES );
 		
 		
-		int width = this.getWidth();
 		double zoomFactor = ((translation.getX()) - (width-(width*getWidthFactor())/2)/2);
 		int xs = XMLParser.edgeSearch(edges, zoomFactor * -1000);
 		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), (zoomFactor - width*getWidthFactor()/2)*-1000);
@@ -260,8 +259,11 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		int xPos = arg0.getXOnScreen(), yPos = arg0.getYOnScreen();
 
 		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
-		double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * getWidthFactor() ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * getHeightFactor() );
-
+		//double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * getWidthFactor() ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * getHeightFactor() );
+		
+		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
+		double xDiff = ( ( xPos - curMousePos.x ) * getWidthFactor() ) , yDiff = ( ( yPos - curMousePos.y ) * getHeightFactor() );
+		
 		if( translation == null )
 			translation = new Point2D.Double( xDiff, yDiff );
 		else
@@ -269,7 +271,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			//Update the translation offset, so we can apply it to the stuff we draw later.
 			translation = new Point2D.Double( translation.getX() + xDiff, translation.getY() + yDiff );
 		}
- 
+		
+		//Rebase the current mouse position, so that the next time we drag the mouse, we will have a new starting point to offset from.
+		curMousePos.x = xPos;
+		curMousePos.y = yPos;
+		
+		/*
 		try
 		{
 			//Move the mouse back to it's original position so we can properly calculate the amount of pixels it moved every frame.
@@ -279,6 +286,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		{
 			exception.printStackTrace();
 		}
+		*/
 
 	}
 
@@ -286,13 +294,13 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	public void mouseMoved( MouseEvent arg0 )
 	{
 		//Set the current mouse pos.
-		curMousePos = arg0.getPoint();
+		//curMousePos = arg0.getPoint();
 	}
 
 	@Override
 	public void mouseClicked( MouseEvent e )
 	{
-		
+		//curMousePos = e.getPoint();
 	}
 
 	@Override
@@ -311,6 +319,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mousePressed( MouseEvent e )
 	{
+		curMousePos.x = e.getXOnScreen();
+		curMousePos.y = e.getYOnScreen();
 		originalEvent = e;
 	}
 
@@ -318,14 +328,14 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	public void mouseReleased( MouseEvent e )
 	{
 		//Put the mouse back to where it was first pressed.
-		try
+		/*try
 		{
 			new Robot().mouseMove( originalEvent.getXOnScreen(), originalEvent.getYOnScreen() );
 		}
 		catch( AWTException exception )
 		{
 			exception.printStackTrace();
-		}
+		}*/
 	}
 
 	@Override
