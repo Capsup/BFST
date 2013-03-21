@@ -72,7 +72,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		panel.addMouseMotionListener( this );
 		panel.addMouseWheelListener( this );
 		// panel.setDefaultCloseOperation( WindowClosingMode.DISPOSE_ON_CLOSE );
-
+		
 		add( panel, BorderLayout.CENTER );
 
 		Animator animator = new Animator( panel );
