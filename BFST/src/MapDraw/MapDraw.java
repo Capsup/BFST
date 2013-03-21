@@ -21,6 +21,8 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import XMLParser.Edge;
@@ -29,7 +31,7 @@ import XMLParser.XMLParser;
 
 import com.jogamp.opengl.util.Animator;
 
-public class MapDraw extends Frame implements GLEventListener, MouseListener, MouseMotionListener, MouseWheelListener
+public class MapDraw extends JPanel implements GLEventListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
 	private int width;
 	private int height;
@@ -55,6 +57,9 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 	public MapDraw( int iWidth, int iHeight )
 	{
+		setLayout(new BorderLayout());
+		//setSize( new Dimension( iWidth, iHeight ) );
+		
 		//Start translation at the place where the map is inside our 3D world.
 		translation = new Point2D.Double(-266, 5940);
 		curMousePos = new Point( 0, 0 );
@@ -64,12 +69,12 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 		XMLParser.makeDataSet();
 
-		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screem flimmering.
+		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
 		glCapabilities.setDoubleBuffered( true );
 		//Tell the context that we want it to be hardware accelerated aswell.
 		glCapabilities.setHardwareAccelerated( true );
 
-		//Create the JPanel where our opengl stuff will be drawn on.
+		//Create the JPanel where our OpenGL stuff will be drawn on.
 		GLJPanel panel = new GLJPanel( glCapabilities );
 		
 		//Add listeners...
@@ -79,30 +84,31 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		panel.addMouseWheelListener( this );
 		// panel.setDefaultCloseOperation( WindowClosingMode.DISPOSE_ON_CLOSE );
 		
-		add( panel, BorderLayout.CENTER );
+		add( panel, BorderLayout.CENTER);
 
-		//Add an animator our panel, which will start the rendering loop, repeadetely calling the display() function of our panel.
+		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
 		Animator animator = new Animator( panel );
 		animator.start();
 
-		this.setSize( new Dimension( iWidth, iHeight ) );
 		width = iWidth;
 		height = iHeight;
 
+		/*
 		JTextField textField = new JTextField();
 		textField.setText( "TESTER" );
 		textField.setSize( new Dimension( 100, 100 ) );
 		textField.setPreferredSize( new Dimension( 100, 100 ) );
 		textField.setLocation( 100, 100 );
 		// textField.setOpaque( false );
-
+		 
 		add( textField, BorderLayout.SOUTH );
+		*/
 	}
 
 	@Override
 	public void display( GLAutoDrawable arg0 )
 	{
-		//Get a opengl v2 context.
+		//Get an OpenGL v2 context.
 		GL2 gl2 = arg0.getGL().getGL2();
 
 		//Clear the color buffer, setting all pixel's color on the screen to the specified color.
@@ -149,6 +155,7 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 		
 		for(int i = xs, r = 0, g = 0, b = 0; i < xe-1; i++, r = 0, g = 0, b = 0)
 		{
+			
 			int c = edges.get(i).getTyp();
 			boolean roadesToShow = c < 2;
 			if(currentZoomLevel < 3)
@@ -165,6 +172,25 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 				roadesToShow = true;
 			
 			
+			/*double length = edges.get(i).getLength();
+			
+			boolean roadesToShow = length*1000 < getHeightFactor();
+			*/
+			
+			/*
+			if(currentZoomLevel < 3)
+				roadesToShow = c < 3;
+			else if(currentZoomLevel < 6)
+				roadesToShow = c < 4;
+			else if(currentZoomLevel < 9)
+				roadesToShow = c < 5;
+			else if(currentZoomLevel < 12)
+				roadesToShow = c < 6;
+			else if(currentZoomLevel < 15)
+				roadesToShow = c < 7;
+			else
+				roadesToShow = true;
+			*/
 			
 			if(roadesToShow){
 				
@@ -329,7 +355,12 @@ public class MapDraw extends Frame implements GLEventListener, MouseListener, Mo
 
 	public static void main( String[] args )
 	{
+		JFrame frame = new JFrame();
+		frame.setSize(800,600);
+		
 		MapDraw mapDraw = new MapDraw( 800, 600 );
-		mapDraw.setVisible( true );
+		frame.setVisible( true );
+		
+		frame.add(mapDraw);
 	}
 }

@@ -46,8 +46,8 @@ public class MainFrame extends JFrame
 		menuPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		//Map Panel <-- Add map class extending JPanel here
-		JPanel mapPanel = new JPanel();
-		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		JPanel mapPanel = new MapDraw(800,600);
+		//mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		/*
 		//Lolz
