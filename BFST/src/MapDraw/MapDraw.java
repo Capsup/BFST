@@ -25,6 +25,7 @@ import XMLParser.Edge;
 import XMLParser.XMLParser;
 
 import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.FPSAnimator;
 
 public class MapDraw extends JPanel implements GLEventListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
@@ -75,7 +76,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		add( panel, BorderLayout.CENTER);
 
 		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
-		Animator animator = new Animator( panel );
+		/*Animator animator = new Animator( panel );
+		animator.start();*/
+		
+		FPSAnimator animator = new FPSAnimator( 60 );
 		animator.start();
 
 		width = 800;
