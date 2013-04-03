@@ -52,7 +52,7 @@ public class ZoomPanel extends JPanel implements Observer{
 		JButton zoomInButton = new JButton("+");
 		zoomInButton.setAlignmentX(CENTER_ALIGNMENT);
 		
-		currentZoomLabel = new JLabel("Zoom Level: "+ZoomLevel.getInstance().getZoomIndex());
+		currentZoomLabel = new JLabel("Zoom Level: 10");
 		currentZoomLabel.setAlignmentX(CENTER_ALIGNMENT);
 		
 		JButton zoomOutButton = new JButton("-");
@@ -68,7 +68,6 @@ public class ZoomPanel extends JPanel implements Observer{
 		add(currentZoomLabel);
 		add(zoomOutButton);
 		
-		
 		//Other
 		ZoomLevel.getInstance().addObserver(this);
 	}
@@ -76,7 +75,8 @@ public class ZoomPanel extends JPanel implements Observer{
 	@Override
 	public void update(Observable o, Object arg) 
 	{
-		currentZoomLabel.setText("Zoom Level: "+ZoomLevel.getInstance().getZoomIndex());
+		currentZoomLabel.setText("Zoom Level: "+(ZoomLevel.getInstance().getZoomIndex()+1));
+	
 	}
 	
 	
