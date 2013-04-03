@@ -29,6 +29,8 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 public class MapDraw extends JPanel implements GLEventListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
+	private long lastMousePressTime;
+	
 	private int width;
 	private int height;
 	//private double scale = 1;
@@ -84,6 +86,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		width = 800;
 		height = 600;
+		ZoomLevel.getInstance().setZoomLevel(0);
 	}
 	
 	//OpenGL Events
@@ -298,6 +301,15 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		curMousePos.x = e.getXOnScreen();
 		curMousePos.y = e.getYOnScreen();
+		
+		//Double tap to zoom
+		if(System.currentTimeMillis() - lastMousePressTime < 350)
+		{
+			ZoomLevel.getInstance().zoomIn();
+			lastMousePressTime = 0;
+		}
+		else
+			lastMousePressTime = System.currentTimeMillis();
 	}
 
 	@Override
