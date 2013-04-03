@@ -131,6 +131,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//Add the panning translation.
 		applyPanning(gl2);
 		
+		  gl2.glEnable(GL.GL_LINE_SMOOTH);      
+
+		
 		//Get the ArrayList containing all the edges of the map
 		ArrayList<Edge> edges = XMLParser.getEdgeList();
 
