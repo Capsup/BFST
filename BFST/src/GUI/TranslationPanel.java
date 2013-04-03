@@ -64,7 +64,7 @@ public class TranslationPanel extends JPanel{
 		JButton upButton = new JButton("^");
 		upButton.setActionCommand("Up");
 		
-		JButton downButton = new JButton("Down");
+		JButton downButton = new JButton("v");
 		downButton.setActionCommand("Down");
 		
 		JButton rightButton = new JButton(">");

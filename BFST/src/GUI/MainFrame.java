@@ -49,26 +49,6 @@ public class MainFrame extends JFrame
 		JPanel mapPanel = new MapDraw();
 		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
-		/*
-		//Lolz
-		JPanel mapPanel;
-		
-		try
-		{
-			// We try to find an image for the main panel to paint.
-			String path = "Danmark.png";
-
-			Rectangle rect = new Rectangle( 0, 0, 600, 600 );
-
-			mapPanel = new JPanelWithBackground( path, rect );
-		}
-		catch( IOException e )
-		{
-			// If no image is found, the panel will be initialized with no background image.
-			mapPanel = new JPanel();
-		}
-		*/
-		
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);
 		

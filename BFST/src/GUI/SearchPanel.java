@@ -23,7 +23,8 @@ public class SearchPanel extends JPanel
 		JLabel searchText = new JLabel("Search: ");
 		
 		//Search Field <-- Insert SearchField class extending JTextField here
-		JTextField searchField = new JTextField("Hello World", 20);
+		JTextField searchField = new JTextField("Not Functional", 20);
+		searchField.setEnabled(false);
 		
 		JButton goButton = new JButton("GO!");
 		
