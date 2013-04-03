@@ -138,8 +138,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glEnable(GL.GL_LINE_SMOOTH);
 		gl2.glEnable(GL.GL_BLEND);
 		gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE);
-		gl2.glLineWidth(1.0f);
+		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
+		gl2.glLineWidth(0.75f);
 	  
 
 	
@@ -352,14 +352,4 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		// System.out.println(scale);
 	}
 
-	/*public static void main( String[] args )
-	{
-		JFrame frame = new JFrame();
-		frame.setSize(800,600);
-		
-		MapDraw mapDraw = new MapDraw();
-		frame.setVisible( true );
-		
-		frame.add(mapDraw);
-	}*/
 }
