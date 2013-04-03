@@ -134,9 +134,15 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//Add the panning translation.
 		applyPanning(gl2);
 		
-		  gl2.glEnable(GL.GL_LINE_SMOOTH);      
+		// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
+		gl2.glEnable(GL.GL_LINE_SMOOTH);
+		gl2.glEnable(GL.GL_BLEND);
+		gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE);
+		gl2.glLineWidth(1.0f);
+	  
 
-		
+	
 		//Get the ArrayList containing all the edges of the map
 		ArrayList<Edge> edges = XMLParser.getEdgeList();
 
