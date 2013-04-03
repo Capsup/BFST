@@ -171,9 +171,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	private Rectangle getDrawEdges(ArrayList<Edge> edges)
 	{
-		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2);
-		int xs = XMLParser.edgeSearch(edges, zoomFactor * -1000);
-		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), (zoomFactor - width*getWidthFactor()/2)*-1000);
+		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
+		int xs = XMLParser.edgeSearch(edges, (zoomFactor + 20 )* -1000);
+		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), ((zoomFactor - 20 ) - width*getWidthFactor()/2)*-1000);
 		xs = xs > 0 ? xs : -xs;
 		xe = xe > 0 ? xe : -xe;
 		/*
@@ -331,7 +331,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		// System.out.println(scale);
 	}
 
-	public static void main( String[] args )
+	/*public static void main( String[] args )
 	{
 		JFrame frame = new JFrame();
 		frame.setSize(800,600);
@@ -340,5 +340,5 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		frame.setVisible( true );
 		
 		frame.add(mapDraw);
-	}
+	}*/
 }
