@@ -27,7 +27,7 @@ public class MainFrame extends JFrame
 	
 	void setupFrame()
 	{
-		this.setSize( 800, 600 );
+		this.setSize( 1200, 600 );
 		this.setTitle( "Main Menu" );
 		this.setLocationRelativeTo( null );
 		this.setVisible( true );
@@ -50,6 +50,7 @@ public class MainFrame extends JFrame
 		//Map Panel <-- Add map class extending JPanel here
 		JPanel mapPanel = new MapDraw();
 		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+
 		
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);
