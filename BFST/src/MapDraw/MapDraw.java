@@ -194,18 +194,18 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
 		
-		boolean canShow = roadType < 2;
+		boolean canShow = roadType < 3;
 		
 		if(zoomIndex < 3)
-			canShow = roadType < 3;
-		else if(zoomIndex < 6)
 			canShow = roadType < 4;
-		else if(zoomIndex < 9)
+		else if(zoomIndex < 6)
 			canShow = roadType < 5;
 		else if(zoomIndex < 12)
 			canShow = roadType < 6;
 		else if(zoomIndex < 15)
 			canShow = roadType < 7;
+		else if(zoomIndex < 16)
+			canShow = roadType < 8;
 		else
 			canShow = true;
 		
