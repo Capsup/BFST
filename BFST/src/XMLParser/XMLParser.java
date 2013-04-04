@@ -145,8 +145,6 @@ public class XMLParser
 		{
 			e.printStackTrace();
 		}
-		// list = null;
-
 	}
 
 	public ArrayList getElements() throws Exception
@@ -171,13 +169,7 @@ public class XMLParser
 				if( name.equals( "elements" ) )
 					continue;
 
-				/*
-				 * if( filePath.contains( "kdv_node_unload.xml" ) ) { if( name.equals( "ARC" ) ) arc = ( int ) Double.parseDouble(
-				 * input.nextEvent().asCharacters().getData() ); else if( name.equals( "KDV-ID" ) ) id = ( int ) Double.parseDouble(
-				 * input.nextEvent().asCharacters().getData() ); else if( name.equals( "X-COORD" ) ) x = Double.parseDouble(
-				 * input.nextEvent().asCharacters().getData() ); else if( name.equals( "Y-COORD" ) ) y = Double.parseDouble(
-				 * input.nextEvent().asCharacters().getData() ); } else
-				 */if( filePath.contains( "kdv_unload.xml" ) )
+				if( filePath.contains( "kdv_unload.xml" ) )
 				{
 
 					if( name.equals( "xFrom" ) )
@@ -198,10 +190,7 @@ public class XMLParser
 			if( event.isEndElement() )
 			{
 				EndElement element = event.asEndElement();
-				/*
-				 * if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_node_unload.xml" ) ) list.add( new Node( arc,
-				 * id, x, y ) ); else
-				 */
+				
 				if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_unload.xml" ) )
 				{
 					list.add( new Edge( fnode, tnode, length, typ, xFrom, yFrom, xTo, yTo ) );

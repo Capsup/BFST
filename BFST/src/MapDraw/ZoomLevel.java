@@ -8,9 +8,12 @@ public class ZoomLevel extends Observable
 	private double[] zoomLevels;
 	private int currentZoomLevelIndex = 0;
 	
+	/*
+	 * ZoomLevel is a singleton that allows us to set and access data about the zoom level of the map
+	 */
 	private ZoomLevel()
 	{
-		zoomLevels = new double[30];
+		zoomLevels = new double[20];
 		
 		for(int i = 0; i < zoomLevels.length; i++)
 			zoomLevels[i] = 1.5 * Math.pow(0.75f, i);

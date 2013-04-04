@@ -33,23 +33,11 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	private int width;
 	private int height;
-	//private double scale = 1;
 	private Point curMousePos;
-	
-	public double getWidthFactor()
-	{
-		return (width/height)*getHeightFactor();
-	}
-	
-	public double getHeightFactor()
-	{
-		return ZoomLevel.getInstance().getZoomLevel();
-	}
 
 	public MapDraw()
 	{
 		setLayout(new BorderLayout());
-		//setSize( new Dimension( iWidth, iHeight ) );
 		
 		//Start translation at the place where the map is inside our 3D world.
 		Translation.getInstance().setTranslation(-266, 5940);
@@ -62,6 +50,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
 		glCapabilities.setDoubleBuffered( true );
+		
 		//Tell the context that we want it to be hardware accelerated aswell.
 		glCapabilities.setHardwareAccelerated( true );
 
@@ -73,20 +62,29 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		panel.addMouseListener( this );
 		panel.addMouseMotionListener( this );
 		panel.addMouseWheelListener( this );
-		// panel.setDefaultCloseOperation( WindowClosingMode.DISPOSE_ON_CLOSE );
 		
 		add( panel, BorderLayout.CENTER);
 
 		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
-		Animator animator = new Animator( panel );
+		//The FPS animator lets us put a limit to the refresh rate of the animator.
+		FPSAnimator animator = new FPSAnimator(panel, 60);
 		animator.start();
 		
-		//FPSAnimator animator = new FPSAnimator( 60 );
-		//animator.start();
-
 		width = 800;
 		height = 600;
+		
+		//We set the initial zoom level to be 0
 		ZoomLevel.getInstance().setZoomLevel(0);
+	}
+	
+	public double getWidthFactor()
+	{
+		return (width/height)*getHeightFactor();
+	}
+	
+	public double getHeightFactor()
+	{
+		return ZoomLevel.getInstance().getZoomLevel();
 	}
 	
 	//OpenGL Events
@@ -98,8 +96,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		//Set the clear color of the color buffer to black, meaning we get a black screen whenever we clear the color buffer.
 		gl.glClearColor( 255, 255, 255, 0 );
+		
 		//Set the current matrix to the projection matrix.
 		gl.glMatrixMode( gl.GL_PROJECTION );
+		
 		//Load the identity matrix, meaning a matrix that does no transformation. 
 		gl.glLoadIdentity();
 
@@ -140,8 +140,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
 		gl2.glLineWidth(0.75f);
-	  
-
 	
 		//Get the ArrayList containing all the edges of the map
 		ArrayList<Edge> edges = XMLParser.getEdgeList();
@@ -149,12 +147,16 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//We want to start drawing lines.
 		gl2.glBegin( GL.GL_LINES );
 		
+		//We calculate the borders of which we want to draw lines. In this we only need to search a partition of our edge array
 		Rectangle drawEdges = getDrawEdges(edges);
 		
+		//We iterate through our edge array from the first edge with the lowest x coordinate inside the map
+		//We end the iteration at the last edge with the highest x coordinate that is still inside the map
 		for(int i = drawEdges.x; i < drawEdges.width-1; i++)
 		{
 			int roadType = edges.get(i).getTyp();
 			
+			//We check if the current zoom level allows the road type to be drawn.
 			if(zoomLevelAllowRoadType(roadType))
 				drawLine(edges.get(i), gl2);
 		}
@@ -168,10 +170,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//Add a translation transformation to the current matrix, effectively moving the ingame 3d coordinate system by the specified amount.
 		//Here, we move the system so that the bottom left point is in the middle of the screen.
 		gl2.glTranslatef( width / 2, height / 2, 0 );
+		
 		//Then we apply the orthographic projection matrix, where we specify exactly what coordinates we're interested in viewing on our screen.
 		//Couple this with the factors that change when you scroll in and out on the mousewheel and you get a 'true' zoom feature,
 		//Where nothing is scaled but you simply see alot less on the entire screen, AKA zooming.
 		gl2.glOrtho( 0, getWidthFactor(), 0, getHeightFactor(), -1, 1 );
+		
 		//And remove the translation again.
 		gl2.glTranslatef( -width / 2, -height / 2, 0 );
 	}
@@ -188,6 +192,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), ((zoomFactor - 20 ) - width*getWidthFactor()/2)*-1000);
 		xs = xs > 0 ? xs : -xs;
 		xe = xe > 0 ? xe : -xe;
+		
+		//A code fragment that we need for later optimization of the iteration partitioning
 		/*
 		int height = this.getHeight()+20;
 		zoomFactor = ((translation.getY()) - (height-(height*getHeightFactor())/2)/2);
@@ -196,6 +202,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		ys = ys > 0 ? ys : -ys;
 		ye = ye > 0 ? ye : -ye;
 		*/
+		
 		int ys = 0;
 		int ye = 0;
 		
@@ -224,22 +231,18 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		return canShow;
 	}
 	
-	private boolean zoomLevelAllowRoadType(double length)
-	{
-		boolean canShow = length*1000 < getHeightFactor();
-		
-		return canShow;
-	}
-	
 	private void drawLine(Edge edge, GL2 gl2)
 	{
 		int r=0;
 		int g=0;
 		int b=0;
 		
-		if( edge.getTyp() == 1 ) r = 255;
-		else if( edge.getTyp() < 5 ) b = 255;
-		else if( edge.getTyp() == 8 ) g = 255;	
+		if( edge.getTyp() == 1 ) 
+			r = 255;
+		else if( edge.getTyp() < 5 ) 
+			b = 255;
+		else if( edge.getTyp() == 8 ) 
+			g = 255;	
 		
 		gl2.glColor3f( r, g, b );
 		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
@@ -251,14 +254,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	public void dispose( GLAutoDrawable arg0 )
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void reshape( GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4 )
 	{
 		// TODO Auto-generated method stub
-
 	}
 	
 	//Mouse events
@@ -270,10 +271,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		int xPos = arg0.getXOnScreen(), yPos = arg0.getYOnScreen();
 
 		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
-		//double xDiff = ( ( xPos - originalEvent.getXOnScreen() ) * getWidthFactor() ) , yDiff = ( ( yPos - originalEvent.getYOnScreen() ) * getHeightFactor() );
-		
-		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
-		double xDiff = ( ( xPos - curMousePos.x ) * getWidthFactor() ) , yDiff = ( ( yPos - curMousePos.y ) * getHeightFactor() );
+		double xDiff = ( ( xPos - curMousePos.x ) * ZoomLevel.getInstance().getZoomLevel())/2, yDiff = ( ( yPos - curMousePos.y ) * ZoomLevel.getInstance().getZoomLevel()/2);
 		
 		Translation.getInstance().translate(xDiff, yDiff);
 		
@@ -308,11 +306,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mousePressed( MouseEvent e )
 	{
+		//We need the information of the mouse current position for the panning method
 		curMousePos.x = e.getXOnScreen();
 		curMousePos.y = e.getYOnScreen();
 		
 		//Double tap to zoom
-		if(System.currentTimeMillis() - lastMousePressTime < 350)
+		if(System.currentTimeMillis() - lastMousePressTime < 275)
 		{
 			ZoomLevel.getInstance().zoomIn();
 			lastMousePressTime = 0;
@@ -337,19 +336,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		{
 			ZoomLevel.getInstance().zoomOut();
 		}
-		
-		System.out.println("Zoomlevel: " + (ZoomLevel.getInstance().getZoomIndex()) + "/30");
-
-		// width += -1 * e.getUnitsToScroll();
-		// height += -1 * e.getUnitsToScroll();
-
-		/*
-		 * double xDiff = width * e.getUnitsToScroll() / 2; double yDiff = height * e.getUnitsToScroll() / 2;
-		 * 
-		 * translation = new Point( (int) (translation.getX() + xDiff), (int) (translation.getY() + yDiff) );
-		 */
-
-		// System.out.println(scale);
 	}
 
 }

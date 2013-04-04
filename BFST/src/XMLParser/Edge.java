@@ -18,7 +18,6 @@ public class Edge implements Comparable<Edge>
 		this.yTo = yTo;
 	}
 
-
 	public int compareTo( Edge a )
 	{
 		return getXFrom() == a.getXFrom() ? 0 : ( getXFrom() > a.getXFrom() ? 1 : -1 );

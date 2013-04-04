@@ -10,6 +10,9 @@ import javax.swing.JPanel;
 
 public class SearchModule extends JPanel{
 
+	/*
+	 * The search module is the combined search panels "from" and "to"
+	 */
 	public SearchModule()
 	{
 		makeContent();

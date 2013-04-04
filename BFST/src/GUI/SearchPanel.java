@@ -10,6 +10,9 @@ import javax.swing.JTextField;
 
 public class SearchPanel extends JPanel 
 {
+	/*
+	 * The Search Panel is a panel in which one can enter what a search criteria and execute it.
+	 */
 	public SearchPanel()
 	{
 		makeContent();

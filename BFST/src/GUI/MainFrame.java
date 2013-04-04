@@ -16,9 +16,11 @@ import javax.swing.border.BevelBorder;
 
 import MapDraw.MapDraw;
 
-
 public class MainFrame extends JFrame
 {	
+	/*
+	 * The Main Frame is the window of the program, it contains the menu, and the map.
+	 */
 	public MainFrame()
 	{
 		makeContent();
@@ -27,11 +29,10 @@ public class MainFrame extends JFrame
 	
 	void setupFrame()
 	{
-		this.setSize( 1200, 600 );
+		this.setSize( 1200, 800 );
 		this.setTitle( "Main Menu" );
 		this.setLocationRelativeTo( null );
 		this.setVisible( true );
-		
 		this.setDefaultCloseOperation( EXIT_ON_CLOSE );
 	}
 	
@@ -43,20 +44,20 @@ public class MainFrame extends JFrame
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
-		//Menu Panel <-- Add menu panel extending JPanel here
+		//Menu Panel
 		JPanel menuPanel = new MenuPanel();
 		menuPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
-		//Map Panel <-- Add map class extending JPanel here
+		//Map Panel
 		JPanel mapPanel = new MapDraw();
 		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
-		
+		//Add the panels to the Main Panel
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);
 		
+		//Add the main panel to the frame
 		contentPane.add(mainPanel);
-		
 	}
 	
 	public static void main(String[] args)
