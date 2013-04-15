@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -22,7 +23,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import XMLParser.Edge;
-import XMLParser.XMLParser;
+import DataProcessing.Interval;
+import DataProcessing.Interval2D;
+import DataProcessing.Query;
 
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -31,6 +34,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 {
 	private long lastMousePressTime;
 	
+	private Query q = new Query();
 	private int width;
 	private int height;
 	//private double scale = 1;
@@ -57,8 +61,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		
 		//Tell OpenGL that we're interested in the default profile, meaning we don't get any specific properties of the gl context.
 		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
-
-		XMLParser.makeDataSet();
 
 		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
 		glCapabilities.setDoubleBuffered( true );
@@ -143,21 +145,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	  
 
 	
-		//Get the ArrayList containing all the edges of the map
-		ArrayList<Edge> edges = XMLParser.getEdgeList();
-
 		//We want to start drawing lines.
 		gl2.glBegin( GL.GL_LINES );
 		
-		Rectangle drawEdges = getDrawEdges(edges);
+		for(Edge e : getDrawEdges(1))
+				drawLine(e, gl2);
 		
-		for(int i = drawEdges.x; i < drawEdges.width-1; i++)
-		{
-			int roadType = edges.get(i).getTyp();
-			
-			if(zoomLevelAllowRoadType(roadType))
-				drawLine(edges.get(i), gl2);
-		}
 		
 		//Stop drawing lines and upload the data to the GPU.
 		gl2.glEnd();
@@ -181,25 +174,21 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
-	private Rectangle getDrawEdges(ArrayList<Edge> edges)
+	private LinkedList<Edge> getDrawEdges(int type)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
-		int xs = XMLParser.edgeSearch(edges, (zoomFactor + 20 )* -1000);
-		int xe = XMLParser.edgeSearch(XMLParser.getEdgeListTo(), ((zoomFactor - 20 ) - width*getWidthFactor()/2)*-1000);
-		xs = xs > 0 ? xs : -xs;
-		xe = xe > 0 ? xe : -xe;
+		double xs = (zoomFactor + 20 )* -1000;
+		double xe = (((zoomFactor - 20 ) - width*getWidthFactor()/2)*-1000);
+
 		/*
-		int height = this.getHeight()+20;
-		zoomFactor = ((translation.getY()) - (height-(height*getHeightFactor())/2)/2);
-		int ys = XMLParser.edgeSearch(edgesY, zoomFactor * -1000);
-		int ye = XMLParser.edgeSearch(XMLParser.getEdgeListYTo(), (zoomFactor - height*getHeightFactor()/2)*-1000);
-		ys = ys > 0 ? ys : -ys;
-		ye = ye > 0 ? ye : -ye;
+		zoomFactor = ((Translation.getInstance().getTranslation().getY()) - (height-(height*getHeightFactor())/2)/2);
+		double ys = zoomFactor * -1000;
+		double ye = ((zoomFactor - height*getHeightFactor()/2)*-1000);
 		*/
-		int ys = 0;
-		int ye = 0;
-		
-		return new Rectangle(xs, ys, xe, ye);
+		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
+	     Interval<Double> yAxis = new Interval<Double>(0.0, 10000000.0);
+	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
+	     return q.queryEdges(rect, type);
 	}
 	
 	private boolean zoomLevelAllowRoadType(int roadType)

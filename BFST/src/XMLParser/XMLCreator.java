@@ -1,8 +1,9 @@
 package XMLParser;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 import javax.xml.stream.XMLEventFactory;
@@ -23,17 +24,26 @@ public class XMLCreator
 	String[] sData;
 	private XMLEventReader input;
 	private String filePath;
-
+	private static ArrayList<Node> nodes;
+	
+	
+	public static Node nodeSearch(int i){
+		ArrayList<String> s = new ArrayList<String>();
+		s.add("" + i); s.add("1"); s.add("1");
+		return nodes.get(Collections.binarySearch(nodes, new Node(s)));
+	}
+	
 	public static void main( String[] args )
 	{
-		XMLParser.makeDataSet();
 		try
 		{
+			XMLParser node = new XMLParser("kdv_node_unload.xml"); nodes = node.getNodes();
+			Collections.sort(nodes);
 			new XMLCreator().convertToXML( "C://Users//Jacob//Desktop//krak-data//kdv_unload" );
 		}
 		catch( Exception e )
 		{
-			System.out.println( "I FAILED!" );
+			e.printStackTrace();
 		}
 
 	}
@@ -53,7 +63,7 @@ public class XMLCreator
 			String sNameString = scanner.nextLine();
 			sNameString.replaceAll( "#", "" );
 			sNames = sNameString.split( " " );
-			// sNames = sNameString.split( "," );
+			//sNames = sNameString.split( "," );
 
 			int i = 0;
 			while( scanner.hasNextLine() )
@@ -92,7 +102,7 @@ public class XMLCreator
 		eventWriter.add( end );
 
 		// Create config open tag
-		StartElement configStartElement = eventFactory.createStartElement( "", "", "elements" );
+		StartElement configStartElement = eventFactory.createStartElement( "", "", "g" );
 		eventWriter.add( configStartElement );
 		eventWriter.add( end );
 
@@ -101,7 +111,7 @@ public class XMLCreator
 			String[] data = sData[i].split( "," );
 
 			eventWriter.add( eventFactory.createDTD( "\t" ) );
-			configStartElement = eventFactory.createStartElement( "", "", "element" );
+			configStartElement = eventFactory.createStartElement( "", "", "e" );
 			eventWriter.add( configStartElement );
 			eventWriter.add( end );
 
@@ -110,29 +120,31 @@ public class XMLCreator
 
 				if( j == 0 )
 				{
-					Node nodeFrom = XMLParser.nodeSearch( Integer.parseInt( data[j] ) );
-					createNode( eventWriter, "xFrom", "" + nodeFrom.getXCoord() );
-					createNode( eventWriter, "yFrom", "" + nodeFrom.getYCoord() );
+					Node nodeFrom = nodeSearch( Integer.parseInt( data[j] ) );
+					createNode( eventWriter, "x", "" + nodeFrom.getX() );
+					createNode( eventWriter, "y", "" + nodeFrom.getY() );
+					createNode( eventWriter, "f", data[j] );
 				}
 				if( j == 1 )
 				{
-					Node nodeTo = XMLParser.nodeSearch( Integer.parseInt( data[j] ) );
-					createNode( eventWriter, "xTo", "" + nodeTo.getXCoord() );
-					createNode( eventWriter, "yTo", "" + nodeTo.getYCoord() );
+					Node nodeTo = nodeSearch( Integer.parseInt( data[j] ) );
+					createNode( eventWriter, "X", "" + nodeTo.getX() );
+					createNode( eventWriter, "Y", "" + nodeTo.getY() );
+					createNode( eventWriter, "t", data[j] );
 				}
 
 				if( j == 5 )
 				{
-					createNode( eventWriter, sNames[j], data[j] );
+					createNode( eventWriter, "ty", data[j] );
 				}
 			}
 
 			eventWriter.add( eventFactory.createDTD( "\t" ) );
-			eventWriter.add( eventFactory.createEndElement( "", "", "element" ) );
+			eventWriter.add( eventFactory.createEndElement( "", "", "e" ) );
 			eventWriter.add( end );
 		}
 
-		eventWriter.add( eventFactory.createEndElement( "", "", "elements" ) );
+		eventWriter.add( eventFactory.createEndElement( "", "", "g" ) );
 		eventWriter.add( end );
 		eventWriter.add( eventFactory.createEndDocument() );
 		eventWriter.close();

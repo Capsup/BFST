@@ -1,44 +1,42 @@
 package XMLParser;
 
+import java.util.ArrayList;
+
 public class Node implements Comparable<Node>
 {
-	private float ARC;
 	private int id;
 	private double xCoord;
 	private double yCoord;
 
-	public Node( float ARC, int id, double xCoord, double yCoord )
+	public Node( ArrayList<String> s )
 	{
-		this.ARC = ARC;
-		this.id = id;
-		this.xCoord = xCoord;
-		this.yCoord = yCoord;
+		init(s);
 	}
-
+	
+	protected void init(ArrayList<String> s){
+		this.id = Integer.parseInt(s.get(0));
+		this.xCoord = Double.parseDouble(s.get(1));
+		this.yCoord = Double.parseDouble(s.get(2));
+	}
+	
 	public int compareTo( Node a )
 	{
 		return getID() == a.getID() ? 0 : ( getID() > a.getID() ? 1 : -1 );
 	}
 
-	// ARC
-	public float getARC()
-	{
-		return ARC;
-	}
-
 	// ID
-	public float getID()
+	public int getID()
 	{
 		return id;
 	}
 
 	// Coordinates
-	public double getXCoord()
+	public double getX()
 	{
 		return xCoord;
 	}
 
-	public double getYCoord()
+	public double getY()
 	{
 		return yCoord;
 	}
