@@ -35,6 +35,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private int height;
 	private Point curMousePos;
 
+	private int tick;
+	private int maximumFPS = 60;
+	
 	public MapDraw()
 	{
 		setLayout(new BorderLayout());
@@ -119,70 +122,66 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void display( GLAutoDrawable arg0 )
 	{
-		//Get an OpenGL v2 context.
-		GL2 gl2 = arg0.getGL().getGL2();
-
-		//Clear the color buffer, setting all pixel's color on the screen to the specified color.
-		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
-
-		//Load the identity matrix, effectively removing all transformations.
-		gl2.glLoadIdentity();
-
-		//Apply zoom
-		applyZoom(gl2);
-		
-		//Add the panning translation.
-		applyPanning(gl2);
-		
-		// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
-		gl2.glEnable(GL.GL_LINE_SMOOTH);
-		gl2.glEnable(GL.GL_BLEND);
-		gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE)
-	
-		//Get the ArrayList containing all the edges of the map
-		ArrayList<Edge> edges = XMLParser.getEdgeList();
-		
-		//We want to start drawing lines.
-		//gl2.glBegin( GL.GL_LINES );
-		
-		//We calculate the borders of which we want to draw lines. In this we only need to search a partition of our edge array
-		Rectangle drawEdges = getDrawEdges(edges);
-		
-		//We iterate through our edge array from the first edge with the lowest x coordinate inside the map
-		//We end the iteration at the last edge with the highest x coordinate that is still inside the map
-		for(int i = drawEdges.x; i < drawEdges.width-1; i++)
+		if(tick % (60/maximumFPS) == 0)
 		{
-			int roadType = edges.get(i).getTyp();
+			//Get an OpenGL v2 context.
+			GL2 gl2 = arg0.getGL().getGL2();
+	
+			//Clear the color buffer, setting all pixel's color on the screen to the specified color.
+			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
+	
+			//Load the identity matrix, effectively removing all transformations.
+			gl2.glLoadIdentity();
+	
+			//Apply zoom
+			applyZoom(gl2);
 			
-			if(zoomLevelAllowRoadType(roadType)) 
+			//Add the panning translation.
+			applyPanning(gl2);
+			
+			// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
+			gl2.glEnable(GL.GL_LINE_SMOOTH);
+			gl2.glEnable(GL.GL_BLEND);
+			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
+		
+			//Get the ArrayList containing all the edges of the map
+			ArrayList<Edge> edges = XMLParser.getEdgeList();
+			
+			//We calculate the borders of which we want to draw lines. In this we only need to search a partition of our edge array
+			Rectangle drawEdges = getDrawEdges(edges);
+			
+			//We iterate through our edge array from the first edge with the lowest x coordinate inside the map
+			//We end the iteration at the last edge with the highest x coordinate that is still inside the map
+			for(int i = drawEdges.x; i < drawEdges.width-1; i++)
 			{
-				if(roadType == 1) 
+				int roadType = edges.get(i).getTyp();
+				
+				if(zoomLevelAllowRoadType(roadType)) 
 				{
-					gl2.glLineWidth(3f);
-					gl2.glBegin(GL.GL_LINES);
-					drawLine(edges.get(i), gl2);
-					gl2.glEnd();
-				} else if(roadType > 1 && roadType < 8) {
-					gl2.glLineWidth(2f);
-					gl2.glBegin(GL.GL_LINES);
-					drawLine(edges.get(i), gl2);
-					gl2.glEnd();
-				} else {
-					gl2.glLineWidth(1.5f);
-					gl2.glBegin(GL.GL_LINES);
-					drawLine(edges.get(i), gl2);
-					gl2.glEnd();
+					if(roadType == 1) 
+					{
+						gl2.glLineWidth(3f);
+						gl2.glBegin(GL.GL_LINES);
+						drawLine(edges.get(i), gl2);
+						gl2.glEnd();
+					} else if(roadType > 1 && roadType < 8) {
+						gl2.glLineWidth(2f);
+						gl2.glBegin(GL.GL_LINES);
+						drawLine(edges.get(i), gl2);
+						gl2.glEnd();
+					} else {
+						gl2.glLineWidth(1.5f);
+						gl2.glBegin(GL.GL_LINES);
+						drawLine(edges.get(i), gl2);
+						gl2.glEnd();
+					}
 				}
 			}
-			
-			
-			//We check if the current zoom level allows the road type to be drawn.
-			
+
 		}
 		
-		//Stop drawing lines and upload the data to the GPU.
-		//gl2.glEnd();
+		tick++;
 	}
 	
 	private void applyZoom(GL2 gl2)
@@ -268,7 +267,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
 		gl2.glColor3f( r, g, b );
 		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
-		
 	}
 
 	@Override
