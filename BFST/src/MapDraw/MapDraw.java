@@ -50,7 +50,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
 
 		XMLParser.makeDataSet();
-
+ 
 		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
 		glCapabilities.setDoubleBuffered( true );
 		
