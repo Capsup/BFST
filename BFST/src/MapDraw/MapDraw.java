@@ -39,6 +39,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private int height;
 	//private double scale = 1;
 	private Point curMousePos;
+	private GraphicsPrefs gp;
 	
 	public double getWidthFactor()
 	{
@@ -97,6 +98,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		//Get a OpenGL v2 context.
 		GL2 gl = arg0.getGL().getGL2();
+		
+		//initialize GraphicsPrefs
+		gp = new GraphicsPrefs(gl);
 
 		//Set the clear color of the color buffer to black, meaning we get a black screen whenever we clear the color buffer.
 		gl.glClearColor( 255, 255, 255, 0 );
@@ -141,19 +145,34 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glEnable(GL.GL_BLEND);
 		gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
-		gl2.glLineWidth(0.75f);
 	  
+		drawLines(gl2);
+				
 
+	}
 	
-		//We want to start drawing lines.
-		gl2.glBegin( GL.GL_LINES );
+	private void drawLines(GL2 gl2) {
 		
-		for(Edge e : getDrawEdges(1))
-				drawLine(e, gl2);
+		int maxType = gp.getMaxTypeAtCurrentZoom();
 		
+		for(int i=1; i<maxType; i++) {
+			for(Edge e: getDrawEdges(i)) {
+				gp.setLineWidth(e);
+				int[] colors = gp.getLineColor(e);
+				gl2.glBegin( GL.GL_LINES );
+				drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				gl2.glEnd();
+			}
+		}
 		
-		//Stop drawing lines and upload the data to the GPU.
-		gl2.glEnd();
+		//add the totally awesome lines in the center of highways.
+		for(Edge e: getDrawEdges(1)) {
+			gp.setLineWidth(1.4f);
+			int[] colors = new int[] {255,215,0};
+			gl2.glBegin( GL.GL_LINES );
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+			gl2.glEnd();
+		}
 	}
 	
 	private void applyZoom(GL2 gl2)
@@ -191,44 +210,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	     return q.queryEdges(rect, type);
 	}
 	
-	private boolean zoomLevelAllowRoadType(int roadType)
-	{
-		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
-		
-		boolean canShow = roadType < 3;
-		
-		if(zoomIndex < 3)
-			canShow = roadType < 4;
-		else if(zoomIndex < 6)
-			canShow = roadType < 5;
-		else if(zoomIndex < 12)
-			canShow = roadType < 6;
-		else if(zoomIndex < 15)
-			canShow = roadType < 7;
-		else if(zoomIndex < 16)
-			canShow = roadType < 8;
-		else
-			canShow = true;
-		
-		return canShow;
-	}
-	
-	private boolean zoomLevelAllowRoadType(double length)
-	{
-		boolean canShow = length*1000 < getHeightFactor();
-		
-		return canShow;
-	}
-	
-	private void drawLine(Edge edge, GL2 gl2)
-	{
-		int r=0;
-		int g=0;
-		int b=0;
-		
-		if( edge.getTyp() == 1 ) r = 255;
-		else if( edge.getTyp() < 5 ) b = 255;
-		else if( edge.getTyp() == 8 ) g = 255;	
+	private void drawLine(Edge edge, GL2 gl2, int r, int g, int b)
+	{		
 		
 		gl2.glColor3f( r, g, b );
 		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
