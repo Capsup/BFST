@@ -345,5 +345,4 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			ZoomLevel.getInstance().zoomOut();
 		}
 	}
-
 }
