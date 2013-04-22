@@ -50,7 +50,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
 
 		XMLParser.makeDataSet();
-
+ 
 		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
 		glCapabilities.setDoubleBuffered( true );
 		
@@ -144,13 +144,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			gl2.glEnable(GL.GL_BLEND);
 			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
-			gl2.glLineWidth(0.75f);
 		
 			//Get the ArrayList containing all the edges of the map
 			ArrayList<Edge> edges = XMLParser.getEdgeList();
-	
-			//We want to start drawing lines.
-			gl2.glBegin( GL.GL_LINES );
 			
 			//We calculate the borders of which we want to draw lines. In this we only need to search a partition of our edge array
 			Rectangle drawEdges = getDrawEdges(edges);
@@ -161,13 +157,28 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			{
 				int roadType = edges.get(i).getTyp();
 				
-				//We check if the current zoom level allows the road type to be drawn.
-				if(zoomLevelAllowRoadType(roadType))
-					drawLine(edges.get(i), gl2);
+				if(zoomLevelAllowRoadType(roadType)) 
+				{
+					if(roadType == 1) 
+					{
+						gl2.glLineWidth(3f);
+						gl2.glBegin(GL.GL_LINES);
+						drawLine(edges.get(i), gl2);
+						gl2.glEnd();
+					} else if(roadType > 1 && roadType < 8) {
+						gl2.glLineWidth(2f);
+						gl2.glBegin(GL.GL_LINES);
+						drawLine(edges.get(i), gl2);
+						gl2.glEnd();
+					} else {
+						gl2.glLineWidth(1.5f);
+						gl2.glBegin(GL.GL_LINES);
+						drawLine(edges.get(i), gl2);
+						gl2.glEnd();
+					}
+				}
 			}
-			
-			//Stop drawing lines and upload the data to the GPU.
-			gl2.glEnd();
+
 		}
 		
 		tick++;
@@ -345,4 +356,5 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			ZoomLevel.getInstance().zoomOut();
 		}
 	}
+
 }
