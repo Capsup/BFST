@@ -148,7 +148,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		
 			//Get the ArrayList containing all the edges of the map
 			ArrayList<Edge> edges = XMLParser.getEdgeList();
-	
+			
 			//We want to start drawing lines.
 			gl2.glBegin( GL.GL_LINES );
 			
