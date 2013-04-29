@@ -71,5 +71,4 @@ public class GraphicsPrefs {
 		
 		return new float[] {r,g,b};
 	}
-
 }

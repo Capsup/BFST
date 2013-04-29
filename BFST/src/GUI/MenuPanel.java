@@ -14,6 +14,9 @@ import javax.swing.SpringLayout.Constraints;
 
 public class MenuPanel extends JPanel
 {
+	/*
+	 * The Menu Panel contains everything to do with the menu
+	 */
 	public MenuPanel()
 	{
 		makeContent();
@@ -35,10 +38,13 @@ public class MenuPanel extends JPanel
 		JPanel translationPanel = new TranslationPanel();
 		translationPanel.setMaximumSize(translationPanel.getPreferredSize());
 		
+		//Add the panels, with vertical glue, in order to have a nice look
+		add(Box.createVerticalGlue());
 		add(searchPanel);
 		add(Box.createVerticalGlue());
 		add(zoomPanel);
 		add(Box.createVerticalGlue());
 		add(translationPanel);
+		add(Box.createVerticalGlue());
 	}
 }

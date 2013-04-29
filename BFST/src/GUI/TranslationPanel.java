@@ -14,10 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import MapDraw.Translation;
+import MapDraw.ZoomLevel;
 
 
 public class TranslationPanel extends JPanel{
 	
+	/*
+	 * The Translation panel gives a GUI possibility of translating the map
+	 */
 	public TranslationPanel()
 	{
 		makeContent();
@@ -27,22 +31,24 @@ public class TranslationPanel extends JPanel{
 	{
 		public void actionPerformed( ActionEvent event )
 		{
+			double translation = 15 * ZoomLevel.getInstance().getZoomLevel();
+			
 			switch( event.getActionCommand() )
 			{
 				case "Up":
-					Translation.getInstance().translate(0, 10);
+					Translation.getInstance().translate(0, translation);
 				break;
 
 				case "Down":
-					Translation.getInstance().translate(0, -10);
+					Translation.getInstance().translate(0, -translation);
 				break;
 
 				case "Right":
-					Translation.getInstance().translate(-10, 0);
+					Translation.getInstance().translate(-translation, 0);
 				break;
 
 				case "Left":
-					Translation.getInstance().translate(10, 0);
+					Translation.getInstance().translate(translation, 0);
 				break;
 			}
 		}

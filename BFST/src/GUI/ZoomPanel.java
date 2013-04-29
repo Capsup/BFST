@@ -20,6 +20,9 @@ public class ZoomPanel extends JPanel implements Observer{
 	
 	private JLabel currentZoomLabel;
 	
+	/*
+	 * The Zoom Panel gives a panel that makes you zoom the map in and out using a user interface
+	 */
 	public ZoomPanel()
 	{
 		makeContent();
@@ -75,8 +78,9 @@ public class ZoomPanel extends JPanel implements Observer{
 	@Override
 	public void update(Observable o, Object arg) 
 	{
+		//Update the text of the zoom label to the current zoom level.
+		//Update is called whenever the observable (ZoomLevel) changes its zoom level
 		currentZoomLabel.setText("Zoom Level: "+(ZoomLevel.getInstance().getZoomIndex()+1));
-	
 	}
 	
 	

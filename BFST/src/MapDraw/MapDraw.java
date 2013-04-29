@@ -41,6 +41,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private Point curMousePos;
 	private GraphicsPrefs gp;
 	
+	private int tick;
+	private int maximumFPS = 60;
+	
 	public double getWidthFactor()
 	{
 		return (width/height)*getHeightFactor();
@@ -79,19 +82,19 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		// panel.setDefaultCloseOperation( WindowClosingMode.DISPOSE_ON_CLOSE );
 		
 		add( panel, BorderLayout.CENTER);
+		
 
 		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
-		Animator animator = new Animator( panel );
+		//The FPS animator lets us put a limit to the refresh rate of the animator.
+		FPSAnimator animator = new FPSAnimator(panel, 60);
 		animator.start();
-		
-		//FPSAnimator animator = new FPSAnimator( 60 );
-		//animator.start();
 
 		width = 800;
 		height = 600;
+
 		ZoomLevel.getInstance().setZoomLevel(0);
 	}
-	
+
 	//OpenGL Events
 	@Override
 	public void init( GLAutoDrawable arg0 )
@@ -125,29 +128,33 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void display( GLAutoDrawable arg0 )
 	{
-		//Get an OpenGL v2 context.
-		GL2 gl2 = arg0.getGL().getGL2();
+		if(tick % (60/maximumFPS) == 0) {
 
-		//Clear the color buffer, setting all pixel's color on the screen to the specified color.
-		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
+			//Get an OpenGL v2 context.
+			GL2 gl2 = arg0.getGL().getGL2();
 
-		//Load the identity matrix, effectively removing all transformations.
-		gl2.glLoadIdentity();
+			//Clear the color buffer, setting all pixel's color on the screen to the specified color.
+			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
 
-		//Apply zoom
-		applyZoom(gl2);
-		
-		//Add the panning translation.
-		applyPanning(gl2);
-		
-		// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
-		gl2.glEnable(GL.GL_LINE_SMOOTH);
-		gl2.glEnable(GL.GL_BLEND);
-		gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
-	  
-		drawLines(gl2);
-				
+			//Load the identity matrix, effectively removing all transformations.
+			gl2.glLoadIdentity();
+
+			//Apply zoom
+			applyZoom(gl2);
+
+			//Add the panning translation.
+			applyPanning(gl2);
+
+			// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
+			gl2.glEnable(GL.GL_LINE_SMOOTH);
+			gl2.glEnable(GL.GL_BLEND);
+			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
+
+			drawLines(gl2);
+		}
+		tick++;
+
 
 	}
 	

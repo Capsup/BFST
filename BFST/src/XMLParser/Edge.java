@@ -23,7 +23,6 @@ public class Edge implements Comparable<Edge>
 		this.typ = Integer.parseInt(s.get(6));
 	}
 
-
 	public int compareTo( Edge a )
 	{
 		return getXFrom() == a.getXFrom() ? 0 : ( getXFrom() > a.getXFrom() ? 1 : -1 );
