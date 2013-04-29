@@ -2,7 +2,7 @@ package MapDraw;
 
 import javax.media.opengl.GL2;
 
-import XMLParser.Edge;
+import Graph.Edge;
 
 public class GraphicsPrefs {
 	

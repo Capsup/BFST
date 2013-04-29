@@ -17,6 +17,8 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import Graph.Node;
+
 public class XMLCreator
 {
 

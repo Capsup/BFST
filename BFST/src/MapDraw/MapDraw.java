@@ -22,10 +22,10 @@ import javax.media.opengl.awt.GLJPanel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import XMLParser.Edge;
 import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 import DataProcessing.Query;
+import Graph.Edge;
 
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;

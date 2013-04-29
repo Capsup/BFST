@@ -1,4 +1,5 @@
 package XMLParser;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,6 +13,10 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import Graph.Edge;
+import Graph.Graph;
+import Graph.Node;
+
 
 
 public class XMLParser
@@ -24,8 +29,9 @@ public class XMLParser
 
 	public XMLParser( String sPath )
 	{
-		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
-		System.out.println(sPath);
+		sPath = "C:/Users/Jacob/git/BFST/BFST/src/XMLParser/" + sPath;
+		sPath = sPath.replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ");
+		//sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
 		try
 		{
 			loadFile( sPath );
@@ -55,13 +61,10 @@ public class XMLParser
 			e.printStackTrace();
 		}
 	}
-
-	public ArrayList<Node> getNodes() throws Exception{
-		ArrayList<Node> tree = new ArrayList<Node>();
+	
+	public ArrayList<Node> getNodesForXMLCreator() throws Exception{
 		ArrayList<String> temp = new ArrayList<String>();
-
-		double x = 0, y = 0;
-		int i = 0;
+		ArrayList<Node> list = new ArrayList<Node>();
 
 		while( input.hasNext() )
 		{
@@ -78,7 +81,7 @@ public class XMLParser
 
 				if( name.equals( "g" ) )
 					continue;
-				if( name.equals( "i" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
+				if( name.equals( "i" ) ) temp.add((input.nextEvent().asCharacters().getData())); 
 				else if( name.equals( "x" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
 				else if( name.equals( "y" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
 			} 
@@ -86,16 +89,56 @@ public class XMLParser
 			{
 				EndElement element = event.asEndElement();
 				if( element.getName().getLocalPart().equals( "e" )){
-					tree.add(new Node(temp)); 
+					list.add(new Node(temp)); 
 					temp = new ArrayList<String>();
 				}
 			}
 		}
-		return tree;
+		
+		return list;
 
 	}
 
-	public ArrayList<LinkedList<Edge>> getEdges() throws Exception
+	/*public Graph getNodes() throws Exception{
+		Graph g = new Graph();
+		//ArrayList<String> temp = new ArrayList<String>();
+		int id = 0;
+
+		while( input.hasNext() )
+		{
+			
+			XMLEvent event = input.nextEvent();
+
+			if( event.isStartDocument() || event.isEndDocument() )
+				continue;
+
+			if( event.isStartElement() )
+			{
+				StartElement element = event.asStartElement();
+				String name = element.getName().getLocalPart();
+
+				if( name.equals( "g" ) )
+					continue;
+				if( name.equals( "i" ) ) id = Integer.parseInt(input.nextEvent().asCharacters().getData()); 
+				//else if( name.equals( "x" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
+				//else if( name.equals( "y" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
+			} 
+			if( event.isEndElement() )
+			{
+				EndElement element = event.asEndElement();
+				if( element.getName().getLocalPart().equals( "e" )){
+					//Node n = new Node(temp); 
+					g.addVertex(); 
+					//temp = new ArrayList<String>();
+				}
+			}
+		}
+		
+		return g;
+
+	}*/
+
+	public ArrayList<LinkedList<Edge>> getEdges(Graph g) throws Exception
 	{
 
 		ArrayList<LinkedList<Edge>> list = new ArrayList<LinkedList<Edge>>();
@@ -105,7 +148,8 @@ public class XMLParser
 		
 		
 		ArrayList<String> temp = new ArrayList<String>();
-
+		int f = 0, t = 0;
+		double weight = 1;
 		String type = "";
 		while( input.hasNext() )
 		{
@@ -121,57 +165,40 @@ public class XMLParser
 
 				if( name.equals( "g" ) )
 					continue;
-<<<<<<< HEAD
 				if( name.equals( "x" ) ) //x
 					temp.add(input.nextEvent().asCharacters().getData());
 				else if( name.equals( "y" ) ) //y
 					temp.add(input.nextEvent().asCharacters().getData());
-				else if( name.equals( "f" ) ) //From node
-					temp.add(input.nextEvent().asCharacters().getData());
+				else if( name.equals( "f" ) ){ //From node
+					f = Integer.parseInt(input.nextEvent().asCharacters().getData());
+					temp.add(f + "");
+				}
 				else if( name.equals( "X" ) ) //X
 					temp.add(input.nextEvent().asCharacters().getData());
 				else if( name.equals( "Y" ) ) //Y
 					temp.add(input.nextEvent().asCharacters().getData());
-				else if( name.equals( "t" ) ) //To node
-					temp.add(input.nextEvent().asCharacters().getData());
+				else if( name.equals( "t" ) ){ //To node
+					t = Integer.parseInt(input.nextEvent().asCharacters().getData());
+					temp.add(t + "");
+				}
+				else if( name.equals( "l" ) ){ //length
+					weight = Double.parseDouble(input.nextEvent().asCharacters().getData());
+					temp.add(weight + "");
+				}
 				if( name.equals( "ty" ) ){//Type
 					type = input.nextEvent().asCharacters().getData();
 					temp.add(type);
-=======
-
-				if( filePath.contains( "kdv_unload.xml" ) )
-				{
-
-					if( name.equals( "xFrom" ) )
-						xFrom = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
-					else if( name.equals( "yFrom" ) )
-						yFrom = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
-					if( name.equals( "xTo" ) )
-						xTo = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
-					else if( name.equals( "yTo" ) )
-						yTo = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
-					else if( name.equals( "LENGTH" ) )
-						length = Double.parseDouble( input.nextEvent().asCharacters().getData() );
-					else if( name.equals( "TYP" ) )
-						typ = ( int ) Double.parseDouble( input.nextEvent().asCharacters().getData() );
->>>>>>> refs/remotes/origin/master
 				}
 			}
 
 			if( event.isEndElement() )
 			{
 				EndElement element = event.asEndElement();
-<<<<<<< HEAD
 
 				if(element.getName().getLocalPart().equals( "e" )){
-					list.get(Integer.parseInt(type)).add(new Edge(temp));
+					Edge e = new Edge(f, t, weight, temp);
+					list.get(Integer.parseInt(type)).add(e);
 					temp = new ArrayList<String>();
-=======
-				
-				if( element.getName().getLocalPart().equals( "element" ) && filePath.contains( "kdv_unload.xml" ) )
-				{
-					list.add( new Edge( fnode, tnode, length, typ, xFrom, yFrom, xTo, yTo ) );
->>>>>>> refs/remotes/origin/master
 				}
 			}
 		}
