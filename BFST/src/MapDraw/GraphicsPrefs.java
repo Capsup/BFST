@@ -32,12 +32,20 @@ public class GraphicsPrefs {
 	public void setLineWidth(Edge e) {
 		int roadType = e.getTyp();
 		
-		if(roadType == 1) 
-		{
+		if(roadType == 1) {
 			gl.glLineWidth(5f);
-		} else if(roadType > 1 && roadType < 8) {
+			
+		} else if(roadType == 2) {
+			gl.glLineWidth(3f);
+			
+		} else if(roadType < 5) {
+			gl.glLineWidth(2f);
+			
+		} else if(roadType > 2 && roadType < 8) {
 			gl.glLineWidth(1.7f);
+			
 		} else {
+			
 			gl.glLineWidth(1.5f);
 		}
 	}
@@ -46,17 +54,22 @@ public class GraphicsPrefs {
 		gl.glLineWidth(f);
 	}
 	
-	public int[] getLineColor(Edge e) {
-		int r=0, g=0, b=0;
+	public float[] getLineColor(Edge e) {
+		float r=0, g=0, b=0;
 		
 		if( e.getTyp() == 1 ) 
-			r = 255;
-		else if( e.getTyp() < 5 ) 
-			b = 255;
-		else if( e.getTyp() == 8 ) 
-			g = 255;
+			r = 255f;
 		
-		return new int[] {r,g,b};
+		else if( e.getTyp() < 5) {
+			r = 210f;
+			g = 105f;
+			b = 30f;
+		}
+		
+		else if( e.getTyp() == 8 ) 
+			g = 255f;
+		
+		return new float[] {r,g,b};
 	}
 
 }

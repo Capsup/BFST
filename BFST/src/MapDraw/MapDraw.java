@@ -158,7 +158,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		for(int i=1; i<maxType; i++) {
 			for(Edge e: getDrawEdges(i)) {
 				gp.setLineWidth(e);
-				int[] colors = gp.getLineColor(e);
+				float[] colors = gp.getLineColor(e);
 				gl2.glBegin( GL.GL_LINES );
 				drawLine(e, gl2, colors[0], colors[1], colors[2]);
 				gl2.glEnd();
@@ -173,8 +173,26 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			drawLine(e, gl2, colors[0], colors[1], colors[2]);
 			gl2.glEnd();
 		}
+		
+		//add yellow to the center of 'motortraffikvej'-highways
+		for(Edge e: getDrawEdges(2)) {
+			gp.setLineWidth(1.4f);
+			int[] colors = new int[] {255,165,0};
+			gl2.glBegin( GL.GL_LINES );
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+			gl2.glEnd();
+		}
+
+		//add yellow to the center of 'motortraffikvej'-highways
+		for(Edge e: getDrawEdges(3)) {
+			gp.setLineWidth(0.8f);
+			int[] colors = new int[] {255,165,0};
+			gl2.glBegin( GL.GL_LINES );
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+			gl2.glEnd();
+		}
 	}
-	
+
 	private void applyZoom(GL2 gl2)
 	{
 		//Add a translation transformation to the current matrix, effectively moving the ingame 3d coordinate system by the specified amount.
@@ -210,12 +228,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	     return q.queryEdges(rect, type);
 	}
 	
-	private void drawLine(Edge edge, GL2 gl2, int r, int g, int b)
+	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
 	{		
 		
-		gl2.glColor3f( r, g, b );
+		gl2.glColor3f( (r/255), (g/255), (b/255) );
 		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
-		gl2.glColor3f( r, g, b );
+		gl2.glColor3f( (r/255), (g/255), (b/255) );
 		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
 	}
 
