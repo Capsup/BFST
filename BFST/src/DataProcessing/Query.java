@@ -40,7 +40,7 @@ public class Query{
 				if(rect.contains(e.getXFrom(), e.getYFrom())) edgesToDraw.add(e);
 				if(rect.contains(e.getXTo(), e.getYTo())) edgesToDraw.add(e);
 			}
-			System.out.println(System.currentTimeMillis() - t);
+			//System.out.println(System.currentTimeMillis() - t);
 			lastQuery = edgesToDraw;
 			return edgesToDraw;
 		}
