@@ -41,7 +41,7 @@ public class GraphicsPrefs {
 		} else if(roadType < 5) {
 			gl.glLineWidth(2f);
 			
-		} else if(roadType > 2 && roadType < 8) {
+		} else if(roadType < 8) {
 			gl.glLineWidth(1.7f);
 			
 		} else {
@@ -79,6 +79,10 @@ public class GraphicsPrefs {
 			r = 210f;
 			g = 105f;
 			b = 30f;
+		}
+		
+		else if( e.getTyp() <6) {
+			
 		}
 		
 		else if( e.getTyp() < 8) {
