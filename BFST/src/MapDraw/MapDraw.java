@@ -44,8 +44,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private int tick;
 	private int maximumFPS = 60;
 	
-	private long lastTime;
-	
 	public double getWidthFactor()
 	{
 		return (width/height)*getHeightFactor();
@@ -130,10 +128,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void display( GLAutoDrawable arg0 )
 	{
-		//if(tick % (60/maximumFPS) == 0) 
-		long curTime = System.currentTimeMillis();
-		if( curTime - lastTime > ( 1000 / 60 ) )
-		{
+		if(tick % (60/maximumFPS) == 0) {
 
 			//Get an OpenGL v2 context.
 			GL2 gl2 = arg0.getGL().getGL2();
@@ -157,67 +152,51 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
 
 			drawLines(gl2);
-			lastTime = curTime;
 		}
-		
+		tick++;
 
 
 	}
 	
 	private void drawLines(GL2 gl2) {
-		
 		int maxType = gp.getMaxTypeAtCurrentZoom();
 		
 		for(int i=1; i<maxType; i++) {
-			Edge testEdge = getDrawEdges(i).get(0);
-			gp.setLineWidth(testEdge);
-			float[] colors = gp.getLineColor(testEdge);
-			
+			for(Edge e: getDrawEdges(i)) {
+				gp.setLineWidth(e);
+				float[] colors = gp.getLineColor(e);
+				gl2.glBegin( GL.GL_LINES );
+				drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				gl2.glEnd();
+			}
+		}
+		
+		//add the totally awesome lines in the center of highways.
+		for(Edge e: getDrawEdges(1)) {
+			gp.setLineWidth(1.4f);
+			int[] colors = new int[] {255,215,0};
 			gl2.glBegin( GL.GL_LINES );
-			for(Edge e: getDrawEdges(i)) {
-				drawLine(e, gl2, colors[0], colors[1], colors[2]);
-			}
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
 			gl2.glEnd();
 		}
 		
-		for(int i=1; i<4; i++) {
-			Edge testEdge = getDrawEdges(i).get(0);
-			gp.setCenterLineWidth(testEdge);
-			float[] colors = gp.getLineCenterColor(testEdge);
-			gl2.glBegin(GL.GL_LINES);
-			
-			for(Edge e: getDrawEdges(i)) {
-				drawLine(e, gl2, colors[0], colors[1], colors[2]);
-			}
+		//add yellow to the center of 'motortraffikvej'-highways
+		for(Edge e: getDrawEdges(2)) {
+			gp.setLineWidth(1.4f);
+			int[] colors = new int[] {255,165,0};
+			gl2.glBegin( GL.GL_LINES );
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
 			gl2.glEnd();
 		}
-		
-//		//add the totally awesome lines in the center of highways.
-//		for(Edge e: getDrawEdges(1)) {
-//			gp.setLineWidth(1.4f);
-//			int[] colors = new int[] {255,215,0};
-//			gl2.glBegin( GL.GL_LINES );
-//			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-//			gl2.glEnd();
-//		}
-//		
-//		//add yellow to the center of 'motortraffikvej'-highways
-//		for(Edge e: getDrawEdges(2)) {
-//			gp.setLineWidth(1.4f);
-//			int[] colors = new int[] {255,165,0};
-//			gl2.glBegin( GL.GL_LINES );
-//			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-//			gl2.glEnd();
-//		}
-//
-//		//add yellow to the center of 'motortraffikvej'-highways
-//		for(Edge e: getDrawEdges(3)) {
-//			gp.setLineWidth(0.8f);
-//			int[] colors = new int[] {255,165,0};
-//			gl2.glBegin( GL.GL_LINES );
-//			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-//			gl2.glEnd();
-//		}
+
+		//add yellow to the center of 'motortraffikvej'-highways
+		for(Edge e: getDrawEdges(3)) {
+			gp.setLineWidth(0.8f);
+			int[] colors = new int[] {255,165,0};
+			gl2.glBegin( GL.GL_LINES );
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+			gl2.glEnd();
+		}
 	}
 
 	private void applyZoom(GL2 gl2)
