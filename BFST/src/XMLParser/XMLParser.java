@@ -30,6 +30,7 @@ public class XMLParser
 	public XMLParser( String sPath )
 	{
 		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
+		
 		try
 		{
 			loadFile( sPath );
