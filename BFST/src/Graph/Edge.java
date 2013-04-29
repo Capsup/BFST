@@ -11,8 +11,7 @@ public class Edge// implements Comparable<Edge>
 	private final int w;
 	private final double weight;
 	
-	private int fromNodeID, toNodeID, typ;
-	private double length;
+	private int typ;
 	private double xTo, yTo, xFrom, yFrom;
 
 	public Edge( int v, int w, double weight, ArrayList<String> s )
@@ -33,75 +32,22 @@ public class Edge// implements Comparable<Edge>
 	}
 	
 	public int getId(){ return id; }
-	
 	public double weight(){ return weight; }
 	public int either(){ return v; }
 	public int other(int ve){ return ve == w ? v : w ; }
 	
-	/*
-	public int compareTo(Edge that){
-		if(this.weight() < that.weight()) return -1;
-		if(this.weight() > that.weight()) return 1;
-		else return 0;
-	}*/
-	
 	protected void init(ArrayList<String> s){
 		this.xFrom = Double.parseDouble(s.get(0));
 		this.yFrom = Double.parseDouble(s.get(1));
-		this.fromNodeID = Integer.parseInt(s.get(2));
 		this.xTo = Double.parseDouble(s.get(3));
 		this.yTo = Double.parseDouble(s.get(4));
-		this.toNodeID = Integer.parseInt(s.get(5));
-		this.length = Double.parseDouble(s.get(6));
 		this.typ = Integer.parseInt(s.get(7));
 	}
 
 
-	/*public int compareTo( Edge a )
-	{
-		return getXFrom() == a.getXFrom() ? 0 : ( getXFrom() > a.getXFrom() ? 1 : -1 );
-	}*/
-
-	public double getXTo()
-	{
-		return xTo;
-	}
-
-	public double getYTo()
-	{
-		return yTo;
-	}
-
-	public double getXFrom()
-	{
-		return xFrom;
-	}
-
-	public double getYFrom()
-	{
-		return yFrom;
-	}
-
-	public int getTyp()
-	{
-		return typ;
-	}
-
-	public int getFromNodeID()
-	{
-		return fromNodeID;
-	}
-
-	public int getToNodeID()
-	{
-		return toNodeID;
-	}
-
-	public double getLength()
-	{
-		return length;
-	}
-
-	
-	//public static int translate(int i){ return translation.get(i); }
+	public double getXTo(){	return xTo; }
+	public double getYTo(){	return yTo; }
+	public double getXFrom(){ return xFrom;	}
+	public double getYFrom(){ return yFrom;	}
+	public int getTyp()	{ return typ; }
 }

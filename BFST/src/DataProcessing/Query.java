@@ -5,13 +5,11 @@ import java.util.LinkedList;
 
 import Graph.Edge;
 import Graph.Graph;
-import Graph.Node;
 import XMLParser.XMLParser;
 
 public class Query{
 	private ArrayList<LinkedList<Edge>> edges;
 	private Graph nodes;
-	private Thread edge;
 	private static LinkedList<Edge> lastQuery;
 
 	private static Interval2D<Double> lastInterval = new Interval2D<Double>(
@@ -23,35 +21,15 @@ public class Query{
 
 	public Query(){
 		try {
-
-			//XMLParser node = new XMLParser("kdv_node_unload.xml");
-			//	nodes = node.getNodes();
-			//nodes = new Graph(675903);
-			nodes = new Graph(1);
-			
 			XMLParser edge = new XMLParser("kdv_unload.xml");
-			
-			edges = edge.getEdges(nodes);
-
-			/*for(int i = 0; i < 100; i++){
-				for(Edge e : edges.get(i))
-					nodes.addEdge(e);
-			}*/
-
-
-
+			edges = edge.getEdges();
+			edge = null;
+			nodes = new Graph(675903, edges);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-
-	/* How to use
-	 Interval<Double> xAxis = new Interval<Double>(new Double(0.0), new Double(70020050.98297));
-     Interval<Double> yAxis = new Interval<Double>(new Double(0.0), new Double(70500527.51786));
-     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
-     queryEdges(rect);
-	 */
 
 	public LinkedList<Edge> queryEdges(Interval2D<Double> rect, int type){
 		if(!lastInterval.equals(rect)){

@@ -138,7 +138,7 @@ public class XMLParser
 
 	}*/
 
-	public ArrayList<LinkedList<Edge>> getEdges(Graph g) throws Exception
+	public ArrayList<LinkedList<Edge>> getEdges() throws Exception
 	{
 
 		ArrayList<LinkedList<Edge>> list = new ArrayList<LinkedList<Edge>>();
@@ -196,8 +196,7 @@ public class XMLParser
 				EndElement element = event.asEndElement();
 
 				if(element.getName().getLocalPart().equals( "e" )){
-					Edge e = new Edge(f, t, weight, temp);
-					list.get(Integer.parseInt(type)).add(e);
+					list.get(Integer.parseInt(type)).add(new Edge(f, t, weight, temp));
 					temp = new ArrayList<String>();
 				}
 			}
