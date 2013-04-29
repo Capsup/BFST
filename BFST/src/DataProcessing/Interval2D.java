@@ -1,6 +1,6 @@
 package DataProcessing;
 
-public class Interval2D<Key extends Comparable<Key>> {
+public class Interval2D<Key extends Comparable<Key>> implements Comparable<Interval2D<Key>> {
     private Interval<Key> x;
     private Interval<Key> y;
 
@@ -23,5 +23,9 @@ public class Interval2D<Key extends Comparable<Key>> {
   
     public String toString() {
         return x + " x " + y;
+    }
+    
+    public int compareTo(Interval2D<Key> i){
+    	return (intervalX().compareTo(i.intervalX()) == 0 && intervalY().compareTo(i.intervalY()) == 0) ? 0 : 1;
     }
 }
