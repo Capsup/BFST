@@ -39,7 +39,7 @@ public class XMLCreator
 	{
 		try
 		{
-			XMLParser node = new XMLParser("kdv_node_unload.xml"); nodes = node.getNodes();
+			XMLParser node = new XMLParser("kdv_node_unload.xml"); nodes = node.getNodesForXMLCreator();
 			Collections.sort(nodes);
 			new XMLCreator().convertToXML( "C://Users//Jacob//Desktop//krak-data//kdv_unload" );
 		}
@@ -133,6 +133,11 @@ public class XMLCreator
 					createNode( eventWriter, "X", "" + nodeTo.getX() );
 					createNode( eventWriter, "Y", "" + nodeTo.getY() );
 					createNode( eventWriter, "t", data[j] );
+				}
+				
+				if( j == 2 )
+				{
+					createNode( eventWriter, "l", data[j] );
 				}
 
 				if( j == 5 )
