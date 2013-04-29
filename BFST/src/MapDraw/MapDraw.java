@@ -132,7 +132,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		//if(tick % (60/maximumFPS) == 0) 
 		long curTime = System.currentTimeMillis();
-		if( curTime - lastTime > ( 1000 / 60 ) )
+		if( curTime - lastTime > ( 1000 / 1 ) )
 		{
 
 			//Get an OpenGL v2 context.
