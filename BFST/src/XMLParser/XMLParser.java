@@ -29,9 +29,7 @@ public class XMLParser
 
 	public XMLParser( String sPath )
 	{
-		sPath = "C:/Users/Jacob/git/BFST/BFST/src/XMLParser/" + sPath;
-		sPath = sPath.replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ");
-		//sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
+		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
 		try
 		{
 			loadFile( sPath );
