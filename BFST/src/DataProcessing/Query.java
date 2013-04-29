@@ -76,6 +76,6 @@ public class Query{
 		j = 0;
 		for(int i = 0; i < q.getGraph().V(); i++)
 			if(bfs.hasPathTo(i)) j++;
-		System.out.println(j);
+		//System.out.println(j);
 	}
 }

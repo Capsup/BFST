@@ -59,8 +59,15 @@ public class GraphicsPrefs {
 			gl.glLineWidth(1.4f);
 		} else if(roadType == 3) {
 			gl.glLineWidth(0.8f);
+		} else if(roadType < 6) {
+			if(ZoomLevel.getInstance().getZoomIndex() > 15) {
+				
+			}
+			gl.glLineWidth(1.3f);
+		} else if(roadType < 8) {
+			gl.glLineWidth(0.8f);
 		} else {
-			gl.glLineWidth(0f);
+			gl.glLineWidth(1f);
 		}
 		
 	}
@@ -82,7 +89,9 @@ public class GraphicsPrefs {
 		}
 		
 		else if( e.getTyp() <6) {
-			
+			if(ZoomLevel.getInstance().getZoomIndex() > 11) {
+				b = 255;
+			}
 		}
 		
 		else if( e.getTyp() < 8) {
@@ -112,6 +121,10 @@ public class GraphicsPrefs {
 			r = 255;
 			g = 165;
 			b = 0;
+		} else if( e.getTyp() < 8) {
+			r = 255;
+			g = 255;
+			b = 255;
 		}
 
 		return new float[] {r,g,b};
