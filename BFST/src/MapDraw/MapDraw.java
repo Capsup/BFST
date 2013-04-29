@@ -169,27 +169,31 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		int maxType = gp.getMaxTypeAtCurrentZoom();
 		
 		for(int i=1; i<maxType; i++) {
-			Edge testEdge = getDrawEdges(i).get(0);
-			gp.setLineWidth(testEdge);
-			float[] colors = gp.getLineColor(testEdge);
-			
-			gl2.glBegin( GL.GL_LINES );
-			for(Edge e: getDrawEdges(i)) {
-				drawLine(e, gl2, colors[0], colors[1], colors[2]);
+			if(!getDrawEdges(i).isEmpty()) {
+				Edge testEdge = getDrawEdges(i).get(0);
+				gp.setLineWidth(testEdge);
+				float[] colors = gp.getLineColor(testEdge);
+				
+				gl2.glBegin( GL.GL_LINES );
+				for(Edge e: getDrawEdges(i)) {
+					drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				}
+				gl2.glEnd();
 			}
-			gl2.glEnd();
 		}
 		
-		for(int i=1; i<4; i++) {
-			Edge testEdge = getDrawEdges(i).get(0);
-			gp.setCenterLineWidth(testEdge);
-			float[] colors = gp.getLineCenterColor(testEdge);
-			gl2.glBegin(GL.GL_LINES);
-			
-			for(Edge e: getDrawEdges(i)) {
-				drawLine(e, gl2, colors[0], colors[1], colors[2]);
+		for(int i=1; i<6; i++) {
+			if(!getDrawEdges(i).isEmpty() && i<maxType && i!=3 && i!=4 && i!=5) {
+				Edge testEdge = getDrawEdges(i).get(0);
+				gp.setCenterLineWidth(testEdge);
+				float[] colors = gp.getLineCenterColor(testEdge);
+				gl2.glBegin(GL.GL_LINES);
+				
+				for(Edge e: getDrawEdges(i)) {
+					drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				}
+				gl2.glEnd();
 			}
-			gl2.glEnd();
 		}
 	}
 	
