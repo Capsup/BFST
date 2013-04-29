@@ -191,33 +191,16 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			}
 			gl2.glEnd();
 		}
-		
-//		//add the totally awesome lines in the center of highways.
-//		for(Edge e: getDrawEdges(1)) {
-//			gp.setLineWidth(1.4f);
-//			int[] colors = new int[] {255,215,0};
-//			gl2.glBegin( GL.GL_LINES );
-//			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-//			gl2.glEnd();
-//		}
-//		
-//		//add yellow to the center of 'motortraffikvej'-highways
-//		for(Edge e: getDrawEdges(2)) {
-//			gp.setLineWidth(1.4f);
-//			int[] colors = new int[] {255,165,0};
-//			gl2.glBegin( GL.GL_LINES );
-//			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-//			gl2.glEnd();
-//		}
-//
-//		//add yellow to the center of 'motortraffikvej'-highways
-//		for(Edge e: getDrawEdges(3)) {
-//			gp.setLineWidth(0.8f);
-//			int[] colors = new int[] {255,165,0};
-//			gl2.glBegin( GL.GL_LINES );
-//			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-//			gl2.glEnd();
-//		}
+	}
+	
+	public void drawRoute(GL2 gl2, LinkedList<Edge> edges) {
+		gp.setLineWidth(3f);
+		float[] colors = new float[] {0,0,255};
+		gl2.glBegin(GL.GL_LINES);
+		for(Edge e: edges) {
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+		}
+		gl2.glEnd();
 	}
 
 	private void applyZoom(GL2 gl2)

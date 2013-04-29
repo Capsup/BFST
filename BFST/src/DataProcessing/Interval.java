@@ -1,6 +1,6 @@
 package DataProcessing;
 
-public class Interval<Key extends Comparable<Key>> {
+public class Interval<Key extends Comparable<Key>> implements Comparable<Interval<Key>> {
 
     private final Key left;
     private final Key right;
@@ -22,5 +22,9 @@ public class Interval<Key extends Comparable<Key>> {
     // string representation of this interval        
     public String toString() {
         return "[" + left + ", " + right + "]";
+    }
+    
+    public int compareTo(Interval<Key> i){
+    	return (i.low().compareTo(low()) == 0 && i.high().compareTo(high()) == 0) ? 0 : 1;
     }
 }
