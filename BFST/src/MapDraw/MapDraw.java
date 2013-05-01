@@ -183,22 +183,24 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		}
 		
 		for(int i=1; i<6; i++) {
-			if(!getDrawEdges(i).isEmpty() && i<maxType && i!=3 && i!=4 && i!=5) {
+			if(!getDrawEdges(i).isEmpty() && i<maxType) {
 				Edge testEdge = getDrawEdges(i).get(0);
-				gp.setCenterLineWidth(testEdge);
-				float[] colors = gp.getLineCenterColor(testEdge);
-				gl2.glBegin(GL.GL_LINES);
-				
-				for(Edge e: getDrawEdges(i)) {
-					drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				if(gp.hasCenterLine(testEdge)) {
+					gp.setCenterLineWidth(testEdge);
+					float[] colors = gp.getLineCenterColor(testEdge);
+					gl2.glBegin(GL.GL_LINES);
+					
+					for(Edge e: getDrawEdges(i)) {
+						drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					}
+					gl2.glEnd();
 				}
-				gl2.glEnd();
 			}
 		}
 	}
 	
 	public void drawRoute(GL2 gl2, LinkedList<Edge> edges) {
-		gp.setLineWidth(3f);
+		gp.setLineWidth(4f);
 		float[] colors = new float[] {0,0,255};
 		gl2.glBegin(GL.GL_LINES);
 		for(Edge e: edges) {
