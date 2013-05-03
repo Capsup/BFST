@@ -2,7 +2,6 @@ package MapDraw;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -47,6 +46,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private int maximumFPS = 60;
 	
 	private long lastTime;
+
+	private int i;
 	
 	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable; }
 	
@@ -140,7 +141,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		//if(tick % (60/maximumFPS) == 0) 
 		long curTime = System.currentTimeMillis();
-		if( curTime - lastTime > ( 1000 / 24 ) )
+		if( curTime - lastTime > ( 1000 / 30 ) )
 		{
 
 			//Get an OpenGL v2 context.
@@ -209,7 +210,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			if(routeToDraw != null) {
 				drawRoute(gl2, routeToDraw);
 			}
+			
 		}
+		System.out.println(i);
+		i = 0;
 	}
 	
 	public void drawRoute(GL2 gl2, Iterable<Edge> edges) {
@@ -243,23 +247,24 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private LinkedList<Edge> getDrawEdges(int type)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
-		double xs = (zoomFactor + 20 )* -1000;
-		double xe = (((zoomFactor - 20 ) - width*getWidthFactor()/2)*-1000);
+		double xs = (zoomFactor)* -1000;
+		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000);
 
-		/*
-		zoomFactor = ((Translation.getInstance().getTranslation().getY()) - (height-(height*getHeightFactor())/2)/2);
-		double ys = zoomFactor * -1000;
-		double ye = ((zoomFactor - height*getHeightFactor()/2)*-1000);
-		*/
+		
+		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
+		double ys = zoomFactor * 1000;
+		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000);
+		
 		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
-	     Interval<Double> yAxis = new Interval<Double>(0.0, 10000000.0);
+	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
+	     
 	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
 	     return q.queryEdges(rect, type);
 	}
 	
 	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
 	{		
-		
+		i++;
 		gl2.glColor3f( (r/255), (g/255), (b/255) );
 		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
 		gl2.glColor3f( (r/255), (g/255), (b/255) );
