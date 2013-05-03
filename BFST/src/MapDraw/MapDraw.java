@@ -19,13 +19,11 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 import DataProcessing.Query;
-import Dijkstra.Dijkstra;
 import Graph.Edge;
 
 import com.jogamp.opengl.util.Animator;
@@ -42,9 +40,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private Point curMousePos;
 	private GraphicsPrefs gp;
 	
-	//Temp route function
-	private Dijkstra d = new Dijkstra(q.getGraph(), 333570);
-	private Iterable<Edge> routeToDraw = d.pathTo(333470);
+	private Iterable<Edge> routeToDraw; 
 
 	
 	private int tick;
@@ -52,7 +48,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	private long lastTime;
 	
-	public void setRoute(LinkedList<Edge> l){ routeToDraw = l; }
+	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable; }
 	
 	public double getWidthFactor()
 	{
@@ -103,6 +99,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		height = 600;
 
 		ZoomLevel.getInstance().setZoomLevel(0);
+		
+		
+		//Getting route!
+		new Route.GetRoute(this, q, 555720, 525710).start();
 	}
 
 	//OpenGL Events
@@ -191,17 +191,20 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		}
 		
 		for(int i=1; i<6; i++) {
-			if(!getDrawEdges(i).isEmpty() && i<maxType && i!=3 && i!=4 && i!=5) {
+			if(!getDrawEdges(i).isEmpty() && i<maxType) {
 				Edge testEdge = getDrawEdges(i).get(0);
-				gp.setCenterLineWidth(testEdge);
-				float[] colors = gp.getLineCenterColor(testEdge);
-				gl2.glBegin(GL.GL_LINES);
-				
-				for(Edge e: getDrawEdges(i)) {
-					drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				if(gp.hasCenterLine(testEdge)) {
+					gp.setCenterLineWidth(testEdge);
+					float[] colors = gp.getLineCenterColor(testEdge);
+					gl2.glBegin(GL.GL_LINES);
+					
+					for(Edge e: getDrawEdges(i)) {
+						drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					}
+					gl2.glEnd();
 				}
-				gl2.glEnd();
 			}
+		
 			
 			if(routeToDraw != null) {
 				drawRoute(gl2, routeToDraw);

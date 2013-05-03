@@ -1,4 +1,4 @@
-package Dijkstra;
+package Route;
 /*************************************************************************
  *  Compilation:  javac IndexMinPQ.java
  *  Execution:    java IndexMinPQ
