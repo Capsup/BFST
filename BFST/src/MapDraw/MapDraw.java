@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 import DataProcessing.Query;
+import Dijkstra.Dijkstra;
 import Graph.Edge;
 
 import com.jogamp.opengl.util.Animator;
@@ -41,10 +42,17 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private Point curMousePos;
 	private GraphicsPrefs gp;
 	
+	//Temp route function
+	private Dijkstra d = new Dijkstra(q.getGraph(), 333570);
+	private Iterable<Edge> routeToDraw = d.pathTo(333470);
+
+	
 	private int tick;
 	private int maximumFPS = 60;
 	
 	private long lastTime;
+	
+	public void setRoute(LinkedList<Edge> l){ routeToDraw = l; }
 	
 	public double getWidthFactor()
 	{
@@ -154,7 +162,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			gl2.glEnable(GL.GL_LINE_SMOOTH);
 			gl2.glEnable(GL.GL_BLEND);
 			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
+			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
 
 			drawLines(gl2);
 			lastTime = curTime;
@@ -194,10 +202,14 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 				}
 				gl2.glEnd();
 			}
+			
+			if(routeToDraw != null) {
+				drawRoute(gl2, routeToDraw);
+			}
 		}
 	}
 	
-	public void drawRoute(GL2 gl2, LinkedList<Edge> edges) {
+	public void drawRoute(GL2 gl2, Iterable<Edge> edges) {
 		gp.setLineWidth(3f);
 		float[] colors = new float[] {0,0,255};
 		gl2.glBegin(GL.GL_LINES);
