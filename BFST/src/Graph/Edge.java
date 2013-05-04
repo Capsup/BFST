@@ -3,6 +3,9 @@ package Graph;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import DataProcessing.Interval;
+import DataProcessing.Interval2D;
+
 public class Edge// implements Comparable<Edge>
 {
 	private static int id_count = 0;
@@ -10,7 +13,7 @@ public class Edge// implements Comparable<Edge>
 	private final int v;
 	private final int w;
 	private final double weight;
-	
+
 	private int typ;
 	private double xTo, yTo, xFrom, yFrom;
 
@@ -22,7 +25,7 @@ public class Edge// implements Comparable<Edge>
 		this.weight = weight;
 		init(s);
 	}
-	
+
 	public Edge( int v, int w, double weight)
 	{
 		this.id = id_count++;
@@ -30,18 +33,30 @@ public class Edge// implements Comparable<Edge>
 		this.w = w;
 		this.weight = weight;
 	}
-	
+
 	public int getId(){ return id; }
 	public double weight(){ return weight; }
 	public int either(){ return v; }
 	public int other(int ve){ return ve == w ? v : w ; }
-	
+
 	protected void init(ArrayList<String> s){
 		this.xFrom = Double.parseDouble(s.get(0));
 		this.yFrom = Double.parseDouble(s.get(1));
 		this.xTo = Double.parseDouble(s.get(3));
 		this.yTo = Double.parseDouble(s.get(4));
 		this.typ = Integer.parseInt(s.get(7));
+	}
+
+
+	public boolean contains(Interval2D<Double> i){
+
+		double xlow = i.intervalX().low();
+		double xhigh = i.intervalX().high();
+
+		double ylow = i.intervalY().low();
+		double yhigh = i.intervalY().high();
+
+		return ((xlow <= xFrom) && (xhigh >= xTo)) && ((ylow <= yFrom) && (yhigh >= yTo));
 	}
 
 

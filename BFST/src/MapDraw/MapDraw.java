@@ -247,13 +247,13 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private LinkedList<Edge> getDrawEdges(int type)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
-		double xs = (zoomFactor)* -1000;
-		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000);
+		double xs = (zoomFactor)* -1000 + 1 * -1000;
+		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 1 * -1000;
 
 		
 		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
-		double ys = zoomFactor * 1000;
-		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000);
+		double ys = zoomFactor * 1000 - 1 * 1000;
+		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 1 * 1000;
 		
 		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
 	     Interval<Double> yAxis = new Interval<Double>(ys, ye);

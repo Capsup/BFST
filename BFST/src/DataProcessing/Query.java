@@ -47,7 +47,8 @@ public class Query{
 			lastInterval[type] = rect;
 			LinkedList<Edge> edgesToDraw = new LinkedList<Edge>();
 			for(Edge e : edges.get(type)){
-				if(rect.contains(e.getXFrom(), e.getYFrom()) && rect.contains(e.getXTo(), e.getYTo())) edgesToDraw.add(e);
+				if(e.contains(rect)) edgesToDraw.add(e);
+				//if(rect.contains(e.getXFrom(), e.getYFrom()) && rect.contains(e.getXTo(), e.getYTo())) edgesToDraw.add(e);
 			}
 			lastQuery[type] = edgesToDraw;
 			return edgesToDraw;
