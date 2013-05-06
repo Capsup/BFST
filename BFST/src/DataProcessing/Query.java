@@ -64,6 +64,7 @@ public class Query{
 	public static void main(String[] agrs){
 		Query q = new Query();
 		System.out.println("Here we go!");
+		
 		Dijkstra d = new Dijkstra(q.getGraph(), 333570);
 		int j = 0;
 		for(int i = 0; i < q.getGraph().V(); i++)
