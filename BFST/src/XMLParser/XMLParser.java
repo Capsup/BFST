@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -24,15 +26,15 @@ public class XMLParser implements Runnable{
 	private String[] sData;
 	private XMLEventReader input;
 	private String filePath, sPath;
-	private static ArrayList<LinkedList<Edge>> list = new ArrayList<LinkedList<Edge>>();
+	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>();
 
-	public static ArrayList<LinkedList<Edge>> getEdgeList(){
+	public static ArrayList<List<Edge>> getEdgeList(){
 		return list;
 	}
 	
 	static{
 		for(int i = 0; i < 100; i++)
-			list.add(new LinkedList<Edge>());
+			list.add(Collections.synchronizedList(new LinkedList<Edge>()));
 	}
 
 
@@ -107,48 +109,8 @@ public class XMLParser implements Runnable{
 
 	}
 
-	/*public Graph getNodes() throws Exception{
-		Graph g = new Graph();
-		//ArrayList<String> temp = new ArrayList<String>();
-		int id = 0;
 
-		while( input.hasNext() )
-		{
-
-			XMLEvent event = input.nextEvent();
-
-			if( event.isStartDocument() || event.isEndDocument() )
-				continue;
-
-			if( event.isStartElement() )
-			{
-				StartElement element = event.asStartElement();
-				String name = element.getName().getLocalPart();
-
-				if( name.equals( "g" ) )
-					continue;
-				if( name.equals( "i" ) ) id = Integer.parseInt(input.nextEvent().asCharacters().getData()); 
-				//else if( name.equals( "x" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
-				//else if( name.equals( "y" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
-			} 
-			if( event.isEndElement() )
-			{
-				EndElement element = event.asEndElement();
-				if( element.getName().getLocalPart().equals( "e" )){
-					//Node n = new Node(temp); 
-					g.addVertex(); 
-					//temp = new ArrayList<String>();
-				}
-			}
-		}
-
-		return g;
-
-	}*/
-
-	public void run()
-	{
-		System.out.println("ok");
+	public void run(){
 		try{
 			ArrayList<String> temp = new ArrayList<String>();
 			int f = 0, t = 0;

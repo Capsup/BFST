@@ -2,6 +2,7 @@ package Graph;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Graph {
     private final int V;
@@ -36,7 +37,7 @@ public class Graph {
         }
     }
     
-    public Graph(int V, ArrayList<LinkedList<Edge>> list) throws Exception{
+    public Graph(int V, ArrayList<List<Edge>> list) throws Exception{
     	this(V);
     	
     	for(Iterable<Edge> l : list)

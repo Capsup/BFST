@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -240,7 +241,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
-	private LinkedList<Edge> getDrawEdges(int type)
+	private List<Edge> getDrawEdges(int type)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
 		double xs = (zoomFactor)* -1000 + 1 * -1000;
