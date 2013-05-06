@@ -1,5 +1,6 @@
 /MSTParse
 *.class
+<<<<<<< HEAD
 /XMLParser
 /.gitignore
 /DataProcessing
@@ -8,3 +9,6 @@
 /MapDraw
 /Route
 /files
+=======
+>>>>>>> branch 'master' of https://github.com/Capsup/BFST.git
+/XMLCreator

@@ -62,6 +62,8 @@ public class SearchModule extends JPanel{
 						
 						int searchResultIndex = AddressParser.getInstance().search(parsedAdress[0]);
 						
+						System.out.println(searchResultIndex);
+						
 						if(searchResultIndex >= 0)
 							System.out.println(AddressParser.getInstance().getAddressArray()[searchResultIndex]);
 					}

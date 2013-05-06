@@ -30,7 +30,6 @@ public class SearchPanel extends JPanel
 		
 		//Search Field <-- Insert SearchField class extending JTextField here
 		searchField = new JTextField("Not Functional", 20);
-		searchField.setEnabled(false);
 		
 		goButton = new JButton("GO!");
 		

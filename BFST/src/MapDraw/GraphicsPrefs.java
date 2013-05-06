@@ -12,8 +12,8 @@ public class GraphicsPrefs {
 		this.gl = gl;
 	}
 	
-	public int[] getTypesAtCurrentZoom() {
-		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
+	public int[] getTypesAtCurrentZoom(double currentZoom) {
+		int zoomIndex = ZoomLevel.getInstance().findIndex(currentZoom);
 		
 		if(zoomIndex < 3)
 			return new int[] {0,1,2,3,4,30,31,40,41};
