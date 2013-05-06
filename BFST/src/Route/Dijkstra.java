@@ -1,4 +1,4 @@
-package Dijkstra;
+package Route;
 
 import java.util.Stack;
 
@@ -28,7 +28,7 @@ public class Dijkstra {
         while (!pq.isEmpty()) {
             int v = pq.delMin();
             for (Edge e : G.adj(v))
-                relax(e);
+                relax(e, v);
         }
 
         // check optimality conditions
@@ -36,8 +36,8 @@ public class Dijkstra {
     }
 
     // relax edge e and update pq if changed
-    private void relax(Edge e) {
-        int v = e.either(), w = e.other(v);
+    private void relax(Edge e, int v) {
+        int w = e.other(v);
         if (distTo[w] > distTo[v] + e.weight()) {
             distTo[w] = distTo[v] + e.weight();
             edgeTo[w] = e;
@@ -60,7 +60,7 @@ public class Dijkstra {
     public Iterable<Edge> pathTo(int v) {
         if (!hasPathTo(v)) return null;
         Stack<Edge> path = new Stack<Edge>();
-        for (Edge e = edgeTo[v]; e != null; e = edgeTo[e.either()]) {
+        for (Edge e = edgeTo[v]; e != null; e = edgeTo[v = e.other(v)]) {
             path.push(e);
         }
         return path;

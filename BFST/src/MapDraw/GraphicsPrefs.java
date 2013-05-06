@@ -26,27 +26,74 @@ public class GraphicsPrefs {
 		else if(zoomIndex < 16)
 			return 8;
 		else
-			return 11;
+			return 42;
 	}
 	
 	public void setLineWidth(Edge e) {
 		int roadType = e.getTyp();
+		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
 		
 		if(roadType == 1) {
-			gl.glLineWidth(5f);
-			
+			gl.glLineWidth(4f);
 		} else if(roadType == 2) {
 			gl.glLineWidth(3f);
-			
-		} else if(roadType < 5) {
+		} else if(roadType == 3) {
 			gl.glLineWidth(2f);
-			
-		} else if(roadType < 8) {
+		} else if(roadType == 5) {
+			gl.glLineWidth(2f);
+			if(zoomIndex > 11) 
+				gl.glLineWidth(4f);
+		} else if(roadType == 5) {
 			gl.glLineWidth(1.7f);
-			
+		} else if(roadType == 6) {
+			gl.glLineWidth(1.7f);
+		} else if(roadType == 8) {
+			gl.glLineWidth(1.7f);
 		} else {
-			
 			gl.glLineWidth(1.5f);
+		}
+		
+		
+		
+		
+//		if(roadType == 1) {
+//			gl.glLineWidth(5f);
+//			
+//		} else if(roadType == 2) {
+//			gl.glLineWidth(3f);
+//			
+//		} else if(roadType < 5) {
+//			gl.glLineWidth(2f);
+//			
+//		} else if(roadType < 8) {
+//			gl.glLineWidth(1.7f);
+//			
+//		} else {
+//			
+//			gl.glLineWidth(1.5f);
+//		}
+	}
+	
+	public boolean hasCenterLine(Edge e) {
+		int roadType = e.getTyp();
+		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
+		
+		if(roadType == 1) {
+			return true;
+		} else if(roadType == 2) {
+			return true;
+		} else if(roadType == 3) {
+			return true;
+		} else if(roadType == 5) {
+			if(zoomIndex > 11) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if(roadType < 8) {
+			return false;
+		} else {
+			return false;
 		}
 	}
 	
@@ -59,8 +106,16 @@ public class GraphicsPrefs {
 			gl.glLineWidth(1.4f);
 		} else if(roadType == 3) {
 			gl.glLineWidth(0.8f);
+		} else if(roadType == 5) {
+			if(ZoomLevel.getInstance().getZoomIndex() > 11) {
+				gl.glLineWidth(1.4f);
+			}
+			gl.glLineWidth(1.3f);
+		} else if(roadType < 8) {
+			gl.glLineWidth(0.8f);
 		} else {
-			gl.glLineWidth(0f);
+			gl.glLineWidth(1f);
+			System.out.println("wat");
 		}
 		
 	}
@@ -80,11 +135,13 @@ public class GraphicsPrefs {
 			g = 105f;
 			b = 30f;
 		}
-		
+
 		else if( e.getTyp() <6) {
-			
+			r = 131f;
+			g = 139f;
+			b = 131f;
 		}
-		
+
 		else if( e.getTyp() < 8) {
 			r = 131f;
 			g = 139f;
@@ -112,6 +169,14 @@ public class GraphicsPrefs {
 			r = 255;
 			g = 165;
 			b = 0;
+		} else if( e.getTyp() == 4) {
+			r = 255;
+			g = 255;
+			b = 255;
+		} else if( e.getTyp() < 8) {
+			r = 255;
+			g = 255;
+			b = 255;
 		}
 
 		return new float[] {r,g,b};

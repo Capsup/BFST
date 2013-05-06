@@ -2,7 +2,6 @@ package MapDraw;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -19,7 +18,6 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import DataProcessing.Interval;
@@ -41,10 +39,14 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private Point curMousePos;
 	private GraphicsPrefs gp;
 	
-	private int tick;
-	private int maximumFPS = 60;
+	private Iterable<Edge> routeToDraw; 
+
 	
 	private long lastTime;
+
+	private int i;
+	
+	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable; }
 	
 	public double getWidthFactor()
 	{
@@ -88,13 +90,17 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
 		//The FPS animator lets us put a limit to the refresh rate of the animator.
-		FPSAnimator animator = new FPSAnimator(panel, 60);
+		FPSAnimator animator = new FPSAnimator(panel, Settings.fps);
 		animator.start();
 
 		width = 800;
 		height = 600;
 
 		ZoomLevel.getInstance().setZoomLevel(0);
+		
+		
+		//Getting route!
+		new Route.GetRoute(this, q, 555720, 525710).start();
 	}
 
 	//OpenGL Events
@@ -132,7 +138,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		//if(tick % (60/maximumFPS) == 0) 
 		long curTime = System.currentTimeMillis();
-		if( curTime - lastTime > ( 1000 / 60 ) )
+		if( curTime - lastTime > ( 1000 / Settings.fps ) )
 		{
 
 			//Get an OpenGL v2 context.
@@ -154,7 +160,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			gl2.glEnable(GL.GL_LINE_SMOOTH);
 			gl2.glEnable(GL.GL_BLEND);
 			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);//GL.GL_DONT_CARE);
+			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
 
 			drawLines(gl2);
 			lastTime = curTime;
@@ -169,31 +175,45 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		int maxType = gp.getMaxTypeAtCurrentZoom();
 		
 		for(int i=1; i<maxType; i++) {
-			Edge testEdge = getDrawEdges(i).get(0);
-			gp.setLineWidth(testEdge);
-			float[] colors = gp.getLineColor(testEdge);
-			
-			gl2.glBegin( GL.GL_LINES );
-			for(Edge e: getDrawEdges(i)) {
-				drawLine(e, gl2, colors[0], colors[1], colors[2]);
+			if(!getDrawEdges(i).isEmpty()) {
+				Edge testEdge = getDrawEdges(i).get(0);
+				gp.setLineWidth(testEdge);
+				float[] colors = gp.getLineColor(testEdge);
+				
+				gl2.glBegin( GL.GL_LINES );
+				for(Edge e: getDrawEdges(i)) {
+					drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				}
+				gl2.glEnd();
 			}
-			gl2.glEnd();
 		}
 		
-		for(int i=1; i<4; i++) {
-			Edge testEdge = getDrawEdges(i).get(0);
-			gp.setCenterLineWidth(testEdge);
-			float[] colors = gp.getLineCenterColor(testEdge);
-			gl2.glBegin(GL.GL_LINES);
-			
-			for(Edge e: getDrawEdges(i)) {
-				drawLine(e, gl2, colors[0], colors[1], colors[2]);
+		for(int i=1; i<6; i++) {
+			if(!getDrawEdges(i).isEmpty() && i<maxType) {
+				Edge testEdge = getDrawEdges(i).get(0);
+				if(gp.hasCenterLine(testEdge)) {
+					gp.setCenterLineWidth(testEdge);
+					float[] colors = gp.getLineCenterColor(testEdge);
+					gl2.glBegin(GL.GL_LINES);
+					
+					for(Edge e: getDrawEdges(i)) {
+						drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					}
+					gl2.glEnd();
+				}
 			}
-			gl2.glEnd();
+		
+			
+			if(routeToDraw != null) {
+				drawRoute(gl2, routeToDraw);
+			}
+			
 		}
+		System.out.println(i);
+		i = 0;
 	}
 	
-	public void drawRoute(GL2 gl2, LinkedList<Edge> edges) {
+	public void drawRoute(GL2 gl2, Iterable<Edge> edges) {
 		gp.setLineWidth(3f);
 		float[] colors = new float[] {0,0,255};
 		gl2.glBegin(GL.GL_LINES);
@@ -224,23 +244,24 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private LinkedList<Edge> getDrawEdges(int type)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
-		double xs = (zoomFactor + 20 )* -1000;
-		double xe = (((zoomFactor - 20 ) - width*getWidthFactor()/2)*-1000);
+		double xs = (zoomFactor)* -1000 + 1 * -1000;
+		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 1 * -1000;
 
-		/*
-		zoomFactor = ((Translation.getInstance().getTranslation().getY()) - (height-(height*getHeightFactor())/2)/2);
-		double ys = zoomFactor * -1000;
-		double ye = ((zoomFactor - height*getHeightFactor()/2)*-1000);
-		*/
+		
+		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
+		double ys = zoomFactor * 1000 - 1 * 1000;
+		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 1 * 1000;
+		
 		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
-	     Interval<Double> yAxis = new Interval<Double>(0.0, 10000000.0);
+	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
+	     
 	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
 	     return q.queryEdges(rect, type);
 	}
 	
 	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
 	{		
-		
+		i++;
 		gl2.glColor3f( (r/255), (g/255), (b/255) );
 		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
 		gl2.glColor3f( (r/255), (g/255), (b/255) );
