@@ -23,10 +23,8 @@ public class Query{
 		
 		for(int i = 0; i < lastInterval.length; i++)
 			lastInterval[i] = interval;
-
 	}
 	
-
 
 	public Graph getGraph(){ return nodes; }
 

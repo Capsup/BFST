@@ -42,9 +42,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private Iterable<Edge> routeToDraw; 
 
 	
-	private int tick;
-	private int maximumFPS = 60;
-	
 	private long lastTime;
 
 	private int i;
@@ -93,7 +90,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
 		//The FPS animator lets us put a limit to the refresh rate of the animator.
-		FPSAnimator animator = new FPSAnimator(panel, 60);
+		FPSAnimator animator = new FPSAnimator(panel, Settings.fps);
 		animator.start();
 
 		width = 800;
@@ -141,7 +138,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		//if(tick % (60/maximumFPS) == 0) 
 		long curTime = System.currentTimeMillis();
-		if( curTime - lastTime > ( 1000 / 30 ) )
+		if( curTime - lastTime > ( 1000 / Settings.fps ) )
 		{
 
 			//Get an OpenGL v2 context.

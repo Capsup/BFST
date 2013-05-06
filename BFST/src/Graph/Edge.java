@@ -49,14 +49,9 @@ public class Edge// implements Comparable<Edge>
 
 
 	public boolean contains(Interval2D<Double> i){
-
-		double xlow = i.intervalX().low();
-		double xhigh = i.intervalX().high();
-
-		double ylow = i.intervalY().low();
-		double yhigh = i.intervalY().high();
-
-		return ((xlow <= xFrom) && (xhigh >= xTo)) && ((ylow <= yFrom) && (yhigh >= yTo));
+		return 
+				((i.intervalX().low() <= xFrom) && (i.intervalX().high() >= xTo)) && 
+				((i.intervalY().low() <= yFrom) && (i.intervalY().high() >= yTo));
 	}
 
 
