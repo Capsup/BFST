@@ -39,7 +39,7 @@ public class Query{
 			
 			for(Thread th : t)
 				th.join();
-
+ 
 			edges = XMLParser.getEdgeList();
 			nodes = new Graph(675903, edges);
 

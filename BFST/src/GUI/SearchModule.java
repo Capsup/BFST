@@ -18,6 +18,8 @@ import javax.swing.JTextField;
 
 import org.ietf.jgss.Oid;
 
+import XMLParser.AddressParser;
+import XMLParser.AddressParser.NaughtyException;
 
 public class SearchModule extends JPanel{
 
@@ -26,6 +28,8 @@ public class SearchModule extends JPanel{
 	private JPanel toPanel;
 	private JButton button;
 	
+	private JTextField fromTextField;
+	private JTextField toTextField;
 	
 	/*
 	 * The search module is the combined search panels "from" and "to"
@@ -41,8 +45,55 @@ public class SearchModule extends JPanel{
 		{
 			switch( event.getActionCommand() )
 			{
+				case "Search":
+					
+					String result = "";
+					
+					if(!showDestination)
+					{
+						String[] parsedAdress = new String[1];
+						
+						try {
+							parsedAdress = AddressParser.getInstance().parseAddress(fromTextField.getText());
+						} catch (NaughtyException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						int searchResultIndex = AddressParser.getInstance().search(parsedAdress[0]);
+						
+						System.out.println(searchResultIndex);
+						
+						if(searchResultIndex >= 0)
+							System.out.println(AddressParser.getInstance().getAddressArray()[searchResultIndex]);
+					}
+					else
+					{
+						String[] parsedAdressFrom = new String[1];
+						String[] parsedAdressTo = new String[1];
+						
+						try {
+							parsedAdressFrom = AddressParser.getInstance().parseAddress(fromTextField.getText());
+							parsedAdressTo = AddressParser.getInstance().parseAddress(toTextField.getText());
+						} catch (NaughtyException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						int searchResultIndexFrom = AddressParser.getInstance().search(parsedAdressFrom[0]);
+						int searchResultIndexTo = AddressParser.getInstance().search(parsedAdressTo[0]);
+						
+						if(searchResultIndexFrom >= 0)
+							System.out.println("From: "+AddressParser.getInstance().getAddressArray()[searchResultIndexFrom]);
+						
+						if(searchResultIndexTo >= 0)
+							System.out.println("To: "+AddressParser.getInstance().getAddressArray()[searchResultIndexTo]);
+					}
+					
+					break;
 				case "Open":
 					toggleDestination();
+					break;
 			}
 		}
 	}
@@ -56,7 +107,14 @@ public class SearchModule extends JPanel{
 		JPanel fromPanel = new JPanel(new BorderLayout());
 		
 		JLabel fromLabel = new JLabel("From:");
-		JPanel fromSearchPanel = new SearchPanel();
+		SearchPanel fromSearchPanel = new SearchPanel();
+		fromSearchPanel.getButton().setActionCommand("Search");
+		fromTextField = fromSearchPanel.getTextField();
+		
+		//Button Listener
+		ButtonListener listener = new ButtonListener();
+		
+		fromSearchPanel.getButton().addActionListener(listener);
 		
 		fromPanel.add(fromLabel, BorderLayout.NORTH);
 		fromPanel.add(fromSearchPanel, BorderLayout.CENTER);
@@ -89,8 +147,6 @@ public class SearchModule extends JPanel{
 		button.setHorizontalTextPosition(JButton.CENTER);
 		button.setText("Destination Search..");
 		
-		ButtonListener listener = new ButtonListener();
-		
 		button.addActionListener(listener);
 		button.setActionCommand("Open");
 		
@@ -101,6 +157,7 @@ public class SearchModule extends JPanel{
 		add(headerLabel);
 		add(fromPanel);
 		add(destinationPanel);
+		
 		/*
 		try {
 			button = new GUIButton(ImageIO.read( GUIButton.class.getResource( "/images/Normal.png" ))
@@ -148,9 +205,9 @@ public class SearchModule extends JPanel{
 	
 	void showDestination()
 	{	
-		JTextField searchField = new JTextField("Not Functional", 20);
+		toTextField = new JTextField("I wish to go to...", 20);
 		
-		toPanel.add(searchField, BorderLayout.WEST);
+		toPanel.add(toTextField, BorderLayout.WEST);
 		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -161,7 +218,6 @@ public class SearchModule extends JPanel{
 		destinationPanel.add(buttonPanel, BorderLayout.CENTER);
 		
 		button.setText("Hide..");
-		
 	}
 	
 	void hideDestination()

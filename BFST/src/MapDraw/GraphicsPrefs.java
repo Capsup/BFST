@@ -4,18 +4,89 @@ import javax.media.opengl.GL2;
 
 import Graph.Edge;
 
+import java.awt.print.Printable;
+import java.util.ArrayList;
+
 public class GraphicsPrefs {
 	
 	GL2 gl;
 	
+	private int[] roadTypeToZoomLevel = new int[]{
+			0,	//0
+			0,	//1
+			0,	//2
+			0,	//3
+			0,	//4
+			6,	//5
+			12,	//6
+			15,	//7
+			16,	//8
+			16,	//9
+			16,	//10
+			16,	//11
+			16,	//12
+			16,	//13
+			16,	//14
+			16,	//15
+			16,	//16
+			16,	//17
+			16,	//18
+			16,	//19
+			16,	//20
+			16,	//21
+			16,	//22
+			16,	//23
+			16,	//24
+			16,	//25
+			16,	//26
+			16,	//27
+			16,	//28
+			16,	//29
+			0,	//30
+			0,	//31
+			16,	//32
+			16,	//33
+			16,	//34
+			16,	//35
+			16,	//36
+			16,	//37
+			16,	//38
+			16,	//39
+			0,	//40
+			0,	//41
+	};
+	
+	
 	public GraphicsPrefs(GL2 gl) {
 		this.gl = gl;
+		
+		for(int i=0; i<roadTypeToZoomLevel.length; i++)
+			roadTypeToZoomLevel[i] -= 1;
 	}
 	
-	public int[] getTypesAtCurrentZoom() {
-		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
+	public int[] getTypesAtCurrentZoom(double currentZoom) {
 		
-		if(zoomIndex < 3)
+		int zoomIndex = ZoomLevel.getInstance().findIndex(currentZoom);
+		
+		//System.out.println(zoomIndex);
+		
+		ArrayList<Integer> intList = new ArrayList<Integer>();
+		
+		for(int i=0; i<roadTypeToZoomLevel.length; i++)
+		{
+			if(roadTypeToZoomLevel[i] <= zoomIndex)
+				intList.add(i);
+		}
+		
+		int[] intArray = new int[intList.size()];
+		
+		for(int i=0; i<intArray.length; i++)
+			intArray[i] = intList.get(i); 
+		
+		return intArray;
+		
+		
+		/*if(zoomIndex < 3)
 			return new int[] {0,1,2,3,4,30,31,40,41};
 		else if(zoomIndex < 6)
 			return new int[] {0,1,2,3,4,30,31,40,41};
@@ -31,7 +102,7 @@ public class GraphicsPrefs {
 				a[i] = i;
 			}
 			return a;
-		}
+		}*/
 	}
 	
 	public int getMaxTypeAtCurrentZoom() {
@@ -206,5 +277,11 @@ public class GraphicsPrefs {
 		}
 
 		return new float[] {r,g,b};
+	}
+	
+	public int getAllowedZoomIndex(int roadType)
+	{
+		
+		return roadTypeToZoomLevel[roadType];
 	}
 }
