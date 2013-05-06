@@ -32,6 +32,11 @@ public class ZoomLevel extends Observable
 		return zoomLevels[currentZoomLevelIndex];
 	}
 	
+	public double getZoomLevel(int index)
+	{
+		return zoomLevels[index];
+	}
+	
 	public int getZoomIndex()
 	{
 		return currentZoomLevelIndex;
@@ -67,9 +72,12 @@ public class ZoomLevel extends Observable
 	{
 		for(int i=0; i<zoomLevels.length; i++)
 		{
-			if(zoomLevel >= zoomLevels[i])
+			if(i == zoomLevels.length-1)
+				return i;
+			
+			if(zoomLevel > zoomLevels[i])
 				return i-1;
 		}
-		return -1;
+		return 0;
 	}
 }

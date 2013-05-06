@@ -146,7 +146,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		
 		
 		//Getting route!
-		new Route.GetRoute(this, q, 555720, 525710).start();
+		new Route.GetRoute(this, q, 355720, 425710).start();
 	}
 
 	//OpenGL Events
@@ -192,7 +192,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 			//Clear the color buffer, setting all pixel's color on the screen to the specified color.
 			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
-
+			
 			//Load the identity matrix, effectively removing all transformations.
 			gl2.glLoadIdentity();
 
@@ -204,23 +204,28 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 			// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
 			gl2.glEnable(GL.GL_LINE_SMOOTH);
-			gl2.glEnable(GL.GL_BLEND);
 			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+			gl2.glEnable( GL.GL_BLEND );
 			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
-
+			
 			drawLines(gl2);
 			
 			animateZoom();
 			
 			lastTime = curTime;
 		}
-		
-
-
 	}
 	
 	private void drawLines(GL2 gl2) {
 		int[] roadTypesToDraw = gp.getTypesAtCurrentZoom(currentZoomLevel);
+		
+		double zoomedOutValue;
+		double zoomedInValue;
+		double difference;
+		
+		double currentRelativeZoom;
+		
+		float opacity;
 		
 		for(int i=1; i<roadTypesToDraw.length; i++) {
 			if(!getDrawEdges(roadTypesToDraw[i]).isEmpty()) {
@@ -228,9 +233,28 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 				gp.setLineWidth(testEdge);
 				float[] colors = gp.getLineColor(testEdge);
 				
+				opacity = -1;
+				
+				//Calculate if the line should fade in
+				if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
+				{
+					zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
+					zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
+					difference = zoomedOutValue - zoomedInValue;
+					
+					currentRelativeZoom = zoomedOutValue-currentZoomLevel;
+					
+					opacity = (float)currentRelativeZoom/(float)difference;
+				}
+				
 				gl2.glBegin( GL.GL_LINES );
 				for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
-					drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					
+					if(opacity < 0)
+						drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					else 
+						drawLine(e, gl2, colors[0], colors[1], colors[2], opacity);
+						
 				}
 				gl2.glEnd();
 			}
@@ -242,10 +266,29 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 				if(gp.hasCenterLine(testEdge)) {
 					gp.setCenterLineWidth(testEdge);
 					float[] colors = gp.getLineCenterColor(testEdge);
+					
+					opacity = -1;
+					
+					//Calculate if the line should fade in
+					if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
+					{
+						zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
+						zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
+						difference = zoomedOutValue - zoomedInValue;
+						
+						currentRelativeZoom = zoomedOutValue-currentZoomLevel;
+						
+						opacity = (float)currentRelativeZoom/(float)difference;
+					}
+					
 					gl2.glBegin(GL.GL_LINES);
 					
 					for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
-						drawLine(e, gl2, colors[0], colors[1], colors[2]);
+						
+						if(opacity < 0)
+							drawLine(e, gl2, colors[0], colors[1], colors[2]);
+						else 
+							drawLine(e, gl2, colors[0], colors[1], colors[2], opacity);
 					}
 					gl2.glEnd();
 				}
@@ -295,7 +338,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		double xs = (zoomFactor)* -1000 + 1 * -1000;
 		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 1 * -1000;
 
-		
 		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
 		double ys = zoomFactor * 1000 - 1 * 1000;
 		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 1 * 1000;
@@ -315,7 +357,16 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glColor3f( (r/255), (g/255), (b/255) );
 		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
 	}
-
+	
+	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b, float a)
+	{		
+		i++;
+		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
+		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
+		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
+		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
+	}
+	
 	@Override
 	public void dispose( GLAutoDrawable arg0 )
 	{
@@ -407,7 +458,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			ZoomLevel.getInstance().zoomOut();
 		}
 		
-		System.out.println("Zoomlevel: " + (ZoomLevel.getInstance().getZoomIndex()) + "/30");
+		//System.out.println("Zoomlevel: " + (ZoomLevel.getInstance().getZoomIndex()) + "/30");
 
 		// width += -1 * e.getUnitsToScroll();
 		// height += -1 * e.getUnitsToScroll();
