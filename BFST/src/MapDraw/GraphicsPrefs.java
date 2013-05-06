@@ -12,6 +12,28 @@ public class GraphicsPrefs {
 		this.gl = gl;
 	}
 	
+	public int[] getTypesAtCurrentZoom() {
+		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
+		
+		if(zoomIndex < 3)
+			return new int[] {0,1,2,3,4,30,31,40,41};
+		else if(zoomIndex < 6)
+			return new int[] {0,1,2,3,4,30,31,40,41};
+		else if(zoomIndex < 12)
+			return new int[] {0,1,2,3,4,5,30,31,40,41};
+		else if(zoomIndex < 15)
+			return new int[] {0,1,2,3,4,5,6,30,31,40,41};
+		else if(zoomIndex < 16)
+			return new int[] {0,1,2,3,4,5,6,7,30,31,40,41};
+		else {
+			int[] a = new int[100];
+			for(int i=0; i<42; i++) {
+				a[i] = i;
+			}
+			return a;
+		}
+	}
+	
 	public int getMaxTypeAtCurrentZoom() {
 		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
 		
@@ -27,13 +49,15 @@ public class GraphicsPrefs {
 			return 8;
 		else
 			return 42;
+		
+		//return 100;
 	}
 	
 	public void setLineWidth(Edge e) {
 		int roadType = e.getTyp();
 		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
 		
-		if(roadType == 1) {
+		if(roadType == 1 || roadType == 31 || roadType == 41) {
 			gl.glLineWidth(4f);
 		} else if(roadType == 2) {
 			gl.glLineWidth(3f);
@@ -78,7 +102,7 @@ public class GraphicsPrefs {
 		int roadType = e.getTyp();
 		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
 		
-		if(roadType == 1) {
+		if(roadType == 1 || roadType == 31 || roadType == 41) {
 			return true;
 		} else if(roadType == 2) {
 			return true;
@@ -100,7 +124,7 @@ public class GraphicsPrefs {
 	public void setCenterLineWidth(Edge e) {
 		int roadType = e.getTyp();
 		
-		if(roadType == 1) {
+		if(roadType == 1 || roadType == 31 || roadType == 41) {
 			gl.glLineWidth(1.4f);
 		} else if(roadType == 2) {
 			gl.glLineWidth(1.4f);
@@ -126,29 +150,30 @@ public class GraphicsPrefs {
 	
 	public float[] getLineColor(Edge e) {
 		float r=0, g=0, b=0;
+		int roadType = e.getTyp();
 		
-		if( e.getTyp() == 1 ) 
+		if( roadType == 1 || roadType == 31 || roadType == 41 ) 
 			r = 255f;
 		
-		else if( e.getTyp() < 5) {
+		else if( roadType < 5) {
 			r = 210f;
 			g = 105f;
 			b = 30f;
 		}
 
-		else if( e.getTyp() <6) {
+		else if( roadType < 6) {
 			r = 131f;
 			g = 139f;
 			b = 131f;
 		}
 
-		else if( e.getTyp() < 8) {
+		else if( roadType < 8) {
 			r = 131f;
 			g = 139f;
 			b = 131f;
 		}
 
-		else if( e.getTyp() == 8 ) 
+		else if( roadType == 8 ) 
 			g = 255f;
 
 		return new float[] {r,g,b};
@@ -156,24 +181,25 @@ public class GraphicsPrefs {
 
 	public float[] getLineCenterColor(Edge e) {
 		float r=0, g=0, b=0;
+		int roadType = e.getTyp();
 
-		if( e.getTyp() == 1 ) {
+		if( roadType == 1 || roadType == 31 || roadType == 41 ) {
 			r = 255;
 			g = 215;
 			b = 0;
-		} else if( e.getTyp() == 2) {
+		} else if( roadType == 2) {
 			r = 255;
 			g = 165;
 			b = 0;
-		} else if( e.getTyp() == 3) {
+		} else if( roadType == 3) {
 			r = 255;
 			g = 165;
 			b = 0;
-		} else if( e.getTyp() == 4) {
+		} else if( roadType == 4) {
 			r = 255;
 			g = 255;
 			b = 255;
-		} else if( e.getTyp() < 8) {
+		} else if( roadType < 8) {
 			r = 255;
 			g = 255;
 			b = 255;

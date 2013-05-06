@@ -30,21 +30,20 @@ public class MenuPanel extends JPanel
 		JPanel searchPanel = new SearchModule();
 		searchPanel.setMaximumSize(searchPanel.getPreferredSize());
 		
-		//Zoom Panel
-		JPanel zoomPanel = new ZoomPanel();
-		zoomPanel.setMaximumSize(zoomPanel.getPreferredSize());
+		//Navigation Panel
+		JPanel navPanel = new NavigationPanel();
+		navPanel.setMaximumSize(navPanel.getPreferredSize());
 		
+		/*
 		//Translation Panel
 		JPanel translationPanel = new TranslationPanel();
 		translationPanel.setMaximumSize(translationPanel.getPreferredSize());
-		
+		*/
 		//Add the panels, with vertical glue, in order to have a nice look
 		add(Box.createVerticalGlue());
 		add(searchPanel);
 		add(Box.createVerticalGlue());
-		add(zoomPanel);
-		add(Box.createVerticalGlue());
-		add(translationPanel);
+		add(navPanel);
 		add(Box.createVerticalGlue());
 	}
 }
