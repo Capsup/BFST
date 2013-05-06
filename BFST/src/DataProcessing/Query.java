@@ -35,7 +35,6 @@ public class Query{
 			for(int i = 0; i < 41; i++){
 				t[i] = new Thread(new XMLParser("kdv_unload_" + (i+1) + ".xml"));
 				t[i].start();
-				//t[i].join();
 			}
 			
 			for(Thread th : t)
