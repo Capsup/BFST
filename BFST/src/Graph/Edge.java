@@ -12,17 +12,16 @@ public class Edge// implements Comparable<Edge>
 	private final int id;
 	private final int v;
 	private final int w;
-	private final double weight;
 
-	private int typ;
-	private double xTo, yTo, xFrom, yFrom;
+	private int typ; //, zip, speedLimit;
+	private double xTo, yTo, xFrom, yFrom, driveTime, length;
+	//private String roadName, oneWay;
 
-	public Edge( int v, int w, double weight, ArrayList<String> s )
+	public Edge( int v, int w, ArrayList<String> s )
 	{
 		this.id = id_count++;
 		this.v = v;
 		this.w = w;
-		this.weight = weight;
 		init(s);
 	}
 
@@ -31,11 +30,17 @@ public class Edge// implements Comparable<Edge>
 		this.id = id_count++;
 		this.v = v;
 		this.w = w;
-		this.weight = weight;
 	}
 
 	public int getId(){ return id; }
-	public double weight(){ return weight; }
+	public double weight(){
+		
+		if(Route.Settings.routeProfile() == Route.Settings.fastest_route)
+			return driveTime;
+		else
+			return length; 
+		}
+	
 	public int either(){ return v; }
 	public int other(int ve){ return ve == w ? v : w ; }
 
@@ -44,7 +49,13 @@ public class Edge// implements Comparable<Edge>
 		this.yFrom = Double.parseDouble(s.get(1));
 		this.xTo = Double.parseDouble(s.get(3));
 		this.yTo = Double.parseDouble(s.get(4));
+		this.length = Double.parseDouble(s.get(6));
 		this.typ = Integer.parseInt(s.get(7));
+		//this.roadName = s.get(8);
+		//this.zip = Integer.parseInt(s.get(9));
+		//this.speedLimit = Integer.parseInt(s.get(10));
+		this.driveTime = Double.parseDouble(s.get(11));
+		//this.oneWay = s.get(12);
 	}
 
 

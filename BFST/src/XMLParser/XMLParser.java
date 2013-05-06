@@ -19,18 +19,27 @@ import Graph.Node;
 
 
 
-public class XMLParser
-{
+public class XMLParser implements Runnable{
 	private String[] sNames;
 	private String[] sData;
 	private XMLEventReader input;
 	private String filePath, sPath;
+	private static ArrayList<LinkedList<Edge>> list = new ArrayList<LinkedList<Edge>>();
+
+	public static ArrayList<LinkedList<Edge>> getEdgeList(){
+		return list;
+	}
+	
+	static{
+		for(int i = 0; i < 100; i++)
+			list.add(new LinkedList<Edge>());
+	}
 
 
 	public XMLParser( String sPath )
 	{
 		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
-		
+		System.out.println(sPath);
 		try
 		{
 			loadFile( sPath );
@@ -60,14 +69,14 @@ public class XMLParser
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ArrayList<Node> getNodesForXMLCreator() throws Exception{
 		ArrayList<String> temp = new ArrayList<String>();
 		ArrayList<Node> list = new ArrayList<Node>();
 
 		while( input.hasNext() )
 		{
-			
+
 			XMLEvent event = input.nextEvent();
 
 			if( event.isStartDocument() || event.isEndDocument() )
@@ -93,7 +102,7 @@ public class XMLParser
 				}
 			}
 		}
-		
+
 		return list;
 
 	}
@@ -105,7 +114,7 @@ public class XMLParser
 
 		while( input.hasNext() )
 		{
-			
+
 			XMLEvent event = input.nextEvent();
 
 			if( event.isStartDocument() || event.isEndDocument() )
@@ -132,75 +141,88 @@ public class XMLParser
 				}
 			}
 		}
-		
+
 		return g;
 
 	}*/
 
-	public ArrayList<LinkedList<Edge>> getEdges() throws Exception
+	public void run()
 	{
-
-		ArrayList<LinkedList<Edge>> list = new ArrayList<LinkedList<Edge>>();
-		
-		for(int i = 0; i < 100; i++)
-			list.add(new LinkedList<Edge>());
-		
-		
-		ArrayList<String> temp = new ArrayList<String>();
-		int f = 0, t = 0;
-		double weight = 1;
-		String type = "";
-		while( input.hasNext() )
-		{
-			XMLEvent event = input.nextEvent();
-
-			if( event.isStartDocument() || event.isEndDocument() )
-				continue;
-
-			if( event.isStartElement() )
+		System.out.println("ok");
+		try{
+			ArrayList<String> temp = new ArrayList<String>();
+			int f = 0, t = 0;
+			String type = "";
+			while( input.hasNext() )
 			{
-				StartElement element = event.asStartElement();
-				String name = element.getName().getLocalPart();
+				XMLEvent event = input.nextEvent();
 
-				if( name.equals( "g" ) )
+				if( event.isStartDocument() || event.isEndDocument() )
 					continue;
-				if( name.equals( "x" ) ) //x
-					temp.add(input.nextEvent().asCharacters().getData());
-				else if( name.equals( "y" ) ) //y
-					temp.add(input.nextEvent().asCharacters().getData());
-				else if( name.equals( "f" ) ){ //From node
-					f = Integer.parseInt(input.nextEvent().asCharacters().getData());
-					temp.add(f + "");
+
+				if( event.isStartElement() )
+				{
+					StartElement element = event.asStartElement();
+					String name = element.getName().getLocalPart();
+
+					if( name.equals( "g" ) )
+						continue;
+					if( name.equals( "x" ) ) //x
+						temp.add(input.nextEvent().asCharacters().getData());
+					else if( name.equals( "y" ) ) //y
+						temp.add(input.nextEvent().asCharacters().getData());
+					else if( name.equals( "f" ) ){ //From node
+						f = Integer.parseInt(input.nextEvent().asCharacters().getData());
+						temp.add(f + "");
+					}
+					else if( name.equals( "X" ) ) //X
+						temp.add(input.nextEvent().asCharacters().getData());
+					else if( name.equals( "Y" ) ) //Y
+						temp.add(input.nextEvent().asCharacters().getData());
+					else if( name.equals( "t" ) ){ //To node
+						t = Integer.parseInt(input.nextEvent().asCharacters().getData());
+						temp.add(t + "");
+					}
+					else if( name.equals( "l" ) ){ //length
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+					else if( name.equals( "ty" ) ){//Type
+						type = input.nextEvent().asCharacters().getData();
+						temp.add(type);
+					}
+
+					else if( name.equals( "rn" ) ){//Road name
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+
+					else if( name.equals( "zi" ) ){//Zipcode
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+
+					else if( name.equals( "sp" ) ){//Speed limit
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+
+					else if( name.equals( "dt" ) ){//Drive time
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+
+					else if( name.equals( "ow" ) ){//One way
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
 				}
-				else if( name.equals( "X" ) ) //X
-					temp.add(input.nextEvent().asCharacters().getData());
-				else if( name.equals( "Y" ) ) //Y
-					temp.add(input.nextEvent().asCharacters().getData());
-				else if( name.equals( "t" ) ){ //To node
-					t = Integer.parseInt(input.nextEvent().asCharacters().getData());
-					temp.add(t + "");
-				}
-				else if( name.equals( "l" ) ){ //length
-					weight = Double.parseDouble(input.nextEvent().asCharacters().getData());
-					temp.add(weight + "");
-				}
-				if( name.equals( "ty" ) ){//Type
-					type = input.nextEvent().asCharacters().getData();
-					temp.add(type);
+
+				if( event.isEndElement() )
+				{
+					EndElement element = event.asEndElement();
+
+					if(element.getName().getLocalPart().equals( "e" )){
+						list.get(Integer.parseInt(type)).add(new Edge(f, t, temp));
+						temp = new ArrayList<String>();
+					}
 				}
 			}
-
-			if( event.isEndElement() )
-			{
-				EndElement element = event.asEndElement();
-
-				if(element.getName().getLocalPart().equals( "e" )){
-					list.get(Integer.parseInt(type)).add(new Edge(f, t, weight, temp));
-					temp = new ArrayList<String>();
-				}
-			}
-		}
-		return list;
+		} catch(Exception e){}
 	}
 }
 

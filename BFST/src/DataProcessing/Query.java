@@ -11,29 +11,35 @@ public class Query{
 	private Graph nodes;
 	private static LinkedList<Edge>[] lastQuery = (LinkedList<Edge>[]) new LinkedList[100];
 	private static Interval2D<Double>[] lastInterval = (Interval2D<Double>[]) new Interval2D[100];
-	
+
 	static{
 		Interval2D<Double> interval = new Interval2D<Double>(
 				new Interval<Double>(new Double(0.0), new Double(70020050.98297)), 
 				new Interval<Double>(new Double(0.0), new Double(70500527.51786))
 				);
-		
+
 		for(int i = 0; i < lastQuery.length; i++)
 			lastQuery[i] = new LinkedList<Edge>();
-		
+
 		for(int i = 0; i < lastInterval.length; i++)
 			lastInterval[i] = interval;
 	}
-	
+
 
 	public Graph getGraph(){ return nodes; }
 
 	public Query(){
 		try {
-			XMLParser edge = new XMLParser("kdv_unload.xml");
-			edges = edge.getEdges();
-			edge = null;
+			Thread t = null;
+			for(int i = 1; i < 2; i++){
+				t = new Thread(new XMLParser("kdv_unload_" + i +".xml"));
+				t.start();
+				t.join();
+			}
+
+			edges = XMLParser.getEdgeList();
 			nodes = new Graph(675903, edges);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

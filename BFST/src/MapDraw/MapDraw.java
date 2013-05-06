@@ -209,7 +209,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			}
 			
 		}
-		System.out.println(i);
+		//System.out.println(i);
 		i = 0;
 	}
 	
