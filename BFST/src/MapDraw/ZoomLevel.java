@@ -62,4 +62,14 @@ public class ZoomLevel extends Observable
 		setChanged();
 		notifyObservers();
 	}
+	
+	public int findIndex(double zoomLevel)
+	{
+		for(int i=0; i<zoomLevels.length; i++)
+		{
+			if(zoomLevel >= zoomLevels[i])
+				return i-1;
+		}
+		return -1;
+	}
 }

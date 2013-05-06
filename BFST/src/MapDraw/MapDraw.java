@@ -39,6 +39,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private Point curMousePos;
 	private GraphicsPrefs gp;
 	
+	protected double currentZoomLevel = 0;
+	private double targetZoomLevel = 0;
+	
 	private Iterable<Edge> routeToDraw; 
 
 	
@@ -55,7 +58,49 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	public double getHeightFactor()
 	{
-		return ZoomLevel.getInstance().getZoomLevel();
+		return currentZoomLevel;
+	}
+	
+	public void animateZoom()
+	{
+		if(targetZoomLevel != ZoomLevel.getInstance().getZoomLevel()) {
+			targetZoomLevel = ZoomLevel.getInstance().getZoomLevel();
+			//zoomDifference = currentZoomLevel - targetZoomLevel;
+		}
+		
+		double increment = 0.1*Math.abs((targetZoomLevel-currentZoomLevel));
+		
+		if(increment < currentZoomLevel*0.01f)
+			increment = currentZoomLevel*0.01f;
+		/*
+		if(targetZoomLevel-currentZoomLevel<0 && targetZoomLevel-currentZoomLevel>-0.008*currentZoomLevel ||
+				targetZoomLevel-currentZoomLevel>0 && targetZoomLevel-currentZoomLevel<0.008*currentZoomLevel) {
+			currentZoomLevel = targetZoomLevel;
+		}*/
+		
+		if(targetZoomLevel > currentZoomLevel)
+		{
+			if(currentZoomLevel+increment < targetZoomLevel)
+				currentZoomLevel += increment;
+			else
+				currentZoomLevel = targetZoomLevel;
+		}
+		else if(targetZoomLevel < currentZoomLevel)
+		{
+			if(currentZoomLevel-increment > targetZoomLevel)
+				currentZoomLevel -= increment;
+			else
+				currentZoomLevel = targetZoomLevel;
+		}
+		
+		//return ZoomLevel.getInstance().getZoomLevel();
+//		if(zoomDifference < 0.05 && zoomDifference > 0 && zoomDifference > -0.05 && zoomDifference < 0 ) {
+//			currentZoomLevel = targetZoomLevel;
+//		} else if(currentZoomLevel > targetZoomLevel) {
+//			currentZoomLevel = currentZoomLevel - 0.0001;
+//		} else if (currentZoomLevel < targetZoomLevel) {
+//			currentZoomLevel = currentZoomLevel + 0.0001;
+//		}
 	}
 
 	public MapDraw()
@@ -163,6 +208,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
 
 			drawLines(gl2);
+			
+			animateZoom();
+			
 			lastTime = curTime;
 		}
 		
@@ -171,7 +219,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	}
 	
 	private void drawLines(GL2 gl2) {
-		int[] roadTypesToDraw = gp.getTypesAtCurrentZoom();
+		int[] roadTypesToDraw = gp.getTypesAtCurrentZoom(currentZoomLevel);
 		
 		for(int i=1; i<roadTypesToDraw.length; i++) {
 			if(!getDrawEdges(roadTypesToDraw[i]).isEmpty()) {
