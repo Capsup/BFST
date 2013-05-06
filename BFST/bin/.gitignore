@@ -1,8 +1,10 @@
 /MSTParse
 *.class
 /XMLParser
+/.gitignore
 /DataProcessing
 /GUI
 /Graph
-/Route
 /MapDraw
+/Route
+/files
