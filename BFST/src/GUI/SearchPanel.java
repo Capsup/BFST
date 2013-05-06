@@ -23,7 +23,7 @@ public class SearchPanel extends JPanel
 		setLayout(new BorderLayout());
 		
 		//Text
-		JLabel searchText = new JLabel("Search: ");
+		//JLabel searchText = new JLabel("Search: ");
 		
 		//Search Field <-- Insert SearchField class extending JTextField here
 		JTextField searchField = new JTextField("Not Functional", 20);
@@ -31,7 +31,7 @@ public class SearchPanel extends JPanel
 		
 		JButton goButton = new JButton("GO!");
 		
-		add(searchText, BorderLayout.WEST);
+		//add(searchText, BorderLayout.WEST);
 		add(searchField, BorderLayout.CENTER);
 		add(goButton, BorderLayout.EAST);
 	}
