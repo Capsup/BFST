@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -18,9 +19,13 @@ import javax.swing.JTextField;
 
 import org.ietf.jgss.Oid;
 
+import Graph.Edge;
 import MapDraw.MapDraw;
+import MapDraw.Translation;
+import MapDraw.ZoomLevel;
 import XMLParser.AddressParser;
 import XMLParser.AddressParser.NaughtyException;
+import java.awt.geom.Point2D;
 
 public class SearchModule extends JPanel{
 
@@ -40,6 +45,8 @@ public class SearchModule extends JPanel{
 	public SearchModule(MapDraw map)
 	{
 		this.map = map;
+		
+		AddressParser.getInstance();
 		
 		makeContent();
 	}
@@ -70,7 +77,17 @@ public class SearchModule extends JPanel{
 						//System.out.println("SearchResult: "+searchResult);
 						
 						if(searchResult >= 0)
-							System.out.println("Name result: "+AddressParser.getInstance().getRoads()[searchResult].getName());
+						{
+							Edge edge = AddressParser.getInstance().getRoads()[searchResult];
+							
+							fromTextField.setText(edge.getName());
+							
+							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
+									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
+							
+							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
+							ZoomLevel.getInstance().setZoomLevel(17);
+						}
 					}
 					else
 					{
@@ -96,25 +113,44 @@ public class SearchModule extends JPanel{
 						if(searchResultIndexFrom >= 0)
 						{
 							fromTextField.setText(AddressParser.getInstance().getRoads()[searchResultIndexFrom].getName());
-							
-							//System.out.println("From: "+AddressParser.getInstance().getRoads()[searchResultIndexFrom].getName());
-							//System.out.println("From: "+AddressParser.getInstance().getRoads()[searchResultIndexFrom].getFromIndex());
 						}
 						
 						if(searchResultIndexTo >= 0)
 						{
 							toTextField.setText(AddressParser.getInstance().getRoads()[searchResultIndexTo].getName());
-							
-							//System.out.println("To: "+AddressParser.getInstance().getRoads()[searchResultIndexTo].getName());
-							//System.out.println("To: "+AddressParser.getInstance().getRoads()[searchResultIndexTo].getToIndex());
 						}
 						
-						
-						//System.out.println(map);
-						
-						
 						if(searchResultIndexFrom >= 0 && searchResultIndexTo >= 0)
+						{
+							Edge edge1 = AddressParser.getInstance().getRoads()[searchResultIndexFrom];
+							Edge edge2 = AddressParser.getInstance().getRoads()[searchResultIndexTo];
+							
+							Point2D.Double tarPos1 = new Point2D.Double(-(edge1.getXFrom()/1000.0) + map.getMapWidth()/2
+									, edge1.getYFrom()/1000.0 - map.getMapHeight()/2);
+							
+							Point2D.Double tarPos2 = new Point2D.Double(-(edge2.getXFrom()/1000.0) + map.getMapWidth()/2
+									, edge2.getYFrom()/1000.0 - map.getMapHeight()/2);
+							
+							Point2D.Double tarPos = new Point2D.Double((tarPos2.x + tarPos1.x)/2, (tarPos2.y + tarPos1.y)/2);
+							
 							map.getRoute(AddressParser.getInstance().getRoads()[searchResultIndexFrom].getFromIndex(), AddressParser.getInstance().getRoads()[searchResultIndexTo].getToIndex());
+							
+							Point2D.Double difference = new Point2D.Double(Math.abs(tarPos2.x - tarPos1.x), Math.abs(tarPos2.y - tarPos1.y));
+							
+							double targetZoom;
+							
+							if(difference.x >= difference.y)
+							{
+								targetZoom = (difference.x/map.getMapWidth())*2;
+							}
+							else 
+							{
+								targetZoom = (difference.y/map.getMapHeight())*2;
+							}
+							
+							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
+							ZoomLevel.getInstance().setZoomLevel(ZoomLevel.getInstance().findIndex(targetZoom));
+						}
 					}
 					
 					break;

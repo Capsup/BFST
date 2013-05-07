@@ -36,19 +36,19 @@ public class TranslationPanel extends JPanel{
 			switch( event.getActionCommand() )
 			{
 				case "Up":
-					Translation.getInstance().translate(0, translation);
+					Translation.getInstance().manualTranslate(0, translation);
 				break;
 
 				case "Down":
-					Translation.getInstance().translate(0, -translation);
+					Translation.getInstance().manualTranslate(0, -translation);
 				break;
 
 				case "Right":
-					Translation.getInstance().translate(-translation, 0);
+					Translation.getInstance().manualTranslate(-translation, 0);
 				break;
 
 				case "Left":
-					Translation.getInstance().translate(translation, 0);
+					Translation.getInstance().manualTranslate(translation, 0);
 				break;
 			}
 		}

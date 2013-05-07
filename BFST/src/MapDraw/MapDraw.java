@@ -105,8 +105,50 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	public void animatePan()
 	{
-		System.out.println(Translation.getInstance().getTranslation());
+		Point2D.Double translation = Translation.getInstance().getTranslation();
+		Point2D.Double tarTranslation = Translation.getInstance().getTargetTranslation();
+		Point2D.Double deltaTranslation = new Point2D.Double();
 		
+		double xIncrement = (0.1*Math.abs(tarTranslation.x-translation.x));
+		double yIncrement = (0.1*Math.abs(tarTranslation.y-translation.y));
+		
+		if(xIncrement < width*0.1f*currentZoomLevel)
+			xIncrement = width*0.1f*currentZoomLevel;
+		
+		if(yIncrement < height*0.1f*currentZoomLevel)
+			yIncrement = height*0.1f*currentZoomLevel;
+		
+		if(tarTranslation.x > translation.x)
+		{
+			if(translation.x+xIncrement < tarTranslation.x)
+				deltaTranslation.x = xIncrement;
+			else
+				deltaTranslation.x = tarTranslation.x-translation.x;
+		}
+		else if(tarTranslation.x < translation.x)
+		{
+			if(translation.x-xIncrement > tarTranslation.x)
+				deltaTranslation.x = -xIncrement;
+			else
+				deltaTranslation.x = tarTranslation.x-translation.x;
+		}
+		
+		if(tarTranslation.y > translation.y)
+		{
+			if(translation.y+yIncrement < tarTranslation.y)
+				deltaTranslation.y = yIncrement;
+			else
+				deltaTranslation.y = tarTranslation.y-translation.y;
+		}
+		else if(tarTranslation.y < translation.y)
+		{
+			if(translation.y-yIncrement > tarTranslation.y)
+				deltaTranslation.y = -yIncrement;
+			else
+				deltaTranslation.y = tarTranslation.y-translation.y;
+		}
+		
+		Translation.getInstance().translate(deltaTranslation.x, deltaTranslation.y);
 	}
 
 	public MapDraw()
@@ -216,7 +258,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			drawLines(gl2);
 			
 			animateZoom();
-			//animatePan();
+			animatePan();
 			
 			lastTime = curTime;
 		}
@@ -401,7 +443,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
 		double xDiff = ( ( xPos - curMousePos.x ) * getWidthFactor() ) , yDiff = ( ( yPos - curMousePos.y ) * getHeightFactor() );
 		
-		Translation.getInstance().translate(xDiff, yDiff);
+		Translation.getInstance().manualTranslate(xDiff, yDiff);
 		
 		//Rebase the current mouse position, so that the next time we drag the mouse, we will have a new starting point to offset from.
 		curMousePos.x = xPos;
@@ -482,5 +524,15 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		System.out.println("Getting Route!");
 		new Route.GetRoute(this, q, from, to).start();
+	}
+	
+	public int getMapWidth()
+	{
+		return width;
+	}
+	
+	public int getMapHeight()
+	{
+		return height;
 	}
 }

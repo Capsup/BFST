@@ -6,6 +6,9 @@ public class Translation
 {
 	private static Translation instance;
 	private Point2D.Double translation;
+	private Point2D.Double targetTranslation;
+	
+	private boolean auto;
 	
 	/*
 	 * Translation is a singleton that allows us to set and access data about the translation of the map
@@ -34,6 +37,26 @@ public class Translation
 		return translation;
 	}
 	
+	public Point2D.Double getTargetTranslation()
+	{
+		//If the translation is null we initialize it before returning
+		if( targetTranslation == null )
+			targetTranslation = getTranslation();
+		
+		return targetTranslation;
+	}
+	
+	/*
+	 * change the translation by dx and dy respectively
+	 */
+	public void manualTranslate(double dx, double dy)
+	{
+		targetTranslation.x = translation.x+dx;
+		targetTranslation.y = translation.y+dy;
+		
+		translate(dx, dy);
+	}
+	
 	/*
 	 * change the translation by dx and dy respectively
 	 */
@@ -55,6 +78,15 @@ public class Translation
 	public void setTranslation(double x, double y)
 	{
 		//We set the translation of the map directly
-		translation = new Point2D.Double(x, y);
+		translation = new Point2D.Double(x, y);	
+	}
+	
+	/*
+	 * Set the translation of the map directly
+	 */
+	public void goToTranslation(double x, double y)
+	{
+		//We set the translation of the map directly
+		targetTranslation = new Point2D.Double(x, y);	
 	}
 }
