@@ -1,13 +1,22 @@
 package XMLParser;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import Graph.Edge;
+
 
 public class AddressParser
 {
 	private String[] arrayStrings;
 
 	private static AddressParser instance;
+	
+	private Edge[] roads;
 	
 	public class NaughtyException extends Exception
 	{
@@ -28,9 +37,36 @@ public class AddressParser
 			System.out.println( e1.getMessage() );
 		}
 		
-		System.out.println(compare("Hej", "Hej"));
-		System.out.println(compare("Hej", "Hej Med Dig"));
-		System.out.println(compare("Hej", "nej"));
+		ArrayList<List<Edge>> edgeList = XMLParser.getEdgeList();
+		ArrayList<Edge> list = new ArrayList<Edge>();
+		
+		//roads = new Edge[edgeList.size()][];
+		
+		for(int i=0; i<edgeList.size(); i++)
+		{
+			Iterator<Edge> it = edgeList.get(i).iterator();
+			
+			while(it.hasNext())
+			{
+				Edge edge = it.next();
+				
+				if(!edge.getName().equals(""))
+					list.add(edge);
+			}
+		}
+		
+		roads = new Edge[list.size()];
+		list.toArray(roads);
+		
+		//for(int i=0; i<roads.length; i++)
+			Arrays.sort(roads);
+		
+		System.out.println(roads[0].getName());
+			
+		//for(int i=0; i<roads.length; i++)
+			//System.out.println(roads[i].getName());
+		//System.out.println(edges.length);
+		
 	}
 	
 	public static AddressParser getInstance()
@@ -40,7 +76,7 @@ public class AddressParser
 		
 		return instance;
 	}
-
+/*
 	public static void main( String[] args )
 	{
 		String address = "Rued Langgaards Vej 75, 7. sal, 2630";
@@ -56,7 +92,7 @@ public class AddressParser
 			System.out.println( e.getMessage() );
 		}
 	}
-
+*/
 	public void loadData( String sPath ) throws NaughtyException
 	{
 		if( getClass().getResource( sPath ) != null )
@@ -180,38 +216,72 @@ public class AddressParser
 		return finalStrings;
 	}
 	
-	public int search(String string) 
+	/*
+	public int[] search(String string) 
 	{
+		int[] result = new int[2];
+		
+		result[0] = -1;
+		
+        for(int i=0; i<roads.length; i++)
+        {
+        	result[0] = search(string, roads[i]);
+        	
+        	if(result[0] >= 0)
+        	{
+        		result[1] = i;
+        		return result;
+        	}
+        }
+        
+        return new int[]{-1,-1};
+	}
+	*/
+       
+	public int[] search(String string) 
+	{
+		Edge[] a = roads;
+		
         int lo = 0;
-        int hi = arrayStrings.length - 1;
+        int hi = a.length - 1;
         
         int cutoff = string.length();
         
+        String string1 = string.substring(0, cutoff);
+    	
         while (lo <= hi) {
             
         	int mid = lo + (hi - lo) / 2;
         	
-        	String string1 = string.substring(0, cutoff);
         	String string2;
         	
-        	if(arrayStrings[mid].length() > cutoff)
-        		string2 = arrayStrings[mid].substring(0, cutoff);
+        	if(a[mid].getName().length() > cutoff)
+        		string2 = a[mid].getName().substring(0, cutoff);
         	else 
-        		string2 = arrayStrings[mid];
+        		string2 = a[mid].getName();
+        	
+        	System.out.println("String 1: "+string1);
+        	System.out.println("String 2: "+string2);
+        	
         	
             if      (compare(string1, string2) == -1) hi = mid - 1;
             else if (compare(string1, string2) == 1) lo = mid + 1;
-            else return mid;
+            else return new int[]{mid, a[mid].getTyp()};
         }
         
-        return -1;
+        return new int[]{-1,-1};
     }
 	
 	public int compare(String string1, String string2)
 	{
 		int length = string1.length();
 		int index = 0;
-		
+		/*
+		if(string1.length() > string2.length())
+			return 1;
+		else if(string2.length() > string1.length())
+			return -1;
+		*/
 		while(index < length && index < string2.length())
 		{
 			if((int)string1.charAt(index) > (int)string2.charAt(index))
@@ -229,8 +299,8 @@ public class AddressParser
 		return 0;
 	}
 	
-	public String[] getAddressArray()
+	public Edge[] getRoads()
 	{
-		return arrayStrings;
+		return roads;
 	}
 }

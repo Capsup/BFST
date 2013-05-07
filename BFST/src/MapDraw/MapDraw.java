@@ -103,6 +103,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 //			currentZoomLevel = currentZoomLevel + 0.0001;
 //		}
 	}
+	
+	public void animatePan()
+	{
+		System.out.println(Translation.getInstance().getTranslation());
+		
+	}
 
 	public MapDraw()
 	{
@@ -211,6 +217,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			drawLines(gl2);
 			
 			animateZoom();
+			//animatePan();
 			
 			lastTime = curTime;
 		}

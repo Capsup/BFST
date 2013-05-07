@@ -1,6 +1,8 @@
 package DataProcessing;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import Graph.Edge;
@@ -40,7 +42,7 @@ public class Query{
 			
 			for(Thread th : t)
 				th.join();
- 
+			
 			edges = XMLParser.getEdgeList();
 			nodes = new Graph(675903, edges);
 

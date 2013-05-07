@@ -1,18 +1,20 @@
 package Graph;
 
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 
-public class Edge// implements Comparable<Edge>
+public class Edge implements Comparable<Edge>
 {
 	private static int id_count = 0;
 	private final int id;
 	private final int v;
 	private final int w;
-
+	private String roadName;
+	
 	private int typ; //, zip, speedLimit;
 	private double xTo, yTo, xFrom, yFrom, driveTime, length;
 	//private String roadName, oneWay;
@@ -51,13 +53,12 @@ public class Edge// implements Comparable<Edge>
 		this.yTo = Double.parseDouble(s.get(4));
 		this.length = Double.parseDouble(s.get(6));
 		this.typ = Integer.parseInt(s.get(7));
-		//this.roadName = s.get(8);
+		this.roadName = s.get(8);
 		//this.zip = Integer.parseInt(s.get(9));
 		//this.speedLimit = Integer.parseInt(s.get(10));
 		this.driveTime = Double.parseDouble(s.get(11));
 		//this.oneWay = s.get(12);
 	}
-
 
 	public boolean contains(Interval2D<Double> i){
 		return 
@@ -65,10 +66,42 @@ public class Edge// implements Comparable<Edge>
 				((i.intervalY().low() <= yFrom) && (i.intervalY().high() >= yTo));
 	}
 
-
 	public double getXTo(){	return xTo; }
 	public double getYTo(){	return yTo; }
 	public double getXFrom(){ return xFrom;	}
 	public double getYFrom(){ return yFrom;	}
 	public int getTyp()	{ return typ; }
+	public String getName(){ return roadName; }
+
+	@Override
+	public int compareTo(Edge arg0) 
+	{
+		String string1 = roadName;
+		String string2 = arg0.getName();
+		
+		int length = string1.length();
+		int index = 0;
+		
+		if(string1.length() > string2.length())
+			return 1;
+		else if(string2.length() > string1.length())
+			return -1;
+		
+		while(index < length && index < string2.length())
+		{
+			if((int)string1.charAt(index) > (int)string2.charAt(index))
+			{
+				return 1;
+			}
+			else if((int)string1.charAt(index) < (int)string2.charAt(index))
+			{
+				return -1;
+			}
+			
+			index++;
+		}
+		
+		return 0;
+		
+	}
 }

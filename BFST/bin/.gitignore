@@ -1,14 +1,10 @@
 /MSTParse
 *.class
-<<<<<<< HEAD
-/XMLParser
 /.gitignore
 /DataProcessing
 /GUI
 /Graph
 /MapDraw
 /Route
-/files
-=======
->>>>>>> branch 'master' of https://github.com/Capsup/BFST.git
 /XMLCreator
+/XMLParser

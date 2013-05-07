@@ -60,15 +60,16 @@ public class SearchModule extends JPanel{
 							e.printStackTrace();
 						}
 						
-						int searchResultIndex = AddressParser.getInstance().search(parsedAdress[0]);
+						int[] searchResult = AddressParser.getInstance().search(parsedAdress[0]);
 						
-						System.out.println(searchResultIndex);
+						System.out.println("SearchResult: "+searchResult[0]);
 						
-						if(searchResultIndex >= 0)
-							System.out.println(AddressParser.getInstance().getAddressArray()[searchResultIndex]);
+						if(searchResult[0] >= 0)
+							System.out.println("Name result: "+AddressParser.getInstance().getRoads()[searchResult[0]].getName());
 					}
 					else
 					{
+						/*
 						String[] parsedAdressFrom = new String[1];
 						String[] parsedAdressTo = new String[1];
 						
@@ -88,6 +89,7 @@ public class SearchModule extends JPanel{
 						
 						if(searchResultIndexTo >= 0)
 							System.out.println("To: "+AddressParser.getInstance().getAddressArray()[searchResultIndexTo]);
+							*/
 					}
 					
 					break;
