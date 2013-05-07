@@ -12,22 +12,28 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout.Constraints;
 
+import MapDraw.MapDraw;
+
 public class MenuPanel extends JPanel
 {
+	private MapDraw map;
+	
 	/*
 	 * The Menu Panel contains everything to do with the menu
-	 */
-	public MenuPanel()
-	{
+	 */	
+	public MenuPanel(MapDraw mapPanel) {
+		
+		this.map = mapPanel;
+		
 		makeContent();
 	}
-	
+
 	void makeContent()
 	{
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		//Search Panel
-		JPanel searchPanel = new SearchModule();
+		JPanel searchPanel = new SearchModule(map);
 		searchPanel.setMaximumSize(searchPanel.getPreferredSize());
 		
 		//Navigation Panel

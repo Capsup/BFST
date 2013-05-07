@@ -61,7 +61,10 @@ public class AddressParser
 		//for(int i=0; i<roads.length; i++)
 			Arrays.sort(roads);
 		
-		System.out.println(roads[0].getName());
+		int randIndex = 500;
+		
+		for(int i=randIndex; i<(randIndex+25); i++)
+			System.out.println(roads[i].getName());
 			
 		//for(int i=0; i<roads.length; i++)
 			//System.out.println(roads[i].getName());
@@ -238,7 +241,7 @@ public class AddressParser
 	}
 	*/
        
-	public int[] search(String string) 
+	public int search(String string) 
 	{
 		Edge[] a = roads;
 		
@@ -260,16 +263,16 @@ public class AddressParser
         	else 
         		string2 = a[mid].getName();
         	
-        	System.out.println("String 1: "+string1);
-        	System.out.println("String 2: "+string2);
+        	//System.out.println("String 1: "+string1);
+        	//System.out.println("String 2: "+string2);
         	
         	
             if      (compare(string1, string2) == -1) hi = mid - 1;
             else if (compare(string1, string2) == 1) lo = mid + 1;
-            else return new int[]{mid, a[mid].getTyp()};
+            else return mid;
         }
         
-        return new int[]{-1,-1};
+        return -1;
     }
 	
 	public int compare(String string1, String string2)
@@ -295,6 +298,11 @@ public class AddressParser
 			
 			index++;
 		}
+		
+		if(string1.length() > string2.length())
+			return 1;
+		else if(string2.length() > string1.length())
+			return -1;
 		
 		return 0;
 	}

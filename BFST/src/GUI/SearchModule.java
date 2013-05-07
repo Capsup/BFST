@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import org.ietf.jgss.Oid;
 
+import MapDraw.MapDraw;
 import XMLParser.AddressParser;
 import XMLParser.AddressParser.NaughtyException;
 
@@ -31,11 +32,15 @@ public class SearchModule extends JPanel{
 	private JTextField fromTextField;
 	private JTextField toTextField;
 	
+	private MapDraw map;
+	
 	/*
 	 * The search module is the combined search panels "from" and "to"
 	 */
-	public SearchModule()
+	public SearchModule(MapDraw map)
 	{
+		this.map = map;
+		
 		makeContent();
 	}
 	
@@ -60,16 +65,16 @@ public class SearchModule extends JPanel{
 							e.printStackTrace();
 						}
 						
-						int[] searchResult = AddressParser.getInstance().search(parsedAdress[0]);
+						int searchResult = AddressParser.getInstance().search(parsedAdress[0]);
 						
-						System.out.println("SearchResult: "+searchResult[0]);
+						//System.out.println("SearchResult: "+searchResult);
 						
-						if(searchResult[0] >= 0)
-							System.out.println("Name result: "+AddressParser.getInstance().getRoads()[searchResult[0]].getName());
+						if(searchResult >= 0)
+							System.out.println("Name result: "+AddressParser.getInstance().getRoads()[searchResult].getName());
 					}
 					else
 					{
-						/*
+						
 						String[] parsedAdressFrom = new String[1];
 						String[] parsedAdressTo = new String[1];
 						
@@ -84,12 +89,32 @@ public class SearchModule extends JPanel{
 						int searchResultIndexFrom = AddressParser.getInstance().search(parsedAdressFrom[0]);
 						int searchResultIndexTo = AddressParser.getInstance().search(parsedAdressTo[0]);
 						
+						//System.out.println(searchResultIndexFrom);
+						//System.out.println(searchResultIndexTo);
+						
+						
 						if(searchResultIndexFrom >= 0)
-							System.out.println("From: "+AddressParser.getInstance().getAddressArray()[searchResultIndexFrom]);
+						{
+							fromTextField.setText(AddressParser.getInstance().getRoads()[searchResultIndexFrom].getName());
+							
+							//System.out.println("From: "+AddressParser.getInstance().getRoads()[searchResultIndexFrom].getName());
+							//System.out.println("From: "+AddressParser.getInstance().getRoads()[searchResultIndexFrom].getFromIndex());
+						}
 						
 						if(searchResultIndexTo >= 0)
-							System.out.println("To: "+AddressParser.getInstance().getAddressArray()[searchResultIndexTo]);
-							*/
+						{
+							toTextField.setText(AddressParser.getInstance().getRoads()[searchResultIndexTo].getName());
+							
+							//System.out.println("To: "+AddressParser.getInstance().getRoads()[searchResultIndexTo].getName());
+							//System.out.println("To: "+AddressParser.getInstance().getRoads()[searchResultIndexTo].getToIndex());
+						}
+						
+						
+						//System.out.println(map);
+						
+						
+						if(searchResultIndexFrom >= 0 && searchResultIndexTo >= 0)
+							map.getRoute(AddressParser.getInstance().getRoads()[searchResultIndexFrom].getFromIndex(), AddressParser.getInstance().getRoads()[searchResultIndexTo].getToIndex());
 					}
 					
 					break;

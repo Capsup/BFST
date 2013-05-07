@@ -40,18 +40,20 @@ public class MainFrame extends JFrame
 	{
 		Container contentPane = this.getContentPane();
 		
+		
+		//Map Panel
+		MapDraw mapPanel = new MapDraw();
+		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+
 		//Main Panel Setup
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
 		//Menu Panel
-		JPanel menuPanel = new MenuPanel();
+		MenuPanel menuPanel = new MenuPanel(mapPanel);
 		menuPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
-		//Map Panel
-		JPanel mapPanel = new MapDraw();
-		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-
+		
 		//Add the panels to the Main Panel
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);

@@ -70,6 +70,8 @@ public class Edge implements Comparable<Edge>
 	public double getYTo(){	return yTo; }
 	public double getXFrom(){ return xFrom;	}
 	public double getYFrom(){ return yFrom;	}
+	public int getFromIndex(){ return v;	}
+	public int getToIndex(){ return w;	}
 	public int getTyp()	{ return typ; }
 	public String getName(){ return roadName; }
 
@@ -82,11 +84,12 @@ public class Edge implements Comparable<Edge>
 		int length = string1.length();
 		int index = 0;
 		
+		/*
 		if(string1.length() > string2.length())
 			return 1;
 		else if(string2.length() > string1.length())
 			return -1;
-		
+		*/
 		while(index < length && index < string2.length())
 		{
 			if((int)string1.charAt(index) > (int)string2.charAt(index))
@@ -100,6 +103,11 @@ public class Edge implements Comparable<Edge>
 			
 			index++;
 		}
+		
+		if(string1.length() > string2.length())
+			return 1;
+		else if(string2.length() > string1.length())
+			return -1;
 		
 		return 0;
 		
