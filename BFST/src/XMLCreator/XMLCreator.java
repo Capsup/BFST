@@ -22,7 +22,6 @@ import XMLParser.XMLParser;
 
 import Graph.Node;
 
-
 public class XMLCreator 
 {
 

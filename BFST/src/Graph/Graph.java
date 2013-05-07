@@ -25,7 +25,7 @@ public class Graph {
      * Create a edge-weighted digraph with V vertices and E edges.
  * @throws Exception 
      */
-    public Graph(int V, int E) throws Exception {
+    public Graph(int V, int E){
         this(V);
         if (E < 0) throw new IllegalArgumentException("Number of edges in a Digraph must be nonnegative");
         for (int i = 0; i < E; i++) {
@@ -37,7 +37,7 @@ public class Graph {
         }
     }
     
-    public Graph(int V, ArrayList<List<Edge>> list) throws Exception{
+    public Graph(int V, ArrayList<List<Edge>> list) {
     	this(V);
     	
     	for(Iterable<Edge> l : list)
@@ -65,7 +65,7 @@ public class Graph {
      * Add the directed edge e to this digraph.
  * @throws Exception 
      */
-    public void addEdge(Edge e) throws Exception {
+    public void addEdge(Edge e)  {
         int v = e.either();
         int w = e.other(v);
         adj[v].add(e);

@@ -38,18 +38,11 @@ public class XMLParser implements Runnable{
 	}
 
 
-	public XMLParser( String sPath )
+	public XMLParser( String sPath ) throws FileNotFoundException
 	{
 		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
-		System.out.println(sPath);
-		try
-		{
-			loadFile( sPath );
-		}
-		catch( FileNotFoundException e )
-		{
-			e.printStackTrace();
-		}
+		loadFile( sPath );
+		
 	}
 
 	public void loadFile( String sPath ) throws FileNotFoundException
@@ -72,7 +65,7 @@ public class XMLParser implements Runnable{
 		}
 	}
 
-	public ArrayList<Node> getNodesForXMLCreator() throws Exception{
+	public ArrayList<Node> getNodesForXMLCreator() throws XMLStreamException{
 		ArrayList<String> temp = new ArrayList<String>();
 		ArrayList<Node> list = new ArrayList<Node>();
 
