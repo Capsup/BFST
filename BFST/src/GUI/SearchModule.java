@@ -73,6 +73,8 @@ public class SearchModule extends JPanel{
 							
 							fromTextField.getDropdown().setVisible(false);
 							
+							map.getRoute(edge.getFromIndex(), edge.getToIndex());
+							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(17);
 						}
