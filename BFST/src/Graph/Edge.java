@@ -16,7 +16,7 @@ public class Edge implements Comparable<Edge>
 	private final int w;
 	private String roadName;
 	
-	private int typ; //, zip, speedLimit;
+	private int typ, zip;//, speedLimit;
 	private double xTo, yTo, xFrom, yFrom, driveTime, length;
 	//private String roadName, oneWay;
 
@@ -55,7 +55,7 @@ public class Edge implements Comparable<Edge>
 		this.length = Double.parseDouble(s.get(6));
 		this.typ = Integer.parseInt(s.get(7));
 		this.roadName = s.get(8);
-		//this.zip = Integer.parseInt(s.get(9));
+		this.zip = Integer.parseInt(s.get(9));
 		//this.speedLimit = Integer.parseInt(s.get(10));
 		this.driveTime = Double.parseDouble(s.get(11));
 		//this.oneWay = s.get(12);
@@ -75,6 +75,7 @@ public class Edge implements Comparable<Edge>
 	public int getToIndex(){ return w;	}
 	public int getTyp()	{ return typ; }
 	public String getName(){ return roadName; }
+	public int getZip(){ return zip; }
 
 	@Override
 	public int compareTo(Edge arg0) 
