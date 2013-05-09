@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.lang.model.element.Element;
+
 import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 
@@ -80,8 +82,8 @@ public class Edge implements Comparable<Edge>
 	@Override
 	public int compareTo(Edge arg0) 
 	{
-		String string1 = roadName;
-		String string2 = arg0.getName();
+		String string1 = getAddress();
+		String string2 = arg0.getAddress();
 		
 		int length = string1.length();
 		int index = 0;
@@ -113,5 +115,13 @@ public class Edge implements Comparable<Edge>
 		
 		return 0;
 		
+	}
+	
+	public String getAddress()
+	{
+		if(getZip() != 0)
+			return (getName()+", "+getZip());
+		else
+			return getName();
 	}
 }

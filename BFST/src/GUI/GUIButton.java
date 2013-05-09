@@ -143,7 +143,6 @@ public class GUIButton extends JButton implements MouseListener
 		int fontHeight = g.getFontMetrics(this.getFont()).getHeight();
 		
 		setFont(getFont().deriveFont(Font.BOLD));
-		g.drawString(this.getText(), this.getSize().width/2-fontLength/2, this.getSize().height/2+fontHeight/4);
-		
+		g.drawString(this.getText(), (int)Math.round(this.getSize().width*0.05), this.getSize().height/2+fontHeight/4);
 	}
 }

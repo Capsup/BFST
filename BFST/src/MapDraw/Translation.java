@@ -67,6 +67,27 @@ public class Translation
 			translation = new Point2D.Double( dx, dy );
 		else
 		{
+			/*
+			//double xMax = MapDraw.getInstance().getOffset().x+(MapDraw.getInstance().getMapWidth())*(ZoomLevel.getInstance().getZoomLevel()*(1.5-ZoomLevel.getInstance().getZoomLevel()));
+			double xMax = MapDraw.getInstance().getOffset().x+MapDraw.getInstance().getMapWidth()/2;
+			double rightBoundary = (translation.x+dx)+MapDraw.getInstance().getWidth()*ZoomLevel.getInstance().getZoomLevel();
+			
+			if(rightBoundary < xMax)
+				translation.x += dx;
+			
+			if(translation.x + dx < xMax && translation.x + dx >  xMin)
+				translation.x += dx;
+			
+			double xMin = MapDraw.getInstance().getOffset().x-(MapDraw.getInstance().getMapWidth())*(ZoomLevel.getInstance().getZoomLevel()*(1.5-ZoomLevel.getInstance().getZoomLevel()));
+			
+			
+			double yMax = MapDraw.getInstance().getOffset().y+(MapDraw.getInstance().getMapHeight()/ZoomLevel.getInstance().getZoomLevel());
+			double yMin = MapDraw.getInstance().getOffset().y-(MapDraw.getInstance().getMapHeight()/ZoomLevel.getInstance().getZoomLevel());
+			
+			if(translation.y + dy < yMax && translation.y + dy >  yMin)
+				translation.y += dy;
+			
+			*/
 			//Update the translation offset, so we can apply it to the stuff we draw later.
 			translation = new Point2D.Double( translation.getX() + dx, translation.getY() + dy );
 		}

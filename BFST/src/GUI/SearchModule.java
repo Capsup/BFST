@@ -69,7 +69,7 @@ public class SearchModule extends JPanel{
 							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
 									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
-							fromTextField.setText(edge.getName());
+							fromTextField.setText(edge.getAddress());
 							
 							fromTextField.getDropdown().setVisible(false);
 							
@@ -104,13 +104,13 @@ public class SearchModule extends JPanel{
 						
 						if(fromEdge != null)
 						{
-							fromTextField.setText(fromEdge.getName());
+							fromTextField.setText(fromEdge.getAddress());
 							fromTextField.getDropdown().setVisible(false);	
 						}
 						
 						if(toEdge != null)
 						{
-							toTextField.setText(toEdge.getName());
+							toTextField.setText(toEdge.getAddress());
 							toTextField.getDropdown().setVisible(false);
 						}
 						

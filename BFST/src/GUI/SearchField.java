@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -15,6 +16,7 @@ import java.awt.geom.Point2D;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -30,9 +32,13 @@ public class SearchField extends JTextField
 {
 	private Dropdown dropdown;
 	
+	private String baseString;
+	
 	public SearchField(String text, int size)
 	{
 		super(text, size);
+		
+		baseString = text;
 		
 		DocumentListener listener = new SearchListener();
 		this.getDocument().addDocumentListener(listener);
@@ -79,7 +85,9 @@ public class SearchField extends JTextField
 	{
 		@Override
 		public void focusGained(FocusEvent e) {
-			// TODO Auto-generated method stub
+
+			if(!getText().equals(baseString))
+				getSuggestions();
 		}
 
 		@Override
@@ -125,7 +133,7 @@ public class SearchField extends JTextField
 			
 			for(int i=0; i<strings.length; i++)
 			{
-				strings[i] = edges[i].getName();
+				strings[i] = edges[i].getAddress();
 			}
 			
 			dropdown.setContent(strings, true);
@@ -191,30 +199,37 @@ public class SearchField extends JTextField
 	{
 		if(getText().length() > 0)
 		{
-			String[] parsedAdress = new String[1];
+			/*
+			String[] parsedAdress = new String[6];
 			
 			try {
 				parsedAdress = AddressParser.getInstance().parseAddress(getText());
 			} catch (NaughtyException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}	
+			}
 			
-			if(parsedAdress[0].length() > 0)
+			
+			for(int i=0; i<parsedAdress.length; i++)
 			{
-				int[] searchResult = AddressParser.getInstance().probabilitySearch(parsedAdress[0], 5);
+				System.out.println("Index "+i+": "+parsedAdress[i]);
+			}*/
+			
+			//if(parsedAdress[0].length() > 0)
+			//{
+				int[] searchResult = AddressParser.getInstance().probabilitySearch(getText(), 5);
 				
 				if(searchResult[0] < 0)
 					dropdown.setContent(new String[]{"-No Matching Result-"}, false);
 
 				return searchResult;
-			}
-			else 
-			{
-				dropdown.setContent(new String[]{"-Invalid Character Input-"}, false);
-
-				return new int[]{-1};
-			}
+			//}
+			//else
+			//{
+			//	dropdown.setContent(new String[]{"-Invalid Character Input-"}, false);
+			//
+			//	return new int[]{-1};
+			//}
 		}
 		else {
 			dropdown.setVisible(false);

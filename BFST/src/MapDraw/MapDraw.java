@@ -557,4 +557,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		return height;
 	}
+	
+	public Point2D.Double getOffset()
+	{
+		return mapOffset;
+	}
 }

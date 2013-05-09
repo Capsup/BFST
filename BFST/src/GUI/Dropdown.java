@@ -16,6 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class Dropdown extends JDialog
 {
@@ -41,8 +42,6 @@ public class Dropdown extends JDialog
 			{
 				if(e.getActionCommand().equals(""+i))
 				{
-					System.out.println("WAT");
-					
 					textField.setText(results[i].getText());
 					
 					setVisible(false);
@@ -110,15 +109,13 @@ public class Dropdown extends JDialog
 		{
 			JButton newButton = new GUIButton(strings[i]);
 			newButton.setEnabled(clickable);
-			
+
 			buttonList.add(newButton);
 			
-			System.out.println((panel.getSize().width+","+textField.getSize().height));
 			newButton.setMaximumSize(new Dimension(panel.getSize().width, textField.getSize().height));
+
 			panel.add(newButton);
 		}
-		
-		//pack();
 		
 		results = new JButton[buttonList.size()];
 		
@@ -126,40 +123,13 @@ public class Dropdown extends JDialog
 		
 		ButtonListener listener = new ButtonListener(results);
 		
-		//pack();
-		
-		int longestWidth = 0;
 				
 		for(int i=0; i<results.length; i++)
 		{
 			results[i].setActionCommand(""+i);
 			results[i].addActionListener(listener);
-			
-			System.out.println(results[i].getSize().width);
-			
-			if(results[i].getSize().width > longestWidth)
-				longestWidth = results[i].getSize().width;
+		
 		}
-		/*
-		System.out.println("Longest: "+longestWidth);
-		
-		for (int i=0; i<results.length; i++) {
-			results[i].setSize(longestWidth, results[i].getSize().height);
-			
-			System.out.println(results[i].getSize().width);
-		}
-		
-		//panel.setSize(textField.getSize().width, panel.getSize().height);
-		//setSize(textField.getSize().width, panel.getSize().height);
-		
-		//revalidate();
-		
-		for (int i=0; i<results.length; i++) {
-			System.out.println(results[i].getSize().width);
-		}
-		
-		repaint();
-		*/
 		
 		setVisible(true);
 		

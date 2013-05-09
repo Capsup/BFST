@@ -61,18 +61,7 @@ public class AddressParser
 		roads = new Edge[list.size()];
 		list.toArray(roads);
 		
-		//for(int i=0; i<roads.length; i++)
-			Arrays.sort(roads);
-		
-		int randIndex = 500;
-		
-		for(int i=randIndex; i<(randIndex+25); i++)
-			System.out.println(roads[i].getName());
-			
-		//for(int i=0; i<roads.length; i++)
-			//System.out.println(roads[i].getName());
-		//System.out.println(edges.length);
-		
+		Arrays.sort(roads);
 	}
 	
 	public static AddressParser getInstance()
@@ -259,7 +248,7 @@ public class AddressParser
             
         	int mid = lo + (hi - lo) / 2;
         	
-        	String string2 = a[mid].getName();
+        	String string2 = a[mid].getAddress();
         	
             if      (compare(string1, string2) == -1) hi = mid - 1;
             else if (compare(string1, string2) == 1) lo = mid + 1;
@@ -294,22 +283,22 @@ public class AddressParser
 
         	if(a[mid].getName().length() > cutoff)
         	{
-        		string2 = a[mid].getName().substring(0, cutoff);
+        		string2 = a[mid].getAddress().substring(0, cutoff);
         	}
         	else
         	{
-        		string2 = a[mid].getName();
+        		string2 = a[mid].getAddress();
         		//string1 = string.substring(0,string2.length());
         	}
         	
-            if      (compare(string1, string2) == -1) hi = mid - 1;
-            else if (compare(string1, string2) == 1) lo = mid + 1;
+            if      (probabilityCompare(string1, string2) == -1) hi = mid - 1;
+            else if (probabilityCompare(string1, string2) == 1) lo = mid + 1;
             else
             {
             	int found = 1;
             	
-            	int[] returnIndexes = new int[count];
-            	returnIndexes[0] = mid;
+            	ArrayList<Integer> foundIndexes = new ArrayList<Integer>();
+            	foundIndexes.add(mid);
             	
             	int increment = 1;
             	
@@ -317,19 +306,20 @@ public class AddressParser
             	{
             		int index = mid;
             		
+            		//Start by incrementing so we dont compare with ourselves
             		index += increment;
             		
-            		while(a[index] != null)
+            		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
             		{
             			boolean bounce = true;
             			
             			for(int i=0; i<found; i++)
-            				if(a[returnIndexes[i]].getName().equals(a[index].getName()))
+            				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
             					bounce = false;
             			
             			if(bounce)
             			{
-            				returnIndexes[found] = index;
+            				foundIndexes.add(index);
             				break;
             			}
             			
@@ -338,11 +328,69 @@ public class AddressParser
             		
             		increment *= -1;
             		
-            		if(returnIndexes[found] >= 0)
+            		if(found < foundIndexes.size())
             			found++;
             	}
             	
-            	//Arrays.sort(returnIndexes);
+            	
+            	int[] returnIndexes = new int[foundIndexes.size()];
+            	returnIndexes[0] = foundIndexes.get(0);
+            	foundIndexes.remove(0);
+            	
+            	for(int i=1; i<returnIndexes.length; i++)
+            	{
+            		cutoff = a[returnIndexes[0]].getAddress().length();
+            		
+            		boolean isfound = false;
+            		
+            		while(!isfound)
+            		{
+            			String firstResultString = a[returnIndexes[0]].getAddress().substring(0, cutoff);
+                		
+            			for(int j=0; j < foundIndexes.size(); j++)	
+            			{	
+	            			String currResultString = a[foundIndexes.get(j)].getAddress();
+	            			
+	            			if(currResultString.length() > cutoff)	
+	            				currResultString = a[foundIndexes.get(j)].getAddress().substring(0, cutoff);
+	            			
+            				if(firstResultString.equals(currResultString))
+		        			{
+		        				returnIndexes[i] = foundIndexes.get(j);
+		        				foundIndexes.remove(j);
+		        				
+		        				isfound = true;
+		        				
+		        				break;
+		        			}
+            			}
+            			
+            			cutoff--;
+            			
+            			if(!isfound && cutoff < 0)
+            				break;
+            		}
+            		
+            		if(!isfound)
+            			break;
+            	}
+            	
+            	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
+            	{
+            		returnIndexes[i] = foundIndexes.get(i);
+            		foundIndexes.remove(i);
+            	}
+            	
+            	/*
+            	int[] returnIndexes = new int[foundIndexes.size()];
+            	
+            	System.out.println(returnIndexes.length);
+            	
+            	for(int i=0; i<returnIndexes.length; i++)
+            	{
+            		returnIndexes[i] = foundIndexes.get(i); 
+            	}
+            	*/
             	
             	return returnIndexes;
             }
@@ -351,7 +399,7 @@ public class AddressParser
         return new int[]{-1};
     }
 	
-	public int compare(String string1, String string2)
+	public int probabilityCompare(String string1, String string2)
 	{
 		int length = string1.length();
 		int index = 0;
@@ -377,6 +425,32 @@ public class AddressParser
 			
 			index++;
 		}
+		
+		//System.out.println("is equal");
+		return 0;
+	}
+	
+	public int compare(String string1, String string2)
+	{
+		int length = string1.length();
+		int index = 0;
+		
+		while(index < length && index < string2.length())
+		{
+			if(string1.charAt(index) < string2.charAt(index))
+			{
+				//System.out.println("is greater");
+				return 1;
+			}
+			else if(string1.charAt(index) > string2.charAt(index))
+			{
+				//System.out.println("is lesser");
+				return -1;
+			}
+			
+			index++;
+		}
+		
 		
 		if(string1.length() > string2.length())
 			return 1;
