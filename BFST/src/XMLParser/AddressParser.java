@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 import Graph.Edge;
 
 
@@ -240,7 +243,7 @@ public class AddressParser
         return new int[]{-1,-1};
 	}
 	*/
-       
+	
 	public int search(String string) 
 	{
 		Edge[] a = roads;
@@ -251,28 +254,101 @@ public class AddressParser
         int cutoff = string.length();
         
         String string1 = string.substring(0, cutoff);
-    	
+        
+        while (lo <= hi) {
+            
+        	int mid = lo + (hi - lo) / 2;
+        	
+        	String string2 = a[mid].getName();
+        	
+            if      (compare(string1, string2) == -1) hi = mid - 1;
+            else if (compare(string1, string2) == 1) lo = mid + 1;
+            else
+            {
+            	return mid;
+            }
+        }
+        
+        return -1;
+    }
+	
+	public int[] probabilitySearch(String string, int count) 
+	{
+		Edge[] a = roads;
+		
+        int lo = 0;
+        int hi = a.length - 1;
+        
+        int cutoff = string.length();
+        
+        String string1 = string.substring(0, cutoff);
+        
         while (lo <= hi) {
             
         	int mid = lo + (hi - lo) / 2;
         	
         	String string2;
         	
-        	if(a[mid].getName().length() > cutoff)
-        		string2 = a[mid].getName().substring(0, cutoff);
-        	else 
-        		string2 = a[mid].getName();
-        	
         	//System.out.println("String 1: "+string1);
-        	//System.out.println("String 2: "+string2);
-        	
+        	//System.out.println("String 2: "+a[mid].getName());
+
+        	if(a[mid].getName().length() > cutoff)
+        	{
+        		string2 = a[mid].getName().substring(0, cutoff);
+        	}
+        	else
+        	{
+        		string2 = a[mid].getName();
+        		//string1 = string.substring(0,string2.length());
+        	}
         	
             if      (compare(string1, string2) == -1) hi = mid - 1;
             else if (compare(string1, string2) == 1) lo = mid + 1;
-            else return mid;
+            else
+            {
+            	int found = 1;
+            	
+            	int[] returnIndexes = new int[count];
+            	returnIndexes[0] = mid;
+            	
+            	int increment = 1;
+            	
+            	while(found < count)
+            	{
+            		int index = mid;
+            		
+            		index += increment;
+            		
+            		while(a[index] != null)
+            		{
+            			boolean bounce = true;
+            			
+            			for(int i=0; i<found; i++)
+            				if(a[returnIndexes[i]].getName().equals(a[index].getName()))
+            					bounce = false;
+            			
+            			if(bounce)
+            			{
+            				returnIndexes[found] = index;
+            				break;
+            			}
+            			
+            			index += increment;
+            		}
+            		
+            		increment *= -1;
+            		
+            		if(returnIndexes[found] >= 0)
+            			found++;
+            	}
+            	
+            	//Arrays.sort(returnIndexes);
+            	
+            	return returnIndexes;
+            }
         }
         
-        return -1;
+        return new int[]{-1};
     }
 	
 	public int compare(String string1, String string2)
@@ -285,14 +361,17 @@ public class AddressParser
 		else if(string2.length() > string1.length())
 			return -1;
 		*/
+		
 		while(index < length && index < string2.length())
 		{
-			if((int)string1.charAt(index) > (int)string2.charAt(index))
+			if(string1.charAt(index) < string2.charAt(index))
 			{
+				//System.out.println("is greater");
 				return 1;
 			}
-			else if((int)string1.charAt(index) < (int)string2.charAt(index))
+			else if(string1.charAt(index) > string2.charAt(index))
 			{
+				//System.out.println("is lesser");
 				return -1;
 			}
 			
@@ -304,6 +383,7 @@ public class AddressParser
 		else if(string2.length() > string1.length())
 			return -1;
 		
+		//System.out.println("is equal");
 		return 0;
 	}
 	

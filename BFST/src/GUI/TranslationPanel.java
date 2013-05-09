@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -31,24 +32,25 @@ public class TranslationPanel extends JPanel{
 	{
 		public void actionPerformed( ActionEvent event )
 		{
-			double translation = 15 * ZoomLevel.getInstance().getZoomLevel();
+			double translationDiff = 15 * ZoomLevel.getInstance().getZoomLevel();
+			Point2D.Double translation = Translation.getInstance().getTargetTranslation();
 			
 			switch( event.getActionCommand() )
 			{
 				case "Up":
-					Translation.getInstance().manualTranslate(0, translation);
+					Translation.getInstance().goToTranslation(translation.x, translation.y+translationDiff);
 				break;
 
 				case "Down":
-					Translation.getInstance().manualTranslate(0, -translation);
+					Translation.getInstance().goToTranslation(translation.x, translation.y-translationDiff);
 				break;
 
 				case "Right":
-					Translation.getInstance().manualTranslate(-translation, 0);
+					Translation.getInstance().goToTranslation(translation.x-translationDiff, translation.y);
 				break;
 
 				case "Left":
-					Translation.getInstance().manualTranslate(translation, 0);
+					Translation.getInstance().goToTranslation(translation.x+translationDiff, translation.y);
 				break;
 			}
 		}
@@ -95,6 +97,5 @@ public class TranslationPanel extends JPanel{
 		
 		add(headerLabel);
 		add(buttonPanel);
-		
 	}
 }

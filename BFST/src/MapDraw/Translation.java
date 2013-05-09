@@ -78,6 +78,7 @@ public class Translation
 	public void setTranslation(double x, double y)
 	{
 		//We set the translation of the map directly
+		targetTranslation = new Point2D.Double(x, y);
 		translation = new Point2D.Double(x, y);	
 	}
 	

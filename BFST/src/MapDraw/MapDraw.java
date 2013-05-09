@@ -31,6 +31,8 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 public class MapDraw extends JPanel implements GLEventListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
+	private static MapDraw instance;
+	
 	private long lastMousePressTime;
 	
 	private Query q = new Query();
@@ -48,6 +50,16 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private long lastTime;
 
 	private int i;
+	
+	private Point2D.Double mapOffset;
+	
+	public static MapDraw getInstance()
+	{
+		if(instance == null)
+			instance = new MapDraw();
+		
+		return instance;
+	}
 	
 	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable; }
 	
@@ -109,14 +121,14 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		Point2D.Double tarTranslation = Translation.getInstance().getTargetTranslation();
 		Point2D.Double deltaTranslation = new Point2D.Double();
 		
-		double xIncrement = (0.1*Math.abs(tarTranslation.x-translation.x));
-		double yIncrement = (0.1*Math.abs(tarTranslation.y-translation.y));
+		double xIncrement = (0.05*Math.abs(tarTranslation.x-translation.x));
+		double yIncrement = (0.05*Math.abs(tarTranslation.y-translation.y));
 		
-		if(xIncrement < width*0.1f*currentZoomLevel)
-			xIncrement = width*0.1f*currentZoomLevel;
+		if(xIncrement < width*0.001f*currentZoomLevel)
+			xIncrement = width*0.001f*currentZoomLevel;
 		
-		if(yIncrement < height*0.1f*currentZoomLevel)
-			yIncrement = height*0.1f*currentZoomLevel;
+		if(yIncrement < height*0.001f*currentZoomLevel)
+			yIncrement = height*0.001f*currentZoomLevel;
 		
 		if(tarTranslation.x > translation.x)
 		{
@@ -151,13 +163,14 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		Translation.getInstance().translate(deltaTranslation.x, deltaTranslation.y);
 	}
 
-	public MapDraw()
+	private MapDraw()
 	{
 		setLayout(new BorderLayout());
 		//setSize( new Dimension( iWidth, iHeight ) );
 		
 		//Start translation at the place where the map is inside our 3D world.
-		Translation.getInstance().setTranslation(-266, 5940);
+		mapOffset = new Point2D.Double(-266, 5940);
+		Translation.getInstance().setTranslation(mapOffset.x, mapOffset.y);
 		curMousePos = new Point( 0, 0 );
 		
 		//Tell OpenGL that we're interested in the default profile, meaning we don't get any specific properties of the gl context.
@@ -476,6 +489,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mousePressed( MouseEvent e )
 	{
+		Translation.getInstance().manualTranslate(0, 0);
+		
 		curMousePos.x = e.getXOnScreen();
 		curMousePos.y = e.getYOnScreen();
 		
@@ -492,6 +507,13 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mouseReleased( MouseEvent e )
 	{
+		Point2D.Double currTranslation = Translation.getInstance().getTranslation();
+		
+		if(currTranslation.x > mapOffset.x+width/1.5 || currTranslation.x < mapOffset.x-width/1.5 || currTranslation.y > mapOffset.y+height/1.25 || currTranslation.y < mapOffset.y-height/1.25)
+		{
+			Translation.getInstance().goToTranslation(mapOffset.x, mapOffset.y);
+			ZoomLevel.getInstance().setZoomLevel(0);
+		}
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
+import javax.management.InstanceAlreadyExistsException;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,13 +19,25 @@ import MapDraw.MapDraw;
 
 public class MainFrame extends JFrame
 {	
+	private static MainFrame instance;
+	
 	/*
 	 * The Main Frame is the window of the program, it contains the menu, and the map.
 	 */
-	public MainFrame()
+	private MainFrame()
 	{
+		instance = this;
+		
 		makeContent();
 		setupFrame();
+	}
+	
+	public static MainFrame getInstance()
+	{
+		if(instance == null)
+			new MainFrame();
+		
+		return instance;
 	}
 	
 	void setupFrame()
@@ -42,7 +55,7 @@ public class MainFrame extends JFrame
 		
 		
 		//Map Panel
-		MapDraw mapPanel = new MapDraw();
+		MapDraw mapPanel = MapDraw.getInstance();
 		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
 		//Main Panel Setup
@@ -64,6 +77,6 @@ public class MainFrame extends JFrame
 	
 	public static void main(String[] args)
 	{
-		new MainFrame();
+		MainFrame.getInstance();
 	}
 }

@@ -148,9 +148,6 @@ public class XMLParser implements Runnable{
 
 					else if( name.equals( "rn" ) ){//Road name
 						String string = input.nextEvent().asCharacters().getData().replace('\'', ' ').trim();
-						//string = string.substring(1, string.length()-1);
-						
-						//System.out.println(string);
 						
 						temp.add(string);
 					}

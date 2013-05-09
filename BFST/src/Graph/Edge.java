@@ -2,6 +2,7 @@ package Graph;
 
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import DataProcessing.Interval;
@@ -92,11 +93,11 @@ public class Edge implements Comparable<Edge>
 		*/
 		while(index < length && index < string2.length())
 		{
-			if((int)string1.charAt(index) > (int)string2.charAt(index))
+			if(string1.charAt(index) < string2.charAt(index))
 			{
 				return 1;
 			}
-			else if((int)string1.charAt(index) < (int)string2.charAt(index))
+			else if(string1.charAt(index) > string2.charAt(index))
 			{
 				return -1;
 			}

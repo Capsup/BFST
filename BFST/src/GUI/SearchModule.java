@@ -13,6 +13,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -30,12 +31,12 @@ import java.awt.geom.Point2D;
 public class SearchModule extends JPanel{
 
 	private boolean showDestination;
-	private JPanel destinationPanel;
+	private SearchPanel destinationPanel;
 	private JPanel toPanel;
 	private JButton button;
 	
-	private JTextField fromTextField;
-	private JTextField toTextField;
+	private SearchField fromTextField;
+	private SearchField toTextField;
 	
 	private MapDraw map;
 	
@@ -59,31 +60,18 @@ public class SearchModule extends JPanel{
 			{
 				case "Search":
 					
-					String result = "";
-					
 					if(!showDestination)
 					{
-						String[] parsedAdress = new String[1];
+						Edge edge = fromTextField.edgeSearch();
 						
-						try {
-							parsedAdress = AddressParser.getInstance().parseAddress(fromTextField.getText());
-						} catch (NaughtyException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-						int searchResult = AddressParser.getInstance().search(parsedAdress[0]);
-						
-						//System.out.println("SearchResult: "+searchResult);
-						
-						if(searchResult >= 0)
+						if(edge != null)
 						{
-							Edge edge = AddressParser.getInstance().getRoads()[searchResult];
+							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
+									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
 							fromTextField.setText(edge.getName());
 							
-							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
-									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
+							fromTextField.getDropdown().setVisible(false);
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(17);
@@ -91,7 +79,6 @@ public class SearchModule extends JPanel{
 					}
 					else
 					{
-						
 						String[] parsedAdressFrom = new String[1];
 						String[] parsedAdressTo = new String[1];
 						
@@ -103,37 +90,39 @@ public class SearchModule extends JPanel{
 							e.printStackTrace();
 						}
 						
-						int searchResultIndexFrom = AddressParser.getInstance().search(parsedAdressFrom[0]);
-						int searchResultIndexTo = AddressParser.getInstance().search(parsedAdressTo[0]);
+						//int searchResultIndexFrom = AddressParser.getInstance().search(parsedAdressFrom[0]);
+						//int searchResultIndexTo = AddressParser.getInstance().search(parsedAdressTo[0]);
+						
+						Edge fromEdge = fromTextField.edgeSearch();
+						Edge toEdge = toTextField.edgeSearch();
 						
 						//System.out.println(searchResultIndexFrom);
 						//System.out.println(searchResultIndexTo);
 						
 						
-						if(searchResultIndexFrom >= 0)
+						if(fromEdge != null)
 						{
-							fromTextField.setText(AddressParser.getInstance().getRoads()[searchResultIndexFrom].getName());
+							fromTextField.setText(fromEdge.getName());
+							fromTextField.getDropdown().setVisible(false);	
 						}
 						
-						if(searchResultIndexTo >= 0)
+						if(toEdge != null)
 						{
-							toTextField.setText(AddressParser.getInstance().getRoads()[searchResultIndexTo].getName());
+							toTextField.setText(toEdge.getName());
+							toTextField.getDropdown().setVisible(false);
 						}
 						
-						if(searchResultIndexFrom >= 0 && searchResultIndexTo >= 0)
+						if(fromEdge != null && toEdge != null)
 						{
-							Edge edge1 = AddressParser.getInstance().getRoads()[searchResultIndexFrom];
-							Edge edge2 = AddressParser.getInstance().getRoads()[searchResultIndexTo];
+							Point2D.Double tarPos1 = new Point2D.Double(-(fromEdge.getXFrom()/1000.0) + map.getMapWidth()/2
+									, fromEdge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
-							Point2D.Double tarPos1 = new Point2D.Double(-(edge1.getXFrom()/1000.0) + map.getMapWidth()/2
-									, edge1.getYFrom()/1000.0 - map.getMapHeight()/2);
-							
-							Point2D.Double tarPos2 = new Point2D.Double(-(edge2.getXFrom()/1000.0) + map.getMapWidth()/2
-									, edge2.getYFrom()/1000.0 - map.getMapHeight()/2);
+							Point2D.Double tarPos2 = new Point2D.Double(-(toEdge.getXFrom()/1000.0) + map.getMapWidth()/2
+									, toEdge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
 							Point2D.Double tarPos = new Point2D.Double((tarPos2.x + tarPos1.x)/2, (tarPos2.y + tarPos1.y)/2);
 							
-							map.getRoute(AddressParser.getInstance().getRoads()[searchResultIndexFrom].getFromIndex(), AddressParser.getInstance().getRoads()[searchResultIndexTo].getToIndex());
+							map.getRoute(fromEdge.getFromIndex(), toEdge.getToIndex());
 							
 							Point2D.Double difference = new Point2D.Double(Math.abs(tarPos2.x - tarPos1.x), Math.abs(tarPos2.y - tarPos1.y));
 							
@@ -141,11 +130,11 @@ public class SearchModule extends JPanel{
 							
 							if(difference.x >= difference.y)
 							{
-								targetZoom = (difference.x/map.getMapWidth())*2;
+								targetZoom = (difference.x/map.getMapWidth())*2.5f;
 							}
 							else 
 							{
-								targetZoom = (difference.y/map.getMapHeight())*2;
+								targetZoom = (difference.y/map.getMapHeight())*2.5f;
 							}
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
@@ -196,7 +185,8 @@ public class SearchModule extends JPanel{
 			toPanel.add(searchField, B orderLayout.CENTER);
 		}*/
 		
-		destinationPanel = new JPanel(new BorderLayout());
+		destinationPanel = new SearchPanel();
+		destinationPanel.setLayout(new BorderLayout());
 		
 		toPanel = new JPanel(new BorderLayout());
 		
@@ -268,7 +258,7 @@ public class SearchModule extends JPanel{
 	
 	void showDestination()
 	{	
-		toTextField = new JTextField("I wish to go to...", 20);
+		toTextField = new SearchField("I wish to go to...", 20);
 		
 		toPanel.add(toTextField, BorderLayout.WEST);
 		

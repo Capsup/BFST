@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -23,36 +24,51 @@ public class GUIButton extends JButton implements MouseListener
 	public static void main(String[] args)
 	{
 		JFrame FUCK = new JFrame();
+	
+		GUIButton SHIT = new GUIButton("Aww Yeah");
 		
-		try {
-			GUIButton SHIT = new GUIButton(ImageIO.read( GUIButton.class.getResource( "/images/Normal.png" ))
-					, ImageIO.read(GUIButton.class.getResource( "/images/Hover.png" ))
-					, ImageIO.read(GUIButton.class.getResource( "/images/Pressed.png" )));
-			
-			
-			SHIT.addMouseListener(SHIT);
-			
-			FUCK.add(SHIT);
-			
-			SHIT.setText("FUCK");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		SHIT.addMouseListener(SHIT);
 		
+		FUCK.add(SHIT);
+		
+		SHIT.setText("FUCK");
+
+	
 		
 		
 		FUCK.setVisible(true);
 	}
 	
-	public GUIButton(BufferedImage normal, BufferedImage hover, BufferedImage active)
+	public GUIButton()
+	{
+		stateIcon = new BufferedImage[3];
+		
+		try {
+			stateIcon[0] = ImageIO.read( GUIButton.class.getResource( "/files/Normal.png" ));
+			stateIcon[1] = ImageIO.read(GUIButton.class.getResource( "/files/Hover.png" ));
+			stateIcon[2] = ImageIO.read(GUIButton.class.getResource( "/files/Active.png" ));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		addMouseListener(this);
+	}
+	
+	public GUIButton(String string)
 	{
 		stateIcon = new BufferedImage[3];
 	
-		stateIcon[0] = normal;
-		stateIcon[1] = hover;
-		stateIcon[2] = active;
+		try {
+			stateIcon[0] = ImageIO.read( GUIButton.class.getResource( "/files/Normal.png" ));
+			stateIcon[1] = ImageIO.read(GUIButton.class.getResource( "/files/Hover.png" ));
+			stateIcon[2] = ImageIO.read(GUIButton.class.getResource( "/files/Active.png" ));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		setText(string);
 		
 		addMouseListener(this);
 	}
@@ -74,8 +90,13 @@ public class GUIButton extends JButton implements MouseListener
 			state = 2;
 		else
 			state = 1;
-
+		
+		Font font = getFont();
+		
 		repaint();
+		
+		setFont(font);
+		
 	}
 
 	@Override
@@ -110,7 +131,6 @@ public class GUIButton extends JButton implements MouseListener
 			state = 1;
 		else 
 			state = 0;
-		
 		repaint();
 	}
 	
@@ -119,11 +139,11 @@ public class GUIButton extends JButton implements MouseListener
 		// Draw the background image.
 		g.drawImage( stateIcon[state], 0, 0, this.getSize().width, this.getSize().height, null );
 		
-		System.out.println(this.getText());
-		
 		int fontLength = g.getFontMetrics(this.getFont()).stringWidth(this.getText());
 		int fontHeight = g.getFontMetrics(this.getFont()).getHeight();
 		
+		setFont(getFont().deriveFont(Font.BOLD));
 		g.drawString(this.getText(), this.getSize().width/2-fontLength/2, this.getSize().height/2+fontHeight/4);
+		
 	}
 }
