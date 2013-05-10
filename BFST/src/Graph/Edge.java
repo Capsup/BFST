@@ -29,7 +29,7 @@ public class Edge implements Comparable<Edge>
 		this.w = w;
 		init(s);
 	}
-
+	
 	public Edge( int v, int w, double weight)
 	{
 		this.id = id_count++;
@@ -82,18 +82,12 @@ public class Edge implements Comparable<Edge>
 	@Override
 	public int compareTo(Edge arg0) 
 	{
-		String string1 = getAddress();
-		String string2 = arg0.getAddress();
+		String string1 = getAddress().toLowerCase();
+		String string2 = arg0.getAddress().toLowerCase();
 		
 		int length = string1.length();
 		int index = 0;
 		
-		/*
-		if(string1.length() > string2.length())
-			return 1;
-		else if(string2.length() > string1.length())
-			return -1;
-		*/
 		while(index < length && index < string2.length())
 		{
 			if(string1.charAt(index) < string2.charAt(index))

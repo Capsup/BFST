@@ -261,6 +261,7 @@ public class SearchModule extends JPanel{
 	void showDestination()
 	{	
 		toTextField = new SearchField("I wish to go to...", 20);
+		toTextField.setPreferredSize(fromTextField.getSize());
 		
 		toPanel.add(toTextField, BorderLayout.WEST);
 		

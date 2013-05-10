@@ -401,6 +401,9 @@ public class AddressParser
 	
 	public int probabilityCompare(String string1, String string2)
 	{
+		string1 = string1.toLowerCase();
+		string2 = string2.toLowerCase();
+		
 		int length = string1.length();
 		int index = 0;
 		/*
@@ -432,6 +435,9 @@ public class AddressParser
 	
 	public int compare(String string1, String string2)
 	{
+		string1 = string1.toLowerCase();
+		string2 = string2.toLowerCase();
+		
 		int length = string1.length();
 		int index = 0;
 		

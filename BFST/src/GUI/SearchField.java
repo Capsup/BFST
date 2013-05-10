@@ -86,8 +86,10 @@ public class SearchField extends JTextField
 		@Override
 		public void focusGained(FocusEvent e) {
 
-			if(!getText().equals(baseString))
-				getSuggestions();
+			if(getText().equals(baseString))
+				setText("");
+				
+			getSuggestions();
 		}
 
 		@Override
@@ -103,7 +105,6 @@ public class SearchField extends JTextField
 		public void changedUpdate(DocumentEvent e) {
 			// TODO Auto-generated method stub
 			//getSuggestions();
-			System.out.println("Changed");
 		}
 
 		@Override
@@ -111,7 +112,6 @@ public class SearchField extends JTextField
 			// TODO Auto-generated method stub
 			getSuggestions();
 
-			System.out.println("insert");
 		}
 
 		@Override
@@ -119,7 +119,6 @@ public class SearchField extends JTextField
 			// TODO Auto-generated method stub
 			getSuggestions();
 
-			System.out.println("removed");
 		}
 	}
 	

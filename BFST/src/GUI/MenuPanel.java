@@ -40,6 +40,7 @@ public class MenuPanel extends JPanel
 		JPanel navPanel = new NavigationPanel();
 		navPanel.setMaximumSize(navPanel.getPreferredSize());
 		
+		
 		/*
 		//Translation Panel
 		JPanel translationPanel = new TranslationPanel();
