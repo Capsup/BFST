@@ -160,13 +160,16 @@ public class SearchField extends JTextField
 		if(searchIndex >= 0)
 			return AddressParser.getInstance().getRoads()[searchIndex].getEdge(0);
 		else {
+			
+			System.out.println("Edge not found, trying probability search");
+			
 			Edge[] edges = edgeProbabilitySearch();
 			
 			if(edges != null)
 				return edgeProbabilitySearch()[0];
+			else
+				return null;	
 		}
-		
-		return null;
 	}
 	
 	public int intSearch()
@@ -180,7 +183,7 @@ public class SearchField extends JTextField
 			e.printStackTrace();
 		}
 		
-		int searchResult = AddressParser.getInstance().search(parsedAdress[0]);
+		int searchResult = AddressParser.getInstance().search(parsedAdress);
 		
 		return searchResult;
 	}
@@ -221,10 +224,10 @@ public class SearchField extends JTextField
 				e.printStackTrace();
 			}
 			
-			for(int i=0; i<parsedAdress.length; i++)
-			{
-				System.out.println("Index "+i+": "+parsedAdress[i]);
-			}
+			//for(int i=0; i<parsedAdress.length; i++)
+			//{
+			//	System.out.println("Index "+i+": "+parsedAdress[i]);
+			//}
 			
 			if(parsedAdress[0].length() > 0)
 			{

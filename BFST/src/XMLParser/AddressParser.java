@@ -1,5 +1,6 @@
 package XMLParser;
 
+import java.awt.print.Printable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -65,25 +66,32 @@ public class AddressParser
 		
 		Arrays.sort(edges);
 		
+		for(int i=10000; i<11000; i++)
+		{
+			System.out.println(edges[i].getName()+", "+edges[i].getZip());
+		}
+		
 		ArrayList<Road> roadList = new ArrayList<Road>();
 		ArrayList<Edge> currEdgeList = new ArrayList<Edge>();
 		
 		String roadName = edges[0].getName();
-		String zipCode = edges[0].getZip()+"";
+		int zipCode = edges[0].getZip();
 		
 		for(int i=0; i<edges.length; i++)
 		{
-			if(roadName.equals(edges[i].getName()) && zipCode.equals(edges[i].getZip()+""))
+			if(roadName.equals(edges[i].getName()) && zipCode == edges[i].getZip())
 			{
 				currEdgeList.add(edges[i]);
 			}
-			else 
+			else
 			{
-				roadName = edges[0].getName();
-				zipCode = edges[0].getZip()+"";
+				roadName = edges[i].getName();
+				zipCode = edges[i].getZip();
 				
 				Edge[] edgeArray = new Edge[currEdgeList.size()];
 				currEdgeList.toArray(edgeArray);
+				
+				//System.out.println(edgeArray.length);
 				
 				roadList.add(new Road(edgeArray));
 				
@@ -236,8 +244,8 @@ public class AddressParser
 				finalStrings[5] += ( !finalStrings[5].equals( "" ) ? " " : "" ) + addressStrings[iProcessed];
 		}
 
-		for( int i = 0; i < finalStrings.length; i++ )
-			System.out.println( finalStrings[i] + "#" );
+		//for( int i = 0; i < finalStrings.length; i++ )
+		//	System.out.println( finalStrings[i] + "#" );
 
 		//System.out.println( "Address was found at line " + lineIndex );
 
@@ -266,22 +274,24 @@ public class AddressParser
 	}
 	*/
 	
-	public int search(String string) 
+	public int search(String[] strings) 
 	{
 		Road[] a = roads;
 		
         int lo = 0;
         int hi = a.length - 1;
         
-        int cutoff = string.length();
+        String string1 = strings[0];
         
-        String string1 = string.substring(0, cutoff);
+        //int cutoff = string.length();
+        
+        //String string1 = string.substring(0, cutoff);
         
         while (lo <= hi) {
             
         	int mid = lo + (hi - lo) / 2;
         	
-        	String string2 = a[mid].getAddress();
+        	String string2 = a[mid].getName();
         	
             if      (compare(string1, string2) == -1) hi = mid - 1;
             else if (compare(string1, string2) == 1) lo = mid + 1;
@@ -295,7 +305,7 @@ public class AddressParser
     }
 	
 	public int[] probabilitySearch(String[] stringArray, int count) 
-	{	
+	{
 		Road[] a = roads;
 		
 		String roadName = stringArray[0];
@@ -318,11 +328,11 @@ public class AddressParser
 
         	if(a[mid].getName().length() > cutoff)
         	{
-        		string2 = a[mid].getAddress().substring(0, cutoff);
+        		string2 = a[mid].getName().substring(0, cutoff);
         	}
         	else
         	{
-        		string2 = a[mid].getAddress();
+        		string2 = a[mid].getName();
         		//string1 = string.substring(0,string2.length());
         	}
         	
@@ -349,7 +359,7 @@ public class AddressParser
             			boolean bounce = true;
             			
             			for(int i=0; i<found; i++)
-            				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
+            				if(a[foundIndexes.get(i)].getName().equals(a[index].getName()))
             					bounce = false;
             			
             			if(bounce)
@@ -374,20 +384,20 @@ public class AddressParser
             	
             	for(int i=1; i<returnIndexes.length; i++)
             	{
-            		cutoff = a[returnIndexes[0]].getAddress().length();
+            		cutoff = a[returnIndexes[0]].getName().length();
             		
             		boolean isfound = false;
             		
             		while(!isfound)
             		{
-            			String firstResultString = a[returnIndexes[0]].getAddress().substring(0, cutoff);
+            			String firstResultString = a[returnIndexes[0]].getName().substring(0, cutoff);
                 		
             			for(int j=0; j < foundIndexes.size(); j++)	
             			{
-	            			String currResultString = a[foundIndexes.get(j)].getAddress();
+	            			String currResultString = a[foundIndexes.get(j)].getName();
 	            			
 	            			if(currResultString.length() > cutoff)	
-	            				currResultString = a[foundIndexes.get(j)].getAddress().substring(0, cutoff);
+	            				currResultString = a[foundIndexes.get(j)].getName().substring(0, cutoff);
 	            			
             				if(firstResultString.equals(currResultString))
 		        			{
@@ -441,21 +451,15 @@ public class AddressParser
 		
 		int length = string1.length();
 		int index = 0;
-		/*
-		if(string1.length() > string2.length())
-			return 1;
-		else if(string2.length() > string1.length())
-			return -1;
-		*/
 		
 		while(index < length && index < string2.length())
 		{
-			if(string1.charAt(index) < string2.charAt(index))
+			if(string1.charAt(index) > string2.charAt(index))
 			{
 				//System.out.println("is greater");
 				return 1;
 			}
-			else if(string1.charAt(index) > string2.charAt(index))
+			else if(string1.charAt(index) < string2.charAt(index))
 			{
 				//System.out.println("is lesser");
 				return -1;
@@ -473,32 +477,46 @@ public class AddressParser
 		string1 = string1.toLowerCase();
 		string2 = string2.toLowerCase();
 		
+		System.out.println("String 1: "+ string1);
+		System.out.println("String 2: "+ string2);
+		
+		if(string1.equals(string2))
+		{
+			System.out.println("Is equal (0)");
+			return 0;
+		}
+		
 		int length = string1.length();
 		int index = 0;
 		
 		while(index < length && index < string2.length())
 		{
-			if(string1.charAt(index) < string2.charAt(index))
+			if(string1.charAt(index) > string2.charAt(index))
 			{
-				//System.out.println("is greater");
+				System.out.println("is greater (0)");
 				return 1;
 			}
-			else if(string1.charAt(index) > string2.charAt(index))
+			else if(string1.charAt(index) < string2.charAt(index))
 			{
-				//System.out.println("is lesser");
+				System.out.println("is lesser (0)");
 				return -1;
 			}
 			
 			index++;
 		}
 		
-		
 		if(string1.length() > string2.length())
+		{
+			System.out.println("Is greater (1)");
 			return 1;
+		}
 		else if(string2.length() > string1.length())
+		{
+			System.out.println("Is lesser (1)");
 			return -1;
+		}
 		
-		//System.out.println("is equal");
+		System.out.println("is equal (1)");
 		return 0;
 	}
 	

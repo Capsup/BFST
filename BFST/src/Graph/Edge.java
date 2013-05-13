@@ -86,22 +86,26 @@ public class Edge implements Comparable<Edge>
 	public String getName(){ return roadName; }
 	public int getZip(){ return zip; }
 
+	
 	@Override
 	public int compareTo(Edge arg0) 
 	{
 		String string1 = getAddress().toLowerCase();
 		String string2 = arg0.getAddress().toLowerCase();
 		
+		if(string1.equals(string2))
+			return 0;
+		
 		int length = string1.length();
 		int index = 0;
 		
 		while(index < length && index < string2.length())
 		{
-			if(string1.charAt(index) < string2.charAt(index))
+			if(string1.charAt(index) > string2.charAt(index))
 			{
 				return 1;
 			}
-			else if(string1.charAt(index) > string2.charAt(index))
+			else if(string1.charAt(index) < string2.charAt(index))
 			{
 				return -1;
 			}
@@ -115,8 +119,8 @@ public class Edge implements Comparable<Edge>
 			return -1;
 		
 		return 0;
-		
 	}
+	
 	
 	public String getAddress()
 	{
