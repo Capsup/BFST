@@ -398,7 +398,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
-	private List<Edge> getDrawEdges(int type)
+	private List<List<Edge>> getDrawEdges(LinkedList<Integer> types)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
 		double xs = (zoomFactor)* -1000 + 1 * -1000;
@@ -412,7 +412,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
 	     
 	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
-	     return q.queryEdges(rect, type);
+	     LinkedList<List<Edge>> list = new LinkedList<List<Edge>>();
+	     for(int type : types)
+	    	 list.add(q.queryEdges(rect, type));
+	     return list;
 	}
 	
 	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
