@@ -30,7 +30,7 @@ public class Query{
 		LinkedList<Thread> threads = new LinkedList<Thread>();
 
 		try {
-			for(int i = 1; i <= 41; i++){
+			for(int i = 1;; i++){
 				Thread t = new Thread(new XMLParser("kdv_unload_" + i + ".xml"));
 				t.start();
 				threads.add(t);
