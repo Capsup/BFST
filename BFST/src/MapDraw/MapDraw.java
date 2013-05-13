@@ -268,6 +268,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			gl2.glEnable( GL.GL_BLEND );
 			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
 			
+			
 			drawLines(gl2);
 			
 			animateZoom();
@@ -287,6 +288,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		double currentRelativeZoom;
 		
 		float opacity;
+		
+		
+		
+		
 		
 		for(int i=1; i<roadTypesToDraw.length; i++) {
 			if(!getDrawEdges(roadTypesToDraw[i]).isEmpty()) {

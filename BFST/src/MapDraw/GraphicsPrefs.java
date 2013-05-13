@@ -11,6 +11,7 @@ public class GraphicsPrefs {
 	
 	GL2 gl;
 	
+	//An array containing the types of roads that are to be showed at the different zoom levels
 	private int[] roadTypeToZoomLevel = new int[]{
 			0,	//0
 			0,	//1
@@ -63,6 +64,7 @@ public class GraphicsPrefs {
 		for(int i=0; i<roadTypeToZoomLevel.length; i++)
 			roadTypeToZoomLevel[i] -= 1;
 	}
+	
 	
 	public int[] getTypesAtCurrentZoom(double currentZoom) {
 		
@@ -143,7 +145,7 @@ public class GraphicsPrefs {
 		} else if(roadType == 6) {
 			gl.glLineWidth(1.7f);
 		} else if(roadType == 8) {
-			gl.glLineWidth(1.7f);
+			gl.glLineWidth(3f);
 		} else {
 			gl.glLineWidth(1.5f);
 		}
@@ -185,6 +187,8 @@ public class GraphicsPrefs {
 			} else {
 				return false;
 			}
+		} else if(roadType == 8) {
+			return true;
 		} else if(roadType < 8) {
 			return false;
 		} else {
@@ -206,6 +210,8 @@ public class GraphicsPrefs {
 				gl.glLineWidth(1.4f);
 			}
 			gl.glLineWidth(1.3f);
+		} else if(roadType == 8) { 
+			gl.glLineWidth(1.2f);
 		} else if(roadType < 8) {
 			gl.glLineWidth(0.8f);
 		} else {
@@ -234,19 +240,26 @@ public class GraphicsPrefs {
 
 		else if( roadType < 6) {
 			r = 131f;
-			g = 139f;
-			b = 131f;
+			g = 100f;
+			b = 100f;
+			//g = 139f;
+			//b = 131f;
 		}
 
 		else if( roadType < 8) {
 			r = 131f;
-			g = 139f;
-			b = 131f;
+			g = 100f;
+			b = 100f;
+			//g = 139f;
+			//b = 131f;
 		}
 
-		else if( roadType == 8 ) 
-			g = 255f;
-
+		else if( roadType == 8 ) {
+			r = 80f;
+			g = 80f;
+			b = 80f;
+		}
+			
 		return new float[] {r,g,b};
 	}
 
@@ -270,6 +283,10 @@ public class GraphicsPrefs {
 			r = 255;
 			g = 255;
 			b = 255;
+		} else if( roadType == 8) {
+			r = 0;
+			g = 255;
+			b = 0;
 		} else if( roadType < 8) {
 			r = 255;
 			g = 255;
