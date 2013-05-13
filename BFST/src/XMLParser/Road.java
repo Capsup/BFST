@@ -7,11 +7,14 @@ public class Road implements Comparable<Road>
 	public Edge[] edges;
 	
 	private String roadName;
-	private String zipCode;
+	private int zipCode;
 	
 	public Road(Edge[] edges)
 	{
 		this.edges = edges;
+		
+		roadName = edges[0].getName();
+		zipCode = edges[0].getZip();
 	}
 
 	@Override
@@ -51,9 +54,21 @@ public class Road implements Comparable<Road>
 		return roadName;
 	}
 	
-	public String getZipCode()
+	public int getZipCode()
 	{
 		return zipCode;
 	}
 	
+	public Edge getEdge(int index)
+	{
+		return edges[index];
+	}
+	
+	public String getAddress()
+	{
+		if(getZipCode() != 0)
+			return (getName()+", "+getZipCode());
+		else
+			return getName();
+	}
 }

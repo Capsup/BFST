@@ -19,8 +19,8 @@ public class AddressParser
 
 	private static AddressParser instance;
 	
-	private Edge[] roads;
-	//private Road[] roads;
+	//private Edge[] roads;
+	private Road[] roads;
 	
 	
 	public class NaughtyException extends Exception
@@ -60,28 +60,41 @@ public class AddressParser
 			}
 		}
 		
-		roads = new Edge[list.size()];
-		list.toArray(roads);
+		Edge[] edges = new Edge[list.size()];
+		list.toArray(edges);
 		
-		Arrays.sort(roads);
-		/*
-		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
+		Arrays.sort(edges);
+		
+		ArrayList<Road> roadList = new ArrayList<Road>();
+		ArrayList<Edge> currEdgeList = new ArrayList<Edge>();
+		
+		String roadName = edges[0].getName();
+		String zipCode = edges[0].getZip()+"";
+		
+		for(int i=0; i<edges.length; i++)
 		{
-			boolean bounce = true;
-			
-			for(int i=0; i<found; i++)
-				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
-					bounce = false;
-			
-			if(bounce)
+			if(roadName.equals(edges[i].getName()) && zipCode.equals(edges[i].getZip()+""))
 			{
-				foundIndexes.add(index);
-				break;
+				currEdgeList.add(edges[i]);
 			}
-			
-			index += increment;
+			else 
+			{
+				roadName = edges[0].getName();
+				zipCode = edges[0].getZip()+"";
+				
+				Edge[] edgeArray = new Edge[currEdgeList.size()];
+				currEdgeList.toArray(edgeArray);
+				
+				roadList.add(new Road(edgeArray));
+				
+				currEdgeList = new ArrayList<Edge>();
+				
+				currEdgeList.add(edges[i]);
+			}
 		}
-		*/
+		
+		roads = new Road[roadList.size()];
+		roadList.toArray(roads);
 	}
 	
 	public static AddressParser getInstance()
@@ -255,7 +268,7 @@ public class AddressParser
 	
 	public int search(String string) 
 	{
-		Edge[] a = roads;
+		Road[] a = roads;
 		
         int lo = 0;
         int hi = a.length - 1;
@@ -281,16 +294,18 @@ public class AddressParser
         return -1;
     }
 	
-	public int[] probabilitySearch(String string, int count) 
-	{
-		Edge[] a = roads;
+	public int[] probabilitySearch(String[] stringArray, int count) 
+	{	
+		Road[] a = roads;
+		
+		String roadName = stringArray[0];
 		
         int lo = 0;
         int hi = a.length - 1;
+
+        String string1 = roadName;
         
-        int cutoff = string.length();
-        
-        String string1 = string.substring(0, cutoff);
+        int cutoff = string1.length();
         
         while (lo <= hi) {
             
@@ -487,7 +502,7 @@ public class AddressParser
 		return 0;
 	}
 	
-	public Edge[] getRoads()
+	public Road[] getRoads()
 	{
 		return roads;
 	}

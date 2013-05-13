@@ -158,7 +158,7 @@ public class SearchField extends JTextField
 		int searchIndex = intSearch();
 
 		if(searchIndex >= 0)
-			return AddressParser.getInstance().getRoads()[searchIndex];
+			return AddressParser.getInstance().getRoads()[searchIndex].getEdge(0);
 		else {
 			Edge[] edges = edgeProbabilitySearch();
 			
@@ -201,7 +201,7 @@ public class SearchField extends JTextField
 		
 		for(int i=0; i<searchResult.length; i++)
 		{
-			edges[i] = AddressParser.getInstance().getRoads()[searchResult[i]];
+			edges[i] = AddressParser.getInstance().getRoads()[searchResult[i]].getEdge(0);
 		}
 		
 		return edges;
@@ -211,7 +211,7 @@ public class SearchField extends JTextField
 	{
 		if(getText().length() > 0)
 		{
-			/*
+			
 			String[] parsedAdress = new String[6];
 			
 			try {
@@ -221,27 +221,26 @@ public class SearchField extends JTextField
 				e.printStackTrace();
 			}
 			
-			
 			for(int i=0; i<parsedAdress.length; i++)
 			{
 				System.out.println("Index "+i+": "+parsedAdress[i]);
-			}*/
+			}
 			
-			//if(parsedAdress[0].length() > 0)
-			//{
-				int[] searchResult = AddressParser.getInstance().probabilitySearch(getText(), 5);
+			if(parsedAdress[0].length() > 0)
+			{
+				int[] searchResult = AddressParser.getInstance().probabilitySearch(parsedAdress, 5);
 				
 				if(searchResult[0] < 0)
 					dropdown.setContent(new String[]{"-No Matching Result-"}, false);
 
 				return searchResult;
-			//}
-			//else
-			//{
-			//	dropdown.setContent(new String[]{"-Invalid Character Input-"}, false);
-			//
-			//	return new int[]{-1};
-			//}
+			}
+			else
+			{
+				dropdown.setContent(new String[]{"-Invalid Character Input-"}, false);
+			
+				return new int[]{-1};
+			}
 		}
 		else {
 			dropdown.setVisible(false);
