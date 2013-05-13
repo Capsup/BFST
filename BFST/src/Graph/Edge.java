@@ -75,7 +75,18 @@ public class Edge implements Comparable<Edge>
 				((i.intervalX().low() <= xFrom) && (i.intervalX().high() >= xTo)) && 
 				((i.intervalY().low() <= yFrom) && (i.intervalY().high() >= yTo));
 	}
-
+	
+	public boolean hasRoadNumber(int i)
+	{
+		return 
+				((i <= toRight) && (i >= fromRight)) ||
+				((i <= toLeft) && (i >= fromLeft));
+	}
+	
+	public int getFromRight(){ return fromRight;	}
+	public int getToRight(){ return toRight;	}
+	public int getFromLeft(){ return fromLeft;	}
+	public int getToLeft(){ return toLeft;	}
 	public double getXTo(){	return xTo; }
 	public double getYTo(){	return yTo; }
 	public double getXFrom(){ return xFrom;	}
@@ -86,6 +97,14 @@ public class Edge implements Comparable<Edge>
 	public String getName(){ return roadName; }
 	public int getZip(){ return zip; }
 
+	public String getZipString()
+	{ 
+		if(zip != 0) 
+			return ""+zip; 
+		else
+			return "";
+	}
+	
 	
 	@Override
 	public int compareTo(Edge arg0) 

@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -11,6 +12,7 @@ import java.awt.geom.Point2D;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -18,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 public class Dropdown extends JDialog
 {
@@ -100,6 +103,7 @@ public class Dropdown extends JDialog
 	{
 		panel.removeAll();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		ArrayList<JButton> buttonList = new ArrayList<JButton>();
 		

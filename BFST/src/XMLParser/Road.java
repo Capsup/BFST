@@ -64,6 +64,11 @@ public class Road implements Comparable<Road>
 		return edges[index];
 	}
 	
+	public Edge[] getEdges()
+	{
+		return edges;
+	}
+	
 	public String getAddress()
 	{
 		if(getZipCode() != 0)

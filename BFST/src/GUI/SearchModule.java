@@ -70,10 +70,6 @@ public class SearchModule extends JPanel{
 							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
 									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
-							fromTextField.setText(edge.getAddress());
-							
-							fromTextField.getDropdown().setVisible(false);
-							
 							map.getRoute(edge.getFromIndex(), edge.getToIndex());
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
@@ -82,38 +78,8 @@ public class SearchModule extends JPanel{
 					}
 					else
 					{
-						String[] parsedAdressFrom = new String[1];
-						String[] parsedAdressTo = new String[1];
-						
-						try {
-							parsedAdressFrom = AddressParser.getInstance().parseAddress(fromTextField.getText());
-							parsedAdressTo = AddressParser.getInstance().parseAddress(toTextField.getText());
-						} catch (NaughtyException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-						//int searchResultIndexFrom = AddressParser.getInstance().search(parsedAdressFrom[0]);
-						//int searchResultIndexTo = AddressParser.getInstance().search(parsedAdressTo[0]);
-						
 						Edge fromEdge = fromTextField.edgeSearch();
 						Edge toEdge = toTextField.edgeSearch();
-						
-						//System.out.println(searchResultIndexFrom);
-						//System.out.println(searchResultIndexTo);
-						
-						
-						if(fromEdge != null)
-						{
-							fromTextField.setText(fromEdge.getAddress());
-							fromTextField.getDropdown().setVisible(false);	
-						}
-						
-						if(toEdge != null)
-						{
-							toTextField.setText(toEdge.getAddress());
-							toTextField.getDropdown().setVisible(false);
-						}
 						
 						if(fromEdge != null && toEdge != null)
 						{
