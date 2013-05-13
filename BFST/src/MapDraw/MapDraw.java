@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -290,12 +291,11 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		float opacity;
 		
 		
-		
-		
+		List<List<Edge>> enormousListOfEdges = getDrawEdges(roadTypesToDraw);
 		
 		for(int i=1; i<roadTypesToDraw.length; i++) {
-			if(!getDrawEdges(roadTypesToDraw[i]).isEmpty()) {
-				Edge testEdge = getDrawEdges(roadTypesToDraw[i]).get(0);
+			if(!enormousListOfEdges.get(i).isEmpty()) {
+				Edge testEdge = enormousListOfEdges.get(i).get(0);
 				gp.setLineWidth(testEdge);
 				float[] colors = gp.getLineColor(testEdge);
 				
@@ -314,7 +314,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 				}
 				
 				gl2.glBegin( GL.GL_LINES );
-				for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
+				for(Edge e: enormousListOfEdges.get(i)) {
 					
 					if(opacity < 0)
 						drawLine(e, gl2, colors[0], colors[1], colors[2]);
@@ -327,8 +327,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		}
 		
 		for(int i=1; i<roadTypesToDraw.length; i++) {
-			if(!getDrawEdges(roadTypesToDraw[i]).isEmpty()) {
-				Edge testEdge = getDrawEdges(roadTypesToDraw[i]).get(0);
+			if(!enormousListOfEdges.get(i).isEmpty()) {
+				//Edge testEdge = getDrawEdges(roadTypesToDraw[i]).get(0);
+				Edge testEdge = enormousListOfEdges.get(i).get(0);
 				if(gp.hasCenterLine(testEdge)) {
 					gp.setCenterLineWidth(testEdge);
 					float[] colors = gp.getLineCenterColor(testEdge);
@@ -349,7 +350,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 					
 					gl2.glBegin(GL.GL_LINES);
 					
-					for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
+					//for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
+					for(Edge e: enormousListOfEdges.get(i)) {
 						
 						if(opacity < 0)
 							drawLine(e, gl2, colors[0], colors[1], colors[2]);
@@ -398,7 +400,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
-	private List<List<Edge>> getDrawEdges(LinkedList<Integer> types)
+	private List<List<Edge>> getDrawEdges(int[] types)
 	{
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
 		double xs = (zoomFactor)* -1000 + 1 * -1000;
