@@ -152,7 +152,7 @@ public class XMLParser implements Runnable{
 						temp.add(string);
 					}
 
-					else if( name.equals( "zi" ) ){//Zipcode
+					else if( name.equals( "zi" ) ){//Zip code
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
 
@@ -164,6 +164,22 @@ public class XMLParser implements Runnable{
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
 
+					else if( name.equals( "fl" ) ){//From left
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+					
+					else if( name.equals( "tl" ) ){//To left
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+					
+					else if( name.equals( "fr" ) ){//From right
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+					
+					else if( name.equals( "tr" ) ){//To right
+						temp.add(input.nextEvent().asCharacters().getData());
+					}
+					
 					else if( name.equals( "ow" ) ){//One way
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
@@ -180,7 +196,7 @@ public class XMLParser implements Runnable{
 				}
 			}
 			
-		} catch(Exception e){}
+		} catch(Exception e){ e.printStackTrace(); }
 	}
 }
 

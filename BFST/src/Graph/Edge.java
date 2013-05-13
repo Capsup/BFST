@@ -19,6 +19,7 @@ public class Edge implements Comparable<Edge>
 	private String roadName;
 	
 	private int typ, zip;//, speedLimit;
+	private int toRight, fromRight, toLeft, fromLeft;
 	private double xTo, yTo, xFrom, yFrom, driveTime, length;
 	//private String roadName, oneWay;
 
@@ -57,10 +58,16 @@ public class Edge implements Comparable<Edge>
 		this.length = Double.parseDouble(s.get(6));
 		this.typ = Integer.parseInt(s.get(7));
 		this.roadName = s.get(8);
-		this.zip = Integer.parseInt(s.get(9));
-		//this.speedLimit = Integer.parseInt(s.get(10));
-		this.driveTime = Double.parseDouble(s.get(11));
-		//this.oneWay = s.get(12);
+		
+		this.fromLeft = Integer.parseInt(s.get(9));
+		this.toLeft = Integer.parseInt(s.get(10));
+		this.fromRight = Integer.parseInt(s.get(11));
+		this.toRight = Integer.parseInt(s.get(12));
+		
+		this.zip = Integer.parseInt(s.get(13));
+		//this.speedLimit = Integer.parseInt(s.get(14));
+		this.driveTime = Double.parseDouble(s.get(15));
+		//this.oneWay = s.get(16);
 	}
 
 	public boolean contains(Interval2D<Double> i){

@@ -30,12 +30,12 @@ public class Query{
 		LinkedList<Thread> threads = new LinkedList<Thread>();
 
 		try {
-			for(int i = 0;; i++){
-				Thread t = new Thread(new XMLParser("kdv_unload_" + (i+1) + ".xml"));
+			for(int i = 1; i <= 41; i++){
+				Thread t = new Thread(new XMLParser("kdv_unload_" + i + ".xml"));
 				t.start();
 				threads.add(t);
 			}
-		} catch (FileNotFoundException e) { }
+		} catch (FileNotFoundException e) {}
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
 
 		graph = new Graph(675903, edges);

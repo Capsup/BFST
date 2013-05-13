@@ -1,8 +1,2 @@
 /MSTParse
 *.class
-/DataProcessing
-/XMLParser
-/Graph
-/GUI
-/MapDraw
-/files
