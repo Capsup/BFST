@@ -31,7 +31,7 @@ public class XMLParser implements Runnable{
 	public static ArrayList<List<Edge>> getEdgeList(){
 		return list;
 	}
-	
+
 	static{
 		for(int i = 0; i < 100; i++)
 			list.add(Collections.synchronizedList(new LinkedList<Edge>()));
@@ -42,7 +42,7 @@ public class XMLParser implements Runnable{
 	{
 		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
 		loadFile( sPath );
-		
+
 	}
 
 	public void loadFile( String sPath ) throws FileNotFoundException
@@ -148,7 +148,7 @@ public class XMLParser implements Runnable{
 
 					else if( name.equals( "rn" ) ){//Road name
 						String string = input.nextEvent().asCharacters().getData().replace('\'', ' ').trim();
-						
+
 						temp.add(string);
 					}
 
@@ -167,19 +167,19 @@ public class XMLParser implements Runnable{
 					else if( name.equals( "fl" ) ){//From left
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
-					
+
 					else if( name.equals( "tl" ) ){//To left
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
-					
+
 					else if( name.equals( "fr" ) ){//From right
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
-					
+
 					else if( name.equals( "tr" ) ){//To right
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
-					
+
 					else if( name.equals( "ow" ) ){//One way
 						temp.add(input.nextEvent().asCharacters().getData());
 					}
@@ -195,8 +195,10 @@ public class XMLParser implements Runnable{
 					}
 				}
 			}
-			
-		} catch(Exception e){ e.printStackTrace(); }
+
+		} catch(Exception e){
+			e.printStackTrace(); 
+		}
 	}
 }
 
