@@ -66,7 +66,6 @@ public class MainFrame extends JFrame
 		MenuPanel menuPanel = new MenuPanel(mapPanel);
 		menuPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
-		
 		//Add the panels to the Main Panel
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);

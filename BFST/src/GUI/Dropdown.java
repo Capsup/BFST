@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.TextField;
@@ -107,9 +108,10 @@ public class Dropdown extends JDialog
 		
 		for(int i=0; i<strings.length; i++)
 		{
-			JButton newButton = new GUIButton(strings[i]);
+			GUIButton newButton = new GUIButton(strings[i]);
 			newButton.setEnabled(clickable);
-
+			newButton.setHoverable(clickable);
+			
 			buttonList.add(newButton);
 			
 			newButton.setMaximumSize(new Dimension(panel.getSize().width, textField.getSize().height));
@@ -122,7 +124,6 @@ public class Dropdown extends JDialog
 		buttonList.toArray(results);
 		
 		ButtonListener listener = new ButtonListener(results);
-		
 				
 		for(int i=0; i<results.length; i++)
 		{

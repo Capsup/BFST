@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -39,6 +40,8 @@ public class SearchField extends JTextField
 		super(text, size);
 		
 		baseString = text;
+		
+		setForeground(Color.GRAY);
 		
 		DocumentListener listener = new SearchListener();
 		this.getDocument().addDocumentListener(listener);
@@ -87,13 +90,23 @@ public class SearchField extends JTextField
 		public void focusGained(FocusEvent e) {
 
 			if(getText().equals(baseString))
+			{
+				setForeground(Color.BLACK);
 				setText("");
-				
+			}
+			
 			getSuggestions();
 		}
 
 		@Override
 		public void focusLost(FocusEvent e) {
+			
+			if(getText().equals(""))
+			{
+				setForeground(Color.GRAY);
+				setText(baseString);
+			}
+			
 			dropdown.setVisible(false);
 		}
 

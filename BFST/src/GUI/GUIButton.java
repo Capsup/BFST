@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 public class GUIButton extends JButton implements MouseListener
 {
@@ -20,6 +21,8 @@ public class GUIButton extends JButton implements MouseListener
 	private int state;
 	private boolean mousePressed;
 	private boolean mouseInWindow;
+	
+	private boolean hoverable = true;
 	
 	public static void main(String[] args)
 	{
@@ -86,16 +89,15 @@ public class GUIButton extends JButton implements MouseListener
 		
 		mouseInWindow = true;
 		
-		if(mousePressed)
-			state = 2;
-		else
-			state = 1;
-		
-		Font font = getFont();
+		if(hoverable)
+		{
+			if(mousePressed)
+				state = 2;
+			else
+				state = 1;
+		}
 		
 		repaint();
-		
-		setFont(font);
 		
 	}
 
@@ -105,7 +107,8 @@ public class GUIButton extends JButton implements MouseListener
 		
 		mouseInWindow = false;
 		
-		state = 0;
+		if(hoverable)	
+			state = 0;
 
 		repaint();
 	}
@@ -116,8 +119,9 @@ public class GUIButton extends JButton implements MouseListener
 		
 		mousePressed = true;
 		
+		if(hoverable)
+			state = 2;
 		
-		state = 2;
 		repaint();
 	}
 
@@ -127,10 +131,12 @@ public class GUIButton extends JButton implements MouseListener
 		
 		mousePressed = false;
 		
-		if(mouseInWindow)
-			state = 1;
-		else 
-			state = 0;
+		if(hoverable)	
+			if(mouseInWindow)
+				state = 1;
+			else 
+				state = 0;
+			
 		repaint();
 	}
 	
@@ -144,5 +150,10 @@ public class GUIButton extends JButton implements MouseListener
 		
 		setFont(getFont().deriveFont(Font.BOLD));
 		g.drawString(this.getText(), (int)Math.round(this.getSize().width*0.05), this.getSize().height/2+fontHeight/4);
+	}
+	
+	public void setHoverable(boolean flick)
+	{
+		hoverable = flick;
 	}
 }

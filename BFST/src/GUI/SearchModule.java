@@ -31,7 +31,8 @@ import java.awt.geom.Point2D;
 public class SearchModule extends JPanel{
 
 	private boolean showDestination;
-	private SearchPanel destinationPanel;
+	private JPanel fromPanel;
+	private JPanel destinationPanel;
 	private JPanel toPanel;
 	private JButton button;
 	
@@ -154,13 +155,13 @@ public class SearchModule extends JPanel{
 	
 	void makeContent()
 	{
-		JLabel headerLabel = new JLabel("Searching: ");
-		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		JPanel fromPanel = new JPanel(new BorderLayout());
+		JLabel headerLabel = new JLabel("Searching: ");
 		
-		JLabel fromLabel = new JLabel("From:");
+		fromPanel = new JPanel(new BorderLayout());
+		
+		//JLabel fromLabel = new JLabel("From:");
 		SearchPanel fromSearchPanel = new SearchPanel();
 		fromSearchPanel.getButton().setActionCommand("Search");
 		fromTextField = fromSearchPanel.getTextField();
@@ -170,7 +171,7 @@ public class SearchModule extends JPanel{
 		
 		fromSearchPanel.getButton().addActionListener(listener);
 		
-		fromPanel.add(fromLabel, BorderLayout.NORTH);
+		//fromPanel.add(fromLabel, BorderLayout.NORTH);
 		fromPanel.add(fromSearchPanel, BorderLayout.CENTER);
 		
 		//JLabel toLabel = new JLabel("To:");
@@ -265,6 +266,7 @@ public class SearchModule extends JPanel{
 		
 		toPanel.add(toTextField, BorderLayout.WEST);
 		
+		/*
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		
@@ -273,17 +275,21 @@ public class SearchModule extends JPanel{
 		
 		destinationPanel.add(buttonPanel, BorderLayout.CENTER);
 		
+		//revalidate();
+		*/
 		button.setText("Hide..");
+		
+		destinationPanel.setMinimumSize(new Dimension(fromPanel.getSize().width, button.getSize().height));
+		destinationPanel.setPreferredSize(new Dimension(fromPanel.getSize().width, button.getSize().height));
+		destinationPanel.setMaximumSize(new Dimension(fromPanel.getSize().width, button.getSize().height));
 	}
 	
 	void hideDestination()
 	{
 		toPanel.remove(1);
 		
-		for(int i=1; i<destinationPanel.getComponentCount(); i++)
-			destinationPanel.remove(i);
+		//destinationPanel.remove(destinationPanel.getComponentCount()-1);
 		
-		button.setText("Destination Search..");
-		
+		button.setText("Add Destination");
 	}
 }

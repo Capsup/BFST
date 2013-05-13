@@ -35,7 +35,7 @@ public class SearchPanel extends JPanel
 		
 		//Search Field <-- Insert SearchField class extending JTextField here
 		searchField = new SearchField("Search Here..", 20);
-		goButton = new JButton("GO!");
+		goButton = new JButton("Search");
 		
 		//add(searchText, BorderLayout.WEST);
 		add(searchField, BorderLayout.CENTER);
