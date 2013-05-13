@@ -20,6 +20,8 @@ public class AddressParser
 	private static AddressParser instance;
 	
 	private Edge[] roads;
+	//private Road[] roads;
+	
 	
 	public class NaughtyException extends Exception
 	{
@@ -62,6 +64,24 @@ public class AddressParser
 		list.toArray(roads);
 		
 		Arrays.sort(roads);
+		/*
+		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
+		{
+			boolean bounce = true;
+			
+			for(int i=0; i<found; i++)
+				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
+					bounce = false;
+			
+			if(bounce)
+			{
+				foundIndexes.add(index);
+				break;
+			}
+			
+			index += increment;
+		}
+		*/
 	}
 	
 	public static AddressParser getInstance()
@@ -348,7 +368,7 @@ public class AddressParser
             			String firstResultString = a[returnIndexes[0]].getAddress().substring(0, cutoff);
                 		
             			for(int j=0; j < foundIndexes.size(); j++)	
-            			{	
+            			{
 	            			String currResultString = a[foundIndexes.get(j)].getAddress();
 	            			
 	            			if(currResultString.length() > cutoff)	
