@@ -70,6 +70,7 @@ public class SearchModule extends JPanel{
 							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
 									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
+							
 							map.getRoute(edge.getFromIndex(), edge.getToIndex());
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
