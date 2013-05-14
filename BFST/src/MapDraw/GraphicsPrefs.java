@@ -65,7 +65,7 @@ public class GraphicsPrefs {
 			roadTypeToZoomLevel[i] -= 1;
 	}
 	
-	
+	//Returns an int[] containing the numbers of all allowed road types at the given zoom level
 	public int[] getTypesAtCurrentZoom(double currentZoom) {
 		
 		int zoomIndex = ZoomLevel.getInstance().findIndex(currentZoom);
@@ -107,25 +107,26 @@ public class GraphicsPrefs {
 		}*/
 	}
 	
-	public int getMaxTypeAtCurrentZoom() {
-		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
-		
-		if(zoomIndex < 3)
-			return 5;
-		else if(zoomIndex < 6)
-			return 5;
-		else if(zoomIndex < 12)
-			return 6;
-		else if(zoomIndex < 15)
-			return 7;
-		else if(zoomIndex < 16)
-			return 8;
-		else
-			return 42;
-		
-		//return 100;
-	}
+//	public int getMaxTypeAtCurrentZoom() {
+//		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
+//		
+//		if(zoomIndex < 3)
+//			return 5;
+//		else if(zoomIndex < 6)
+//			return 5;
+//		else if(zoomIndex < 12)
+//			return 6;
+//		else if(zoomIndex < 15)
+//			return 7;
+//		else if(zoomIndex < 16)
+//			return 8;
+//		else
+//			return 42;
+//		
+//		//return 100;
+//	}
 	
+	//Checks what type of edge has been given, then sets the gl.glLineWidth to an appropriate size
 	public void setLineWidth(Edge e) {
 		int roadType = e.getTyp();
 		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
@@ -171,6 +172,7 @@ public class GraphicsPrefs {
 //		}
 	}
 	
+	//Checks what type of edge has been given, then returns true if the roadtype has a center-line
 	public boolean hasCenterLine(Edge e) {
 		int roadType = e.getTyp();
 		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
@@ -196,6 +198,7 @@ public class GraphicsPrefs {
 		}
 	}
 	
+	//Checks what type of edge has been given, then sets the gl.glLineWidth to an appropriate size
 	public void setCenterLineWidth(Edge e) {
 		int roadType = e.getTyp();
 		
@@ -221,10 +224,13 @@ public class GraphicsPrefs {
 		
 	}
 	
+	//Sets the lineWidth to a user-given value. 
+	//This is useful when we want to paint over lines, when we are showing a route, for example.
 	public void setLineWidth(float f) {
 		gl.glLineWidth(f);
 	}
 	
+	//Checks what type of edge has been given, then returns an array with r, g and b values for the given type.
 	public float[] getLineColor(Edge e) {
 		float r=0, g=0, b=0;
 		int roadType = e.getTyp();
@@ -263,6 +269,7 @@ public class GraphicsPrefs {
 		return new float[] {r,g,b};
 	}
 
+	//Checks what type of edge has been given, then returns an array with r, g and b values for the given type's centerLine.
 	public float[] getLineCenterColor(Edge e) {
 		float r=0, g=0, b=0;
 		int roadType = e.getTyp();
@@ -296,9 +303,9 @@ public class GraphicsPrefs {
 		return new float[] {r,g,b};
 	}
 	
+	//Returns the allowed zoom index for the given roadType.
 	public int getAllowedZoomIndex(int roadType)
 	{
-		
 		return roadTypeToZoomLevel[roadType];
 	}
 }
