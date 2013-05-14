@@ -47,7 +47,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private double targetZoomLevel = 0;
 	
 	private Iterable<Edge> routeToDraw; 
-
+	private double currentRouteLength;
+	
 	private long lastTime;
 
 	private int i;
@@ -62,7 +63,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		return instance;
 	}
 	
-	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable; }
+	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable;}
 	
 	public double getWidthFactor()
 	{
@@ -373,6 +374,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	}
 	
 	public void drawRoute(GL2 gl2, Iterable<Edge> edges) {
+		
 		gp.setLineWidth(3f);
 		float[] colors = new float[] {0,0,255};
 		gl2.glBegin(GL.GL_LINES);
@@ -556,6 +558,18 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		System.out.println("Getting Route!");
 		new Route.GetRoute(this, q, from, to).start();
+	}
+	
+	public double getCurrentRouteLength()
+	{
+		System.out.println(currentRouteLength);
+		return currentRouteLength;
+	}
+	
+	public void setCurrentRouteLength(double length)
+	{
+		currentRouteLength = length;
+		System.out.println(currentRouteLength);
 	}
 	
 	public int getMapWidth()

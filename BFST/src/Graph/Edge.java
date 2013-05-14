@@ -96,7 +96,8 @@ public class Edge implements Comparable<Edge>
 	public int getTyp()	{ return typ; }
 	public String getName(){ return roadName; }
 	public int getZip(){ return zip; }
-
+	public double getLength(){ return length; }
+	
 	public String getZipString()
 	{ 
 		if(zip != 0) 
