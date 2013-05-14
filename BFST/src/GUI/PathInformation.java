@@ -112,8 +112,6 @@ public class PathInformation extends Observable
 			
 			time -= Math.floor(time);
 			
-			System.out.println(time);
-			
 			int minutes = (int)Math.round(60*time);
 			
 			StringBuilder stringBuilder = new StringBuilder();

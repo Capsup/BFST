@@ -3,11 +3,15 @@ package XMLParser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Box.Filler;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -40,24 +44,23 @@ public class XMLParser implements Runnable{
 
 	public XMLParser( String sPath ) throws FileNotFoundException
 	{
-		sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
+		//sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
 		loadFile( sPath );
 
 	}
 
 	public void loadFile( String sPath ) throws FileNotFoundException
 	{
-		File file = new File( sPath );
-		if( !file.exists() )
+		URL url = getClass().getResource( sPath );
+		if( url == null )
 			throw new FileNotFoundException();
-
+		InputStream in = getClass().getResourceAsStream( sPath );
 		filePath = sPath;
-
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		try
 		{
-			input = inputFactory.createXMLEventReader( new FileInputStream( file ) );
+			input = inputFactory.createXMLEventReader( in );
 		}
 		catch( XMLStreamException e )
 		{

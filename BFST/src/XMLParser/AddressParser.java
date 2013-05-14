@@ -315,8 +315,9 @@ public class AddressParser
             		{
             			if((roads[index].getZipCode()+"").equals(stringArray[4]))
         				{
-        					mid = index;
+            				mid = index;
         					isFound = true;
+        					
         				}
         				
         				index++;
@@ -326,7 +327,7 @@ public class AddressParser
             		
             		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
             		{
-        				if((roads[index].getZipCode()+"").equals(stringArray[5]))
+            			if((roads[index].getZipCode()+"").equals(stringArray[4]))
         				{
         					mid = index;
         					isFound = true;

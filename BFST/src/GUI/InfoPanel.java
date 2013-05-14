@@ -161,8 +161,6 @@ public class InfoPanel extends JPanel implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		System.out.println("Info Panel is updated");
-		
 		updatePanel();	
 	}
 }
