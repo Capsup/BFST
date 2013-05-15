@@ -50,7 +50,7 @@ public class GetRoute extends Thread {
 	
 	public boolean hasNewPath()
 	{
-		return from != lastFrom || to != lastTo || Settings.routeProfile() != lastPathSetting;
+		return from != lastFrom || to != lastTo || Settings.routeProfile() != lastPathSetting || Settings.meansOfTransport() != lastTransportSetting;
 	}
 	
 	public boolean hasNewTransport()

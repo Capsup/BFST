@@ -15,8 +15,8 @@ public class Settings {
 	private static int meansOfTransport = car;
 	
 	private static int ferry_allowed = 0;
-	private static int yes = 0;
-	private static int no = 1;
+	public static final int yes = 0;
+	public static final int no = 1;
 	
 	public static void setFerryAllowed(int i){ ferry_allowed = (i < 2 && i >= 0) ? i : yes; }	
 	public static int ferryAllowed(){ return ferry_allowed; }

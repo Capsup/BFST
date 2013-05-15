@@ -76,8 +76,10 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{ 
 		//routeToDraw = null;
 		
+		if(edges != routeToDraw)
+			currentRouteIndex = edges.length-1;
+		
 		routeToDraw = edges;
-		currentRouteIndex = edges.length-1;
 	}
 	
 	public double getWidthFactor()
@@ -384,7 +386,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			}
 			
 		}
-		System.out.println(i);
 		i = 0;
 	}
 	

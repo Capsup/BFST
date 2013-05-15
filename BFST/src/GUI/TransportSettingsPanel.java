@@ -64,8 +64,14 @@ public class TransportSettingsPanel extends JPanel
 			
 			if(e.getActionCommand() == "Ferry")
 			{
-				System.out.println(ferryCheckBox.isSelected());
-				//Route.Settings.
+				if(ferryCheckBox.isSelected())
+					Route.Settings.setFerryAllowed(Route.Settings.yes);
+				else
+					Route.Settings.setFerryAllowed(Route.Settings.no);
+				
+				System.out.println(Route.Settings.ferryAllowed());
+				
+				MapDraw.getInstance().refreshRoute();
 			}
 		}
 	}
@@ -105,6 +111,7 @@ public class TransportSettingsPanel extends JPanel
 		
 		ferryCheckBox = new JCheckBox("Ferry");
 		ferryCheckBox.setActionCommand("Ferry");
+		ferryCheckBox.setSelected(true);
 		ferryCheckBox.setEnabled(Route.Settings.meansOfTransport() == Route.Settings.car);
 		ferryCheckBox.setAlignmentX(LEFT_ALIGNMENT);
 		
