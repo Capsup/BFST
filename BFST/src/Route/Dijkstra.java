@@ -78,7 +78,7 @@ public class Dijkstra {
 	        	else
 	        		currentPathTravelTime += (e.getLength()/1000)/50;
         	else if(Settings.meansOfTransport() == Settings.bike)
-        		currentPathTravelTime += (e.getLength()/1000)/20;
+        		currentPathTravelTime += (e.getLength()/1000)/18;
         	else 
         		currentPathTravelTime += (e.getLength()/1000)/5;
         	
