@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.BevelBorder;
 
+import MapDraw.MapDraw;
+
 public class SettingsPanel extends JPanel
 {
 	public SettingsPanel()
@@ -27,12 +29,22 @@ public class SettingsPanel extends JPanel
 			
 			if(e.getActionCommand() == "Fastest")
 			{
-				Route.Settings.setRouteProfile(Route.Settings.fastest_route);
+				if(Route.Settings.routeProfile() != Route.Settings.fastest_route)
+				{
+					Route.Settings.setRouteProfile(Route.Settings.fastest_route);
+					
+					MapDraw.getInstance().refreshRoute();
+				}
 			}
 			
 			if(e.getActionCommand() == "Shortest")
 			{
-				Route.Settings.setRouteProfile(Route.Settings.shortest_route);
+				if(Route.Settings.routeProfile() != Route.Settings.shortest_route)
+				{
+					Route.Settings.setRouteProfile(Route.Settings.shortest_route);
+					
+					MapDraw.getInstance().refreshRoute();
+				}
 			}
 		}
 		

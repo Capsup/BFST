@@ -47,6 +47,9 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private double targetZoomLevel = 0;
 	
 	private Iterable<Edge> routeToDraw; 
+	private int routeFrom = -1;
+	private int routeTo = -1;
+	
 	private double currentRouteLength;
 	
 	private long lastTime;
@@ -557,7 +560,24 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	public void getRoute(int from, int to)
 	{
 		System.out.println("Getting Route!");
+		
+		routeFrom = from;
+		routeTo = to;
+		
 		new Route.GetRoute(this, q, from, to).start();
+	}
+	
+	public boolean hasRoute()
+	{
+		return routeToDraw != null && routeFrom >= 0 && routeTo >= 0;
+	}
+	
+	public void refreshRoute()
+	{
+		if(hasRoute())
+		{
+			getRoute(routeFrom, routeTo);
+		}
 	}
 	
 	public double getCurrentRouteLength()
