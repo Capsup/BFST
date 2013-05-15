@@ -1,17 +1,14 @@
 package XMLParser;
 
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.Box.Filler;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -20,33 +17,25 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import Graph.Edge;
-import Graph.Graph;
 import Graph.Node;
 
 
-
 public class XMLParser implements Runnable{
-	private String[] sNames;
-	private String[] sData;
 	private XMLEventReader input;
-	private String filePath, sPath;
-	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>();
-
-	public static ArrayList<List<Edge>> getEdgeList(){
-		return list;
-	}
-
-	static{
-		for(int i = 0; i < 100; i++)
-			list.add(Collections.synchronizedList(new LinkedList<Edge>()));
-	}
+	
+	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>(); //List to contains all edges
+	
+	/**
+	 * @param 
+	 * @return 
+	 */
+	public static ArrayList<List<Edge>> getEdgeList(){ return list; } //Method to get edges after the have been created
+	static{	for(int i = 0; i < 100; i++) list.add(Collections.synchronizedList(new LinkedList<Edge>())); }
 
 
 	public XMLParser( String sPath ) throws FileNotFoundException
 	{
-		//sPath = ( "" + XMLParser.class.getResource( "" ) ).replaceAll( "file:/", "" ).replaceAll( "/", "\\\\\\\\" ).replaceAll("%20", " ") + sPath;
 		loadFile( sPath );
-
 	}
 
 	public void loadFile( String sPath ) throws FileNotFoundException
@@ -55,7 +44,6 @@ public class XMLParser implements Runnable{
 		if( url == null )
 			throw new FileNotFoundException();
 		InputStream in = getClass().getResourceAsStream( sPath );
-		filePath = sPath;
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		try

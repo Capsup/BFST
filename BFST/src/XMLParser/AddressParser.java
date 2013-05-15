@@ -12,12 +12,18 @@ import java.util.List;
 
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
+import DataProcessing.Interval;
+import DataProcessing.Interval2D;
 import Graph.Edge;
 
 
 public class AddressParser
 {
 	private String[] arrayStrings;
+	Interval2D<Double> interval = new Interval2D<Double>(
+			new Interval<Double>(new Double(0.0), new Double(700200050.98297)), 
+			new Interval<Double>(new Double(0.0), new Double(705000527.51786))
+			);
 
 	private static AddressParser instance;
 	
@@ -40,7 +46,7 @@ public class AddressParser
 		
 		for(int i=0; i<edgeList.size(); i++)
 		{
-			Iterator<Edge> it = edgeList.get(i).iterator();
+			Iterator<Edge> it = DataProcessing.Query.getInstance().queryEdges(interval, i).iterator();
 			
 			while(it.hasNext())
 			{
