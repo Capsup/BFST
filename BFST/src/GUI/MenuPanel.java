@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
@@ -16,41 +17,67 @@ import MapDraw.MapDraw;
 
 public class MenuPanel extends JPanel
 {
-	private MapDraw map;
-	
+
 	/*
 	 * The Menu Panel contains everything to do with the menu
 	 */	
-	public MenuPanel(MapDraw mapPanel) {
+	public MenuPanel() {
 		
-		this.map = mapPanel;
 		
 		makeContent();
 	}
 
 	void makeContent()
 	{
+		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		//Search Panel
-		JPanel searchPanel = new SearchModule(map);
+		JPanel searchPanel = new SearchModule();
 		searchPanel.setMaximumSize(searchPanel.getPreferredSize());
+		searchPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		//Info Panel
+		JPanel infoPanel = new InfoPanel();
+		infoPanel.setMaximumSize(infoPanel.getPreferredSize());
+		infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		//Settings Panel
+		JPanel settingsContainerPanel = new JPanel();
+		settingsContainerPanel.setLayout(new BoxLayout(settingsContainerPanel, BoxLayout.X_AXIS));
+		settingsContainerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		JPanel settingsPanel = new SettingsPanel();
+		settingsPanel.setMaximumSize(settingsPanel.getPreferredSize());
+		//settingsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		settingsContainerPanel.add(Box.createHorizontalGlue());
+		settingsContainerPanel.add(settingsPanel);
+		settingsContainerPanel.add(Box.createHorizontalGlue());
 		
 		//Navigation Panel
+		JPanel navContainerPanel = new JPanel();
+		navContainerPanel.setLayout(new BoxLayout(navContainerPanel, BoxLayout.X_AXIS));
+		navContainerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
 		JPanel navPanel = new NavigationPanel();
 		navPanel.setMaximumSize(navPanel.getPreferredSize());
+		//navPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
+		navContainerPanel.add(Box.createHorizontalGlue());
+		navContainerPanel.add(navPanel);
+		navContainerPanel.add(Box.createHorizontalGlue());
 		
-		/*
-		//Translation Panel
-		JPanel translationPanel = new TranslationPanel();
-		translationPanel.setMaximumSize(translationPanel.getPreferredSize());
-		*/
 		//Add the panels, with vertical glue, in order to have a nice look
 		add(Box.createVerticalGlue());
 		add(searchPanel);
+		//add(Box.createVerticalGlue());
+		add(infoPanel);
+		add(settingsContainerPanel);
 		add(Box.createVerticalGlue());
-		add(navPanel);
+		add(navContainerPanel);
 		add(Box.createVerticalGlue());
+		
+		
 	}
 }

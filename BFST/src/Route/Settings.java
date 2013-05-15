@@ -16,5 +16,4 @@ public class Settings {
 	
 	public static void setMeansOfTransport(int i){ meansOfTransport = (i < 3 && i >= 0) ? i : car; }	
 	public static int meansOfTransport(){ return meansOfTransport; }
-	
 }

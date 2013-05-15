@@ -38,15 +38,11 @@ public class SearchModule extends JPanel{
 	
 	private SearchField fromTextField;
 	private SearchField toTextField;
-	
-	private MapDraw map;
-	
 	/*
 	 * The search module is the combined search panels "from" and "to"
 	 */
-	public SearchModule(MapDraw map)
+	public SearchModule()
 	{
-		this.map = map;
 		
 		AddressParser.getInstance();
 		
@@ -61,12 +57,15 @@ public class SearchModule extends JPanel{
 			{
 				case "Search":
 					
+					MapDraw map = MapDraw.getInstance();
+					
 					if(!showDestination)
 					{
 						Edge edge = fromTextField.edgeSearch();
 						
 						if(edge != null)
 						{
+							
 							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
 									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
@@ -75,6 +74,18 @@ public class SearchModule extends JPanel{
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(17);
+							/*
+							//Pass the new information to the info panel
+							String[] infoStrings = new String[3];
+							
+							infoStrings[0] = "Name: "+fromTextField.getText();
+							infoStrings[1] = "This is a test string";
+							infoStrings[2] = "This is aslo a test string";
+							
+							SearchInformation.getInstance().setSearchInfo(infoStrings);
+							*/
+							
+							PathInformation.getInstance().setVisible(false);
 						}
 					}
 					else
@@ -109,6 +120,26 @@ public class SearchModule extends JPanel{
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(ZoomLevel.getInstance().findIndex(targetZoom));
+							
+							/*
+							//Pass the new information to the info panel
+							String[] infoStrings = new String[3];
+							
+							infoStrings[0] = "From: "+fromTextField.getText();
+							infoStrings[1] = "To: "+toTextField.getText();
+							infoStrings[2] = "Distance: "+map.getCurrentRouteLength()+" km";
+							
+							//Calculate travel time
+							
+							
+							
+							
+							//infoStrings[3] = "Travel Time: "+routeLength/100+"h";
+							
+							*/
+							
+							PathInformation.getInstance().setFromAndTo(fromTextField.getText(), toTextField.getText());
+							PathInformation.getInstance().setVisible(true);
 						}
 					}
 					
@@ -244,6 +275,7 @@ public class SearchModule extends JPanel{
 		
 		//revalidate();
 		*/
+		
 		button.setText("Hide..");
 		
 		destinationPanel.setMinimumSize(new Dimension(fromPanel.getSize().width, button.getSize().height));
