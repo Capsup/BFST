@@ -22,11 +22,12 @@ public class Query{
 		for(int i = 0; i < lastQuery.length; i++) lastQuery[i] = new LinkedList<Edge>();
 		for(int i = 0; i < lastInterval.length; i++) lastInterval[i] = interval;
 	}
-
-
+	
 	public Graph getGraph(){ return graph; }
+	
 
 	public Query(){
+		double time = System.currentTimeMillis();
 		LinkedList<Thread> threads = new LinkedList<Thread>();
 
 		try {
@@ -39,6 +40,7 @@ public class Query{
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
 
 		graph = new Graph(675903, edges);
+		System.out.println("Query load time: " + (System.currentTimeMillis() - time) / 1000 + "s");
 	}
 
 

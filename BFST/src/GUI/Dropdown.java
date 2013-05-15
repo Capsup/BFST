@@ -69,7 +69,6 @@ public class Dropdown extends JDialog
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
 		String[] strings = new String[]{"WAT", "FUCK", "BALLS"};
-		System.out.println("hey");
 		
 		for(int i=0; i<strings.length; i++)
 			panel.add(new JLabel(strings[i]));

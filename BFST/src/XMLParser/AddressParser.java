@@ -66,12 +66,7 @@ public class AddressParser
 		list.toArray(edges);
 		
 		Arrays.sort(edges);
-		
-		for(int i=10000; i<11000; i++)
-		{
-			System.out.println(edges[i].getName()+", "+edges[i].getZip());
-		}
-		
+
 		ArrayList<Road> roadList = new ArrayList<Road>();
 		ArrayList<Edge> currEdgeList = new ArrayList<Edge>();
 		
