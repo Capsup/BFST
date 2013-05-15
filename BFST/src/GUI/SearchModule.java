@@ -162,6 +162,7 @@ public class SearchModule extends JPanel{
 		//JLabel fromLabel = new JLabel("From:");
 		SearchPanel fromSearchPanel = new SearchPanel();
 		fromSearchPanel.getButton().setActionCommand("Search");
+		fromSearchPanel.getButton().setFocusable(false);
 		fromTextField = fromSearchPanel.getTextField();
 		
 		//Button Listener
@@ -196,10 +197,11 @@ public class SearchModule extends JPanel{
 		
 		//ImageIcon icon = new ImageIcon(getClass().getResource("/images/Boeing 1337.png"));
 		
-		button = new JButton("Destination Search...");
+		button = new JButton("Click for destination search...");
 		
 		button.setHorizontalTextPosition(JButton.CENTER);
-		button.setText("Destination Search..");
+		button.setText("Click for destination search...");
+		button.setFocusable(false);
 		
 		button.addActionListener(listener);
 		button.setActionCommand("Open");
@@ -289,6 +291,7 @@ public class SearchModule extends JPanel{
 		
 		//destinationPanel.remove(destinationPanel.getComponentCount()-1);
 		
-		button.setText("Add Destination");
+		button.setText("Click for destination search...");
+		
 	}
 }

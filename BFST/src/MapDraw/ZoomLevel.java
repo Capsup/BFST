@@ -50,22 +50,33 @@ public class ZoomLevel extends Observable
 		notifyObservers();
 	}
 	
-	public void zoomIn()
+	public boolean zoomIn()
 	{
 		if(currentZoomLevelIndex+1 < zoomLevels.length)
+		{
 			currentZoomLevelIndex++;
-		
-		setChanged();
-		notifyObservers();
+
+			setChanged();
+			notifyObservers();
+			
+			return true;
+		}
+		else
+			return false;
 	}
 	
-	public void zoomOut()
+	public boolean zoomOut()
 	{
 		if(currentZoomLevelIndex-1 >= 0)
+		{
 			currentZoomLevelIndex--;
-		
-		setChanged();
-		notifyObservers();
+			setChanged();
+			notifyObservers();
+			
+			return true;
+		}
+		else 
+			return false;
 	}
 	
 	public int findIndex(double zoomLevel)
