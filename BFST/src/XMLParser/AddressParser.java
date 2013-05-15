@@ -169,7 +169,7 @@ public class AddressParser
 		for( ; iProcessed < addressStrings.length; iProcessed++ )
 		{
 			String curString = addressStrings[iProcessed];
-			if( curString.matches( "[\\xC5\\xC6\\xD8\\xE5\\xE6\\xF8\\xC9\\xE9\\xC4\\xE4\\xD6\\xF6\\xDC\\xFC\\xC8\\xE8a-zA-Z,]*" )
+			if( curString.matches( "[\\xC5\\xC6\\xD8\\xE5\\xE6\\xF8\\xC9\\xE9\\xC4\\xE4\\xD6\\xF6\\xDC\\xFC\\xC8\\xE8a-zA-Z,.]*" )
 			        && !curString.equals( "i" ) )
 				if( curString.contains( "," ) )
 				{

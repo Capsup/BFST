@@ -13,6 +13,7 @@ public class GetRoute extends Thread {
 	public static int lastTo = -1;
 	public static int lastPathSetting = -1;
 	public static int lastTransportSetting = -1;
+	public static int lastFerrySetting = -1;
 	
 	public GetRoute(MapDraw map, int from, int to){
 		this.map = map;
@@ -46,11 +47,12 @@ public class GetRoute extends Thread {
 		lastTo = to;
 		lastPathSetting = Settings.routeProfile();
 		lastTransportSetting = Settings.meansOfTransport();
+		lastFerrySetting = Settings.ferryAllowed();
 	}
 	
 	public boolean hasNewPath()
 	{
-		return from != lastFrom || to != lastTo || Settings.routeProfile() != lastPathSetting || Settings.meansOfTransport() != lastTransportSetting;
+		return from != lastFrom || to != lastTo || Settings.routeProfile() != lastPathSetting || Settings.meansOfTransport() != lastTransportSetting || Settings.ferryAllowed() != lastFerrySetting;
 	}
 	
 	public boolean hasNewTransport()

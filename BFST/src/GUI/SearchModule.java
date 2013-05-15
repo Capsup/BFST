@@ -72,16 +72,6 @@ public class SearchModule extends JPanel{
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(17);
-							/*
-							//Pass the new information to the info panel
-							String[] infoStrings = new String[3];
-							
-							infoStrings[0] = "Name: "+fromTextField.getText();
-							infoStrings[1] = "This is a test string";
-							infoStrings[2] = "This is aslo a test string";
-							
-							SearchInformation.getInstance().setSearchInfo(infoStrings);
-							*/
 							
 							PathInformation.getInstance().setVisible(false);
 							fromTextField.getDropdown().updatePosition();
@@ -289,6 +279,7 @@ public class SearchModule extends JPanel{
 	
 	void hideDestination()
 	{
+		toTextField.getDropdown().setVisible(false);
 		toPanel.remove(1);
 		
 		//destinationPanel.remove(destinationPanel.getComponentCount()-1);
