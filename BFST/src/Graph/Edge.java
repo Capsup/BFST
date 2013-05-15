@@ -1,13 +1,6 @@
 package Graph;
 
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import javax.lang.model.element.Element;
-
-import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 
 public class Edge implements Comparable<Edge>
@@ -16,12 +9,11 @@ public class Edge implements Comparable<Edge>
 	private final int id;
 	private final int v;
 	private final int w;
-	private String roadName;
 	
 	private int typ, zip, speedLimit;
 	private int toRight, fromRight, toLeft, fromLeft;
 	private double xTo, yTo, xFrom, yFrom, driveTime, length;
-	//private String roadName, oneWay;
+	private String roadName, oneWay;
 
 	public Edge( int v, int w, ArrayList<String> s )
 	{
@@ -67,7 +59,7 @@ public class Edge implements Comparable<Edge>
 		this.zip = Integer.parseInt(s.get(13));
 		this.speedLimit = Integer.parseInt(s.get(14));
 		this.driveTime = Double.parseDouble(s.get(15));
-		//this.oneWay = s.get(16);
+		this.oneWay = s.get(16);
 	}
 
 	public boolean contains(Interval2D<Double> i){
@@ -99,6 +91,7 @@ public class Edge implements Comparable<Edge>
 	public double getLength(){ return length; }
 	public double getSpeedLimit(){ return speedLimit; }
 	public double getDriveTime(){ return driveTime; }
+	public String getOneWay(){ return oneWay; }
 	
 	public String getZipString()
 	{ 

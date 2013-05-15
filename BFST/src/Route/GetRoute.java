@@ -8,15 +8,13 @@ import MapDraw.MapDraw;
 public class GetRoute extends Thread {
 	private int from, to;
 	private MapDraw map;
-	private Query q;
 	
 	public static int lastFrom = -1;
 	public static int lastTo = -1;
 	public static int lastPathSetting = -1;
 	public static int lastTransportSetting = -1;
 	
-	public GetRoute(MapDraw map,Query q, int from, int to){
-		this.q = q;
+	public GetRoute(MapDraw map, int from, int to){
 		this.map = map;
 		this.from = from;
 		this.to = to;
@@ -30,7 +28,7 @@ public class GetRoute extends Thread {
 		GUI.PathInformation.getInstance().setTravelTime(-1);
 		GUI.PathInformation.getInstance().update();
 		
-		Dijkstra d = new Dijkstra(q.getGraph(), from);
+		Dijkstra d = new Dijkstra(Query.getInstance().getGraph(), from);
 		
 		//Iterable<Edge> edges = d.pathTo(to);
 		Edge[] edges = d.pathTo(to);

@@ -39,7 +39,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	private long lastLeftMousePressTime;
 	private long lastRightMousePressTime;
 	
-	private Query q = new Query();
+	private Query q = Query.getInstance();
 	private int width;
 	private int height;
 	//private double scale = 1;
@@ -384,7 +384,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			}
 			
 		}
-		//System.out.println(i);
+		System.out.println(i);
 		i = 0;
 	}
 	
@@ -425,13 +425,15 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	
 	private List<List<Edge>> getDrawEdges(int[] types)
 	{
+		int width = this.width;
+		int height = this.height;
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
-		double xs = (zoomFactor)* -1000 + 1 * -1000;
-		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 1 * -1000;
+		double xs = (zoomFactor)* -1000 + 10 * -1000;
+		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 10 * -1000;
 
 		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
-		double ys = zoomFactor * 1000 - 1 * 1000;
-		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 1 * 1000;
+		double ys = zoomFactor * 1000 - 10 * 1000;
+		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 10 * 1000;
 		
 		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
 	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
@@ -615,7 +617,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		routeFrom = from;
 		routeTo = to;
 		
-		GetRoute route = new GetRoute(this, q, from, to);
+		GetRoute route = new GetRoute(this, from, to);
 		
 		if(route.hasNewPath() || route.hasNewTransport())
 			route.start();
