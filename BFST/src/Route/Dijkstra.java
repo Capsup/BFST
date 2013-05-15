@@ -11,6 +11,7 @@ public class Dijkstra {
     private IndexMinPQ<Double> pq;    // priority queue of vertices
 
     private double currentPathLength = 0;
+    private double currentPathTravelTime  = 0;
     
     public Dijkstra(Graph G, int s) {
         for (Edge e : G.edges()) {
@@ -62,9 +63,18 @@ public class Dijkstra {
     public Iterable<Edge> pathTo(int v) {
         if (!hasPathTo(v)) return null;
         Stack<Edge> path = new Stack<Edge>();
+        
         currentPathLength = 0;
+        currentPathTravelTime = 0;
+        
         for (Edge e = edgeTo[v]; e != null; e = edgeTo[v = e.other(v)]) {
         	currentPathLength += e.getLength();
+        	
+        	if(e.getSpeedLimit() != 0)
+        		currentPathTravelTime += (e.getLength()/1000)/e.getSpeedLimit();
+        	else
+        		currentPathTravelTime += (e.getLength()/1000)/50;
+        	
             path.push(e);
         }
         return path;
@@ -125,5 +135,10 @@ public class Dijkstra {
     public double getCurrentPathLength()
     {
     	return currentPathLength;
+    }
+    
+    public double getTravelTime()
+    {
+    	return currentPathTravelTime;
     }
 }

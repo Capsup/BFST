@@ -20,6 +20,7 @@ public class GetRoute extends Thread {
 	public void run()
 	{
 		GUI.PathInformation.getInstance().setLength(-1);
+		GUI.PathInformation.getInstance().setTravelTime(-1);
 		GUI.PathInformation.getInstance().update();
 
 		Dijkstra d = new Dijkstra(q.getGraph(), from);
@@ -29,6 +30,7 @@ public class GetRoute extends Thread {
 		map.setRoute(edges);
 		
 		GUI.PathInformation.getInstance().setLength(d.getCurrentPathLength());
+		GUI.PathInformation.getInstance().setTravelTime(d.getTravelTime());
 		GUI.PathInformation.getInstance().update();
 	}
 }

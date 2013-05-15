@@ -13,6 +13,7 @@ public class PathInformation extends Observable
 	private String pathFrom;
 	private String pathTo;
 	private double length;
+	private double travelTime;
 	
 	private PathInformation()
 	{
@@ -59,6 +60,11 @@ public class PathInformation extends Observable
 		this.length = length;
 	}
 	
+	public void setTravelTime(double travelTime)
+	{
+		this.travelTime = travelTime;
+	}
+	
 	public boolean getVisible()
 	{
 		return isVisible;
@@ -100,13 +106,15 @@ public class PathInformation extends Observable
 	
 	public String getTravelTime()
 	{
-		if(length >= 0)
+		if(travelTime >= 0)
 		{
-			double lengthInKM = length/1000;
+			//double lengthInKM = length/1000;
 			
-			double kmPerHour = 100;
+			//double kmPerHour = 100;
 			
-			double time = lengthInKM/kmPerHour;
+			//double time = lengthInKM/kmPerHour;
+			
+			double time = travelTime;
 			
 			int hours = (int)Math.floor(time);
 			

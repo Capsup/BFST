@@ -275,6 +275,7 @@ public class SearchModule extends JPanel{
 		
 		//revalidate();
 		*/
+		
 		button.setText("Hide..");
 		
 		destinationPanel.setMinimumSize(new Dimension(fromPanel.getSize().width, button.getSize().height));

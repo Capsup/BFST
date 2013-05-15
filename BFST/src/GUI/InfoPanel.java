@@ -89,13 +89,12 @@ public class InfoPanel extends JPanel implements Observer{
 		fromLabel = new JLabel("From: ");
 		toLabel = new JLabel("To: ");
 		lengthLabel = new JLabel("Length: ");
-		travelTimeLabel = new JLabel("Travel Time (100 km/h): ");
+		travelTimeLabel = new JLabel("Travel Time: ");
 
 		labelPanel.add(fromLabel);
 		labelPanel.add(toLabel);
 		labelPanel.add(lengthLabel);
 		labelPanel.add(travelTimeLabel);
-		
 		
 		JPanel infoPanel = new JPanel();
 		
