@@ -27,7 +27,8 @@ public class Query{
 		return instance;
 
 	}
-
+	
+	
 	private Query(){
 		double time = System.currentTimeMillis();
 		LinkedList<Thread> threads = new LinkedList<Thread>();

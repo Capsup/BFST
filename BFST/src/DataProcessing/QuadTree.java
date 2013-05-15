@@ -1,15 +1,25 @@
 package DataProcessing;
 
 import java.util.ArrayList;
+
+/**
+ * This is not entirely our code! It's found at http://algs4.cs.princeton.edu/. We only made small modifications
+ * 
+ * @param <Key> The keys make nodes with
+ * @param <Value> The object to store with the point
+ */
+
 public class QuadTree<Key extends Comparable<Key>, Value>  {
     private Node root;
  
-    // helper node data type
+    /**
+     * Helper class to store the nodes
+     */
     private class Node {
         Key x, y;              
         Node NW, NE, SE, SW;   
         Value value;
-
+        
         Node(Key x, Key y, Value value) {
             this.x = x;
             this.y = y;
@@ -18,6 +28,12 @@ public class QuadTree<Key extends Comparable<Key>, Value>  {
     }
 
 
+    /**
+     * Inserts the node in the QuadTree
+     * @param x the x point
+     * @param y the y point
+     * @param value
+     */
     public void insert(Key x, Key y, Value value) {
         root = insert(root, x, y, value);
     }
