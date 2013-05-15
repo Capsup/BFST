@@ -28,6 +28,7 @@ import DataProcessing.Query;
 import Graph.Edge;
 import Route.GetRoute;
 
+import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
 
@@ -35,7 +36,8 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 {
 	private static MapDraw instance;
 	
-	private long lastMousePressTime;
+	private long lastLeftMousePressTime;
+	private long lastRightMousePressTime;
 	
 	private Query q = new Query();
 	private int width;
@@ -525,14 +527,33 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		curMousePos.x = e.getXOnScreen();
 		curMousePos.y = e.getYOnScreen();
 		
-		//Double tap to zoom
-		if(System.currentTimeMillis() - lastMousePressTime < 350)
+		if(e.getButton() == e.BUTTON1)
 		{
-			ZoomLevel.getInstance().zoomIn();
-			lastMousePressTime = 0;
+			//Double tap to zoom
+			if(System.currentTimeMillis() - lastLeftMousePressTime < 350)
+			{
+				if(ZoomLevel.getInstance().zoomIn())
+					applyZoomTranslation(e, 1, 2);
+				
+				lastLeftMousePressTime = 0;
+			}
+			else
+				lastLeftMousePressTime = System.currentTimeMillis();
 		}
-		else
-			lastMousePressTime = System.currentTimeMillis();
+		else if(e.getButton() == e.BUTTON3)
+		{
+			//Double tap right click to zoom
+			if(System.currentTimeMillis() - lastRightMousePressTime < 350)
+			{
+				if(ZoomLevel.getInstance().zoomOut())
+					applyZoomTranslation(e, -1, 2);
+				
+				lastRightMousePressTime = 0;
+			}
+			else
+				lastRightMousePressTime = System.currentTimeMillis();
+		}
+		
 	}
 
 	@Override
@@ -552,11 +573,14 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	{
 		if( e.getUnitsToScroll() < 0 )
 		{
-			ZoomLevel.getInstance().zoomIn();
+			if(ZoomLevel.getInstance().zoomIn())
+				applyZoomTranslation(e, 1, 3);
 		}
 		else
 		{
-			ZoomLevel.getInstance().zoomOut();
+			
+			if(ZoomLevel.getInstance().zoomOut())
+				applyZoomTranslation(e, -1, 3);
 		}
 		
 		//System.out.println("Zoomlevel: " + (ZoomLevel.getInstance().getZoomIndex()) + "/30");
@@ -572,7 +596,18 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		// System.out.println(scale);
 	}
-
+	
+	public void applyZoomTranslation(MouseEvent e, int zoomDirection, int zoomFactor)
+	{
+		Point centerPoint = new Point(getMapWidth()/2, getMapHeight()/2);
+		
+		Point difference = new Point((centerPoint.x-e.getPoint().x)*zoomDirection, (centerPoint.y-e.getPoint().y)*zoomDirection);
+		
+		Point2D.Double currTarTranslation = Translation.getInstance().getTranslation();
+		
+		Translation.getInstance().goToTranslation(currTarTranslation.x+((difference.x)*(ZoomLevel.getInstance().getZoomLevel()/1.5f))/zoomFactor, currTarTranslation.y+((difference.y)*(ZoomLevel.getInstance().getZoomLevel()/1.5f))/zoomFactor);
+	}
+	
 	public void getRoute(int from, int to)
 	{
 		System.out.println("Getting Route!");
