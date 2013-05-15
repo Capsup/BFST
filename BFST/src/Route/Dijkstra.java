@@ -1,5 +1,6 @@
 package Route;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import Graph.Edge;
@@ -60,9 +61,10 @@ public class Dijkstra {
     }
 
     // shortest path from s to v as an Iterable, null if no such path
-    public Iterable<Edge> pathTo(int v) {
+    public Edge[] pathTo(int v) {
         if (!hasPathTo(v)) return null;
-        Stack<Edge> path = new Stack<Edge>();
+        //Stack<Edge> path = new Stack<Edge>();
+        ArrayList<Edge> path = new ArrayList<Edge>();
         
         currentPathLength = 0;
         currentPathTravelTime = 0;
@@ -70,14 +72,24 @@ public class Dijkstra {
         for (Edge e = edgeTo[v]; e != null; e = edgeTo[v = e.other(v)]) {
         	currentPathLength += e.getLength();
         	
-        	if(e.getSpeedLimit() != 0)
-        		currentPathTravelTime += (e.getLength()/1000)/e.getSpeedLimit();
-        	else
-        		currentPathTravelTime += (e.getLength()/1000)/50;
+        	if(Settings.meansOfTransport() == Settings.car)
+	        	if(e.getSpeedLimit() != 0)
+	        		currentPathTravelTime += (e.getLength()/1000)/e.getSpeedLimit();
+	        	else
+	        		currentPathTravelTime += (e.getLength()/1000)/50;
+        	else if(Settings.meansOfTransport() == Settings.bike)
+        		currentPathTravelTime += (e.getLength()/1000)/20;
+        	else 
+        		currentPathTravelTime += (e.getLength()/1000)/5;
         	
-            path.push(e);
+            //path.push(e);
+        	path.add(e);
         }
-        return path;
+        
+        Edge[] returnArray = new Edge[path.size()];
+        path.toArray(returnArray);
+        
+        return returnArray;
     }
 
 

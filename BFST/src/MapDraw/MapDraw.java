@@ -26,6 +26,7 @@ import DataProcessing.Interval;
 import DataProcessing.Interval2D;
 import DataProcessing.Query;
 import Graph.Edge;
+import Route.GetRoute;
 
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -46,9 +47,12 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	protected double currentZoomLevel = 0;
 	private double targetZoomLevel = 0;
 	
-	private Iterable<Edge> routeToDraw; 
+	//private Iterable<Edge> routeToDraw; 
+	private Edge[] routeToDraw; 
 	private int routeFrom = -1;
 	private int routeTo = -1;
+	
+	private int currentRouteIndex;
 	
 	private double currentRouteLength;
 	
@@ -66,7 +70,13 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		return instance;
 	}
 	
-	public void setRoute(Iterable<Edge> iterable){ routeToDraw = iterable;}
+	public void setRoute(Edge[] edges)
+	{ 
+		//routeToDraw = null;
+		
+		routeToDraw = edges;
+		currentRouteIndex = edges.length-1;
+	}
 	
 	public double getWidthFactor()
 	{
@@ -376,17 +386,23 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		i = 0;
 	}
 	
-	public void drawRoute(GL2 gl2, Iterable<Edge> edges) {
+	public void drawRoute(GL2 gl2, Edge[] edges) {
 		
 		gp.setLineWidth(3f);
 		float[] colors = new float[] {0,0,255};
 		gl2.glBegin(GL.GL_LINES);
-		for(Edge e: edges) {
+		/*for(Edge e: edges) {
 			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+		}*/
+		for(int i=edges.length-1; i>=currentRouteIndex; i--) {
+			drawLine(edges[i], gl2, colors[0], colors[1], colors[2]);
 		}
 		gl2.glEnd();
+		
+		if(currentRouteIndex > 0)
+			currentRouteIndex--;
 	}
-
+	
 	private void applyZoom(GL2 gl2)
 	{
 		//Add a translation transformation to the current matrix, effectively moving the ingame 3d coordinate system by the specified amount.
@@ -564,7 +580,11 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		routeFrom = from;
 		routeTo = to;
 		
-		new Route.GetRoute(this, q, from, to).start();
+		GetRoute route = new GetRoute(this, q, from, to);
+		
+		if(route.hasNewPath() || route.hasNewTransport())
+			route.start();
+			
 	}
 	
 	public boolean hasRoute()

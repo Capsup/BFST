@@ -35,19 +35,8 @@ public class AddressParser
 
 	private AddressParser()
 	{
-		try
-		{
-			loadData( "/files/road_names.txt" );
-		}
-		catch( NaughtyException e1 )
-		{
-			System.out.println( e1.getMessage() );
-		}
-		
 		ArrayList<List<Edge>> edgeList = XMLParser.getEdgeList();
 		ArrayList<Edge> list = new ArrayList<Edge>();
-		
-		//roads = new Edge[edgeList.size()][];
 		
 		for(int i=0; i<edgeList.size(); i++)
 		{
@@ -64,13 +53,9 @@ public class AddressParser
 		
 		Edge[] edges = new Edge[list.size()];
 		list.toArray(edges);
+		list.clear();
 		
 		Arrays.sort(edges);
-		
-		for(int i=10000; i<11000; i++)
-		{
-			System.out.println(edges[i].getName()+", "+edges[i].getZip());
-		}
 		
 		ArrayList<Road> roadList = new ArrayList<Road>();
 		ArrayList<Edge> currEdgeList = new ArrayList<Edge>();
@@ -113,6 +98,7 @@ public class AddressParser
 		
 		return instance;
 	}
+	
 /*
 	public static void main( String[] args )
 	{
@@ -192,7 +178,8 @@ public class AddressParser
 		{
 			throw new NaughtyException( "OMG, WAT R U DOIN !?!?!" );
 		}*/
-
+		
+		/*
 		boolean bExists = false;
 		int lineIndex = 0;
 		for( String address : arrayStrings )
@@ -204,6 +191,7 @@ public class AddressParser
 				break;
 			}
 		}
+		*/
 		/*
 		if( !bExists )
 		{
@@ -286,17 +274,9 @@ public class AddressParser
         int hi = a.length - 1;
         
         String string1 = stringArray[0];
-        /*
-        if(!stringArray[0].equals(""))
+        
+        while (lo <= hi) 
         {
-        	string1 += stringArray[0];
-        }
-        */
-        //int cutoff = string.length();
-        
-        //String string1 = string.substring(0, cutoff);
-        
-        while (lo <= hi) {
             
         	int mid = lo + (hi - lo) / 2;
         	
@@ -608,6 +588,11 @@ public class AddressParser
 		
 		while(index < length && index < string2.length())
 		{
+			if(string1.charAt(index) == ' ' && string2.charAt(index) != ' ')
+				return 1;
+			else if(string1.charAt(index) != ' ' && string2.charAt(index) == ' ')
+				return -1;
+				
 			if(string1.charAt(index) > string2.charAt(index))
 			{
 				//System.out.println("is greater");
@@ -636,7 +621,7 @@ public class AddressParser
 		
 		if(string1.equals(string2))
 		{
-			System.out.println("Is equal (0)");
+			//System.out.println("Is equal (0)");
 			return 0;
 		}
 		
@@ -645,6 +630,11 @@ public class AddressParser
 		
 		while(index < length && index < string2.length())
 		{
+			if(string1.charAt(index) == ' ' && string2.charAt(index) != ' ')
+				return 1;
+			else if(string1.charAt(index) != ' ' && string2.charAt(index) == ' ')
+				return -1;
+				
 			if(string1.charAt(index) > string2.charAt(index))
 			{
 				//System.out.println("is greater (0)");

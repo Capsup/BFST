@@ -11,7 +11,9 @@ import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.awt.geom.Point2D;
 
 import javax.swing.JFrame;
@@ -45,17 +47,29 @@ public class SearchField extends JTextField
 		
 		setForeground(Color.GRAY);
 		
-		DocumentListener listener = new SearchListener();
-		this.getDocument().addDocumentListener(listener);
+		this.getDocument().addDocumentListener(new SearchListener());
 		
 		dropdown = new Dropdown(this);
 		
-		FocusListener focusListener = new MyFocusListener();
-		this.addFocusListener(focusListener);
+		this.addFocusListener(new MyFocusListener());
 		
-		ComponentListener myComponentListener = new MyComponentListener();
+		MainFrame.getInstance().addComponentListener(new MyComponentListener());
+		MainFrame.getInstance().addWindowFocusListener(new MyWindowListener());
+	}
+	
+	class MyWindowListener implements WindowFocusListener
+	{
+
+		@Override
+		public void windowGainedFocus(WindowEvent e) {
+			dropdown.setVisible(false);
+		}
+
+		@Override
+		public void windowLostFocus(WindowEvent e) {
+			dropdown.setVisible(false);
+		}
 		
-		MainFrame.getInstance().addComponentListener(myComponentListener);
 	}
 	
 	class MyComponentListener implements ComponentListener
@@ -75,7 +89,7 @@ public class SearchField extends JTextField
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
@@ -199,7 +213,17 @@ public class SearchField extends JTextField
 			Edge[] edges = edgeProbabilitySearch(parsedAdress);
 			
 			if(edges != null)
-				return edgeProbabilitySearch(parsedAdress)[0];
+			{
+				Edge edge = edges[0];
+				
+				if(parsedAdress[1].equals(""))
+					setText(edge.getName()+", "+edge.getZipString());
+				else
+					setText(edge.getName()+" "+parsedAdress[1]+", "+edge.getZipString());
+
+				
+				return edges[0];
+			}
 			else
 				return null;	
 		}

@@ -43,9 +43,17 @@ public class MenuPanel extends JPanel
 		infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		//Settings Panel
+		JPanel settingsContainerPanel = new JPanel();
+		settingsContainerPanel.setLayout(new BoxLayout(settingsContainerPanel, BoxLayout.X_AXIS));
+		settingsContainerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
 		JPanel settingsPanel = new SettingsPanel();
 		settingsPanel.setMaximumSize(settingsPanel.getPreferredSize());
-		settingsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		//settingsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		settingsContainerPanel.add(Box.createHorizontalGlue());
+		settingsContainerPanel.add(settingsPanel);
+		settingsContainerPanel.add(Box.createHorizontalGlue());
 		
 		//Navigation Panel
 		JPanel navContainerPanel = new JPanel();
@@ -65,7 +73,7 @@ public class MenuPanel extends JPanel
 		add(searchPanel);
 		//add(Box.createVerticalGlue());
 		add(infoPanel);
-		add(settingsPanel);
+		add(settingsContainerPanel);
 		add(Box.createVerticalGlue());
 		add(navContainerPanel);
 		add(Box.createVerticalGlue());

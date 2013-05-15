@@ -150,7 +150,7 @@ public class XMLParser implements Runnable{
 					}
 
 					else if( name.equals( "rn" ) ){//Road name
-						String string = input.nextEvent().asCharacters().getData().replace('\'', ' ').trim();
+						String string = input.nextEvent().asCharacters().getData().replace('\'', ' ').trim().replace('-', ' ');
 
 						temp.add(string);
 					}

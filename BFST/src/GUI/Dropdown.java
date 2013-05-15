@@ -67,12 +67,6 @@ public class Dropdown extends JDialog
 	{
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		
-		String[] strings = new String[]{"WAT", "FUCK", "BALLS"};
-		System.out.println("hey");
-		
-		for(int i=0; i<strings.length; i++)
-			panel.add(new JLabel(strings[i]));
 			
 		add(panel);
 		
@@ -81,7 +75,6 @@ public class Dropdown extends JDialog
 		setVisible(false);
 		setResizable(false);
 		setFocusableWindowState(false);
-		pack();
 	}
 	
 	public void updatePosition()
@@ -133,7 +126,6 @@ public class Dropdown extends JDialog
 		{
 			results[i].setActionCommand(""+i);
 			results[i].addActionListener(listener);
-		
 		}
 		
 		setVisible(true);

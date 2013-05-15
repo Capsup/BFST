@@ -98,6 +98,7 @@ public class Edge implements Comparable<Edge>
 	public int getZip(){ return zip; }
 	public double getLength(){ return length; }
 	public double getSpeedLimit(){ return speedLimit; }
+	public double getDriveTime(){ return driveTime; }
 	
 	public String getZipString()
 	{ 
@@ -122,6 +123,11 @@ public class Edge implements Comparable<Edge>
 		
 		while(index < length && index < string2.length())
 		{
+			if(string1.charAt(index) == ' ' && string2.charAt(index) != ' ')
+				return 1;
+			else if(string1.charAt(index) != ' ' && string2.charAt(index) == ' ')
+				return -1;
+			
 			if(string1.charAt(index) > string2.charAt(index))
 			{
 				return 1;

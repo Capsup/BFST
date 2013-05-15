@@ -24,24 +24,6 @@ public class GUIButton extends JButton implements MouseListener
 	
 	private boolean hoverable = true;
 	
-	public static void main(String[] args)
-	{
-		JFrame FUCK = new JFrame();
-	
-		GUIButton SHIT = new GUIButton("Aww Yeah");
-		
-		SHIT.addMouseListener(SHIT);
-		
-		FUCK.add(SHIT);
-		
-		SHIT.setText("FUCK");
-
-	
-		
-		
-		FUCK.setVisible(true);
-	}
-	
 	public GUIButton()
 	{
 		stateIcon = new BufferedImage[3];

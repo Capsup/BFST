@@ -1,12 +1,22 @@
 package GUI;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.font.TextAttribute;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.BevelBorder;
@@ -15,36 +25,24 @@ import MapDraw.MapDraw;
 
 public class SettingsPanel extends JPanel
 {
+	ToggleButton toggleButton;
+	
 	public SettingsPanel()
 	{
 		makeContent();
 	}
 	
-	public class RadioButtonListener implements ActionListener
+	private class ToggleButtonListener implements ActionListener
 	{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			
-			if(e.getActionCommand() == "Fastest")
+			if(e.getActionCommand() == "Toggled")
 			{
-				if(Route.Settings.routeProfile() != Route.Settings.fastest_route)
-				{
-					Route.Settings.setRouteProfile(Route.Settings.fastest_route);
-					
-					MapDraw.getInstance().refreshRoute();
-				}
-			}
-			
-			if(e.getActionCommand() == "Shortest")
-			{
-				if(Route.Settings.routeProfile() != Route.Settings.shortest_route)
-				{
-					Route.Settings.setRouteProfile(Route.Settings.shortest_route);
-					
-					MapDraw.getInstance().refreshRoute();
-				}
+				toggleButton.toggle();
+				
+				updatePanel();
 			}
 		}
 		
@@ -52,28 +50,51 @@ public class SettingsPanel extends JPanel
 	
 	public void makeContent()
 	{
-		setBorder(BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), "Path Settings"));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		JRadioButton fastestRadioButton = new JRadioButton("Fastest");
-		fastestRadioButton.setSelected(true);
-		fastestRadioButton.setActionCommand("Fastest");
-	    
-		JRadioButton shortestRadioButton = new JRadioButton("Shortest");
-		shortestRadioButton.setActionCommand("Shortest");
-	    
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(fastestRadioButton);
-		buttonGroup.add(shortestRadioButton);
+		toggleButton = new ToggleButton("Show Options", "Hide Options");
+		toggleButton.setActionCommand("Toggled");
+		toggleButton.addActionListener(new ToggleButtonListener());
+		toggleButton.setAlignmentX(CENTER_ALIGNMENT);
 		
-		add(fastestRadioButton);
-		add(shortestRadioButton);
+		add(toggleButton);
+	}
+	
+	private void updatePanel()
+	{
+		if(toggleButton.getToggled())
+		{
+			JPanel containerPanel = new JPanel();
+			containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.X_AXIS));
+			containerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), "Settings"));
+			
+			
+			JPanel pathSettingsPanel = new PathSettingsPanel();
+			//pathSettingsPanel.setAlignmentX(CENTER_ALIGNMENT);
+			containerPanel.add(pathSettingsPanel);
+			
+			JPanel transportSettingsPanel = new TransportSettingsPanel();
+			//transportSettingsPanel.setAlignmentX(CENTER_ALIGNMENT);
+			containerPanel.add(transportSettingsPanel);
+			
+			containerPanel.setAlignmentX(CENTER_ALIGNMENT);
+			add(containerPanel);
+			
+			setMaximumSize(new Dimension(getParent().getPreferredSize().width, getPreferredSize().height));
+			
+		}
+		else 
+		{
+			int componentCount = getComponentCount();
+			
+			for(int i=1; i<componentCount; i++)
+			{
+				remove(1);
+			}
+			
+			setMaximumSize(new Dimension(getParent().getPreferredSize().width, getPreferredSize().height));
+			
+		}
 		
-		ActionListener listener = new RadioButtonListener();
-		
-		fastestRadioButton.addActionListener(listener);
-		shortestRadioButton.addActionListener(listener);
-		
-		//setMaximumSize(new Dimension(getParent().getPreferredSize().width, getPreferredSize().height));
 	}
 }
