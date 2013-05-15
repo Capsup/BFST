@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.media.nativewindow.OffscreenLayerOption;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import Graph.Edge;
@@ -323,23 +324,18 @@ public class AddressParser
             		}
             	}
             	
+            	int roadNumber = 0;
+            	
             	if(!stringArray[1].equals(""))
             	{
-            		int roadNumber = Integer.parseInt(stringArray[1]);
-            		
-            		for(int i=0; i<a[mid].getEdges().length; i++)
-            		{
-            			if(a[mid].getEdge(i).hasRoadNumber(roadNumber))
-            			{
-            				System.out.println("Success");
-            				
-                        	return new int[]{mid, i};
-            			}
-            		}
-
-            		System.out.println("(2)");
-            		return new int[]{-1};
+            		roadNumber = Integer.parseInt(stringArray[1]);
             	}
+            	
+        		int indexWithNumber = a[mid].getEdgeWithRoadNumber(roadNumber, false);
+        		
+        		if(indexWithNumber >= 0)
+        			return new int[]{mid,indexWithNumber};
+        		
             	
             	return new int[]{mid,0};
             }
@@ -417,149 +413,151 @@ public class AddressParser
             		if(!isFound)
             			return new int[][]{{-1}};
             	}
+            	
+            	int found = 1;
+            	
+            	ArrayList<Integer> foundIndexes = new ArrayList<Integer>();
+            	foundIndexes.add(mid);
+            	
+            	int increment = 1;
+            	
+            	while(found < count)
+            	{
+            		int index = mid;
+            		
+            		//Start by incrementing so we dont compare with ourselves
+            		index += increment;
+            		
+            		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
+            		{
+            			boolean bounce = true;
+            			
+            			for(int i=0; i<found; i++)
+            				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
+            					bounce = false;
+            			
+            			if(bounce)
+            			{
+            				foundIndexes.add(index);
+            				break;
+            			}
+            			
+            			index += increment;
+            		}
+            		
+            		increment *= -1;
+            		
+            		if(found < foundIndexes.size())
+            			found++;
+            	}
+            	
             	/*
             	if(!stringArray[1].equals(""))
             	{
             		int roadNumber = Integer.parseInt(stringArray[1]);
             		
-            		for(int i=0; i<a[mid].getEdges().length; i++)
+            		for(int j=0; j<foundIndexes.size(); j++)
             		{
-            			if(a[mid].getEdge(i).hasRoadNumber(roadNumber))
+            			/*
+            			boolean isFound = false;
+            			
+	            		for(int i=0; i<roads[foundIndexes.get(j)].getEdges().length; i++)
+	            		{
+	            			
+	            			if(roads[foundIndexes.get(j)].getEdge(i).hasRoadNumber(roadNumber))
+	            			{
+	            				isFound = true;
+	            			}
+	            		}
+	            		
+            			if(!isFound)
             			{
-                        	return new int[][]{{mid, i}};
+                        	foundIndexes.remove(j);
+                        	j--;
+                        	break;
+            			}
+            			
+            			
+            			if(roads[foundIndexes.get(j)].getEdgeWithRoadNumber(roadNumber) < 0)
+            			{
+            				foundIndexes.remove(j);
+            				j--;
+                        	break;
             			}
             		}
             		
-            		return new int[][]{{-1}};
+            		if(foundIndexes.size() == 0)
+            			return new int[][]{{-1}};
+            			
             	}
-            	else {*/
-	            	int found = 1;
-	            	
-	            	ArrayList<Integer> foundIndexes = new ArrayList<Integer>();
-	            	foundIndexes.add(mid);
-	            	
-	            	int increment = 1;
-	            	
-	            	while(found < count)
-	            	{
-	            		int index = mid;
-	            		
-	            		//Start by incrementing so we dont compare with ourselves
-	            		index += increment;
-	            		
-	            		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
-	            		{
-	            			boolean bounce = true;
+            	*/
+            	
+            	
+            	int[][] returnIndexes = new int[foundIndexes.size()][2];
+            	returnIndexes[0][0] = foundIndexes.get(0);
+            	foundIndexes.remove(0);
+            	
+            	for(int i=1; i<returnIndexes.length; i++)
+            	{
+            		cutoff = a[returnIndexes[0][0]].getName().length();
+            		
+            		boolean isfound = false;
+            		
+            		while(!isfound)
+            		{
+            			String firstResultString = a[returnIndexes[0][0]].getName().substring(0, cutoff);
+                		
+            			for(int j=0; j < foundIndexes.size(); j++)	
+            			{
+	            			String currResultString = a[foundIndexes.get(j)].getName();
 	            			
-	            			for(int i=0; i<found; i++)
-	            				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
-	            					bounce = false;
+	            			if(currResultString.length() > cutoff)	
+	            				currResultString = a[foundIndexes.get(j)].getName().substring(0, cutoff);
 	            			
-	            			if(bounce)
-	            			{
-	            				foundIndexes.add(index);
-	            				break;
-	            			}
-	            			
-	            			index += increment;
-	            		}
-	            		
-	            		increment *= -1;
-	            		
-	            		if(found < foundIndexes.size())
-	            			found++;
-	            	}
-	            	
-	            	if(!stringArray[1].equals(""))
-	            	{
-	            		int roadNumber = Integer.parseInt(stringArray[1]);
-	            		
-	            		/*
-	            		for(Integer foundIndex : foundIndexes) 
-	            		{
-	            			for(int i=0; i<roads[foundIndex].getEdges().length; i++)
-		            		{
-		            			if(!roads[foundIndex].getEdge(i).hasRoadNumber(roadNumber))
-		            			{
-		                        	foundIndexes.remove(foundIndex);
-		            			}
-		            		}
-						}*/
-	            		
-	            		
-	            		for(int j=0; j<foundIndexes.size(); j++)
-	            		{
-	            			boolean isFound = false;
-	            			
-		            		for(int i=0; i<roads[foundIndexes.get(j)].getEdges().length; i++)
-		            		{
-		            			if(roads[foundIndexes.get(j)].getEdge(i).hasRoadNumber(roadNumber))
-		            			{
-		            				isFound = true;
-		            			}
-		            		}
-		            		
-		            		if(!isFound)
-	            			{
-	                        	foundIndexes.remove(j);
-	                        	j--;
-	                        	break;
-	            			}
-	            		}
-	            		
-	            		if(foundIndexes.size() == 0)
-	            			return new int[][]{{-1}};
-	            	}
-	            	
-	            	int[][] returnIndexes = new int[foundIndexes.size()][2];
-	            	returnIndexes[0][0] = foundIndexes.get(0);
-	            	foundIndexes.remove(0);
-	            	
-	            	for(int i=1; i<returnIndexes.length; i++)
-	            	{
-	            		cutoff = a[returnIndexes[0][0]].getName().length();
-	            		
-	            		boolean isfound = false;
-	            		
-	            		while(!isfound)
-	            		{
-	            			String firstResultString = a[returnIndexes[0][0]].getName().substring(0, cutoff);
-	                		
-	            			for(int j=0; j < foundIndexes.size(); j++)	
-	            			{
-		            			String currResultString = a[foundIndexes.get(j)].getName();
-		            			
-		            			if(currResultString.length() > cutoff)	
-		            				currResultString = a[foundIndexes.get(j)].getName().substring(0, cutoff);
-		            			
-	            				if(firstResultString.equals(currResultString))
-			        			{
-			        				returnIndexes[i][0] = foundIndexes.get(j);
-			        				foundIndexes.remove(j);
-			        				
-			        				isfound = true;
-			        				
-			        				break;
-			        			}
-	            			}
-	            			
-	            			cutoff--;
-	            			
-	            			if(!isfound && cutoff < 0)
-	            				break;
-	            		}
-	            		
-	            		if(!isfound)
-	            			break;
-	            	}
-	            	
-	            	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
-	            	{
-	            		returnIndexes[i][0] = foundIndexes.get(i);
-	            		foundIndexes.remove(i);
-	            	}
-	            	
-	            	return returnIndexes;
+            				if(firstResultString.equals(currResultString))
+		        			{
+		        				returnIndexes[i][0] = foundIndexes.get(j);
+		        				foundIndexes.remove(j);
+		        				
+		        				isfound = true;
+		        				
+		        				break;
+		        			}
+            			}
+            			
+            			cutoff--;
+            			
+            			if(!isfound && cutoff < 0)
+            				break;
+            		}
+            		
+            		if(!isfound)
+            			break;
+            	}
+            	
+            	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
+            	{
+            		returnIndexes[i][0] = foundIndexes.get(i);
+            		foundIndexes.remove(i);
+            	}
+            	
+            	int roadNumber = 0;
+            	
+            	if(!stringArray[1].equals(""))
+            	{
+            		roadNumber = Integer.parseInt(stringArray[1]);
+            	}
+        	
+        		for(int i=0; i<returnIndexes.length; i++)
+        		{
+        			int roadNumberIndex = roads[returnIndexes[i][0]].getEdgeWithRoadNumber(roadNumber, true);
+        			
+        			if(roadNumberIndex >= 0)
+        				returnIndexes[i][1] = roadNumberIndex;
+        		}
+        	
+            	
+            	return returnIndexes;
             	//}
 	            	
             	/*

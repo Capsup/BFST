@@ -162,18 +162,20 @@ public class SearchField extends JTextField
 			e.printStackTrace();
 		}
 		
-		Edge[] edges = edgeProbabilitySearch(parsedAdress);
+		int[][] ints = intProbabilitySearch(parsedAdress);
 		
-		if(edges != null)
+		if(ints.length > 0 && ints[0][0] >= 0)
 		{
-			String[] strings = new String[edges.length];
+			String[] strings = new String[ints.length];
 			
 			for(int i=0; i<strings.length; i++)
 			{
-				if(parsedAdress[1].equals(""))
-					strings[i] = edges[i].getName()+", "+edges[i].getZipString();
+				Edge edge = AddressParser.getInstance().getRoads()[ints[i][0]].getEdge(ints[i][1]);
+				
+				if(parsedAdress[1].equals("") || ints[i][0] == 0 || edge.getToRight() == 0)
+					strings[i] = edge.getName()+", "+edge.getZipString();
 				else
-					strings[i] = edges[i].getName()+" "+parsedAdress[1]+", "+edges[i].getZipString();
+					strings[i] = edge.getName()+" "+edge.getToRight()+", "+edge.getZipString();
 			}
 			
 			dropdown.setContent(strings, true);
@@ -220,7 +222,6 @@ public class SearchField extends JTextField
 					setText(edge.getName()+", "+edge.getZipString());
 				else
 					setText(edge.getName()+" "+parsedAdress[1]+", "+edge.getZipString());
-
 				
 				return edges[0];
 			}
