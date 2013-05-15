@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import Graph.Edge;
 import Graph.Graph;
+import QuadTree.Interval;
+import QuadTree.Interval2D;
+import QuadTree.QuadTree;
 import XMLParser.XMLParser;
 
 public class Query{

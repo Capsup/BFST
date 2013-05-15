@@ -20,12 +20,12 @@ import javax.swing.JTextField;
 
 import org.ietf.jgss.Oid;
 
+import AddressParser.AddressParser;
+import AddressParser.AddressParser.NaughtyException;
 import Graph.Edge;
 import MapDraw.MapDraw;
 import MapDraw.Translation;
 import MapDraw.ZoomLevel;
-import XMLParser.AddressParser;
-import XMLParser.AddressParser.NaughtyException;
 import java.awt.geom.Point2D;
 
 public class SearchModule extends JPanel{

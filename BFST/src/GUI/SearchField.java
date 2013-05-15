@@ -24,12 +24,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import AddressParser.AddressParser;
+import AddressParser.AddressParser.NaughtyException;
 import Graph.Edge;
 import MapDraw.MapDraw;
 import MapDraw.Translation;
 import MapDraw.ZoomLevel;
-import XMLParser.AddressParser;
-import XMLParser.AddressParser.NaughtyException;
 
 public class SearchField extends JTextField
 {

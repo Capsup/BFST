@@ -22,10 +22,10 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import javax.swing.JPanel;
 
-import DataProcessing.Interval;
-import DataProcessing.Interval2D;
 import DataProcessing.Query;
 import Graph.Edge;
+import QuadTree.Interval;
+import QuadTree.Interval2D;
 import Route.GetRoute;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
