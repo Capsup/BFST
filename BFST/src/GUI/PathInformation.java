@@ -114,7 +114,7 @@ public class PathInformation extends Observable
 			
 			//double time = lengthInKM/kmPerHour;
 			
-			double time = travelTime*1.15;
+			double time = travelTime;
 			
 			int hours = (int)Math.floor(time);
 			

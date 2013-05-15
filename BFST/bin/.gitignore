@@ -1,2 +1,7 @@
 /MSTParse
 *.class
+/XMLParser
+/AddressParser
+/DataProcessing
+/QuadTree
+/XMLCreator
