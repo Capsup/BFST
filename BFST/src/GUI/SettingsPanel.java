@@ -30,8 +30,8 @@ import MapDraw.MapDraw;
  */
 public class SettingsPanel extends JPanel
 {
-	//We allocate a custom ToggleButton that lets us toggle the main settings panel.
-	ToggleButton toggleButton;
+	ToggleButton toggleButton;		//We allocate a custom ToggleButton that lets us toggle the main settings panel.
+	
 	
 	public SettingsPanel()
 	{

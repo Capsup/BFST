@@ -11,15 +11,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
+/**
+ * A Panel that combines a search field and a searchButton
+ * @author Jonas Kastberg
+ */
 public class SearchPanel extends JPanel 
 {
 	JButton goButton;
 	SearchField searchField;
-	Dropdown dropdown;
 	
-	/*
-	 * The Search Panel is a panel in which one can enter what a search criteria and execute it.
+	/**
+	 * Initializes a panel with SearchField and a button
 	 */
 	public SearchPanel()
 	{
@@ -30,18 +32,11 @@ public class SearchPanel extends JPanel
 	{
 		setLayout(new BorderLayout());
 		
-		//Text
-		//JLabel searchText = new JLabel("Search: ");
-		
-		//Search Field <-- Insert SearchField class extending JTextField here
 		searchField = new SearchField("Search Here..", 20);
 		goButton = new JButton("Search");
 		
-		//add(searchText, BorderLayout.WEST);
 		add(searchField, BorderLayout.CENTER);
-		//add(comboBox, BorderLayout.CENTER);
 		add(goButton, BorderLayout.EAST);
-		
 	}
 
 	public JButton getButton()
@@ -52,10 +47,5 @@ public class SearchPanel extends JPanel
 	public SearchField getTextField()
 	{
 		return searchField;
-	}
-	
-	public Dropdown getDropdown()
-	{
-		return dropdown;
 	}
 }

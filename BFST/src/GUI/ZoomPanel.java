@@ -22,7 +22,7 @@ import MapDraw.ZoomLevel;
  */
 public class ZoomPanel extends JPanel implements Observer{
 	
-	private JLabel currentZoomLabel;
+	private JLabel currentZoomLabel;	//We allocate the JLabel containing the currentZoomLevel so that we can change it later
 	
 	/**
 	 * The Zoom Panel gives a panel that lets you zoom the map in and out using a user interface
@@ -41,7 +41,6 @@ public class ZoomPanel extends JPanel implements Observer{
 	{
 		public void actionPerformed( ActionEvent event )
 		{
-			
 			//We use a switch to check for all the buttons we have added to our listener
 			switch( event.getActionCommand() )
 			{
