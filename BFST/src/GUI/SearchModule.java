@@ -43,7 +43,6 @@ public class SearchModule extends JPanel{
 	 */
 	public SearchModule()
 	{
-		
 		AddressParser.getInstance();
 		
 		makeContent();
@@ -65,7 +64,6 @@ public class SearchModule extends JPanel{
 						
 						if(edge != null)
 						{
-							
 							Point2D.Double tarPos = new Point2D.Double(-(edge.getXFrom()/1000.0) + map.getMapWidth()/2
 									, edge.getYFrom()/1000.0 - map.getMapHeight()/2);
 							
@@ -86,6 +84,7 @@ public class SearchModule extends JPanel{
 							*/
 							
 							PathInformation.getInstance().setVisible(false);
+							fromTextField.getDropdown().updatePosition();
 						}
 					}
 					else
@@ -140,6 +139,9 @@ public class SearchModule extends JPanel{
 							
 							PathInformation.getInstance().setFromAndTo(fromTextField.getText(), toTextField.getText());
 							PathInformation.getInstance().setVisible(true);
+							
+							fromTextField.getDropdown().updatePosition();
+							toTextField.getDropdown().updatePosition();
 						}
 					}
 					

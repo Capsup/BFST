@@ -36,6 +36,8 @@ public class AddressParser
 
 	private AddressParser()
 	{
+		instance = this;
+		
 		ArrayList<List<Edge>> edgeList = XMLParser.getEdgeList();
 		ArrayList<Edge> list = new ArrayList<Edge>();
 		
@@ -95,7 +97,7 @@ public class AddressParser
 	public static AddressParser getInstance()
 	{
 		if(instance == null)
-			instance = new AddressParser();
+			new AddressParser();
 		
 		return instance;
 	}
