@@ -21,11 +21,13 @@ public class MainFrame extends JFrame
 {	
 	private static MainFrame instance;
 	
-	/*
+	/**
 	 * The Main Frame is the window of the program, it contains the menu, and the map.
+	 * This is a singleton
 	 */
 	private MainFrame()
 	{
+		//To avoid multiple singletons we assign the instance value in our constructor rather than our getInstance() method
 		instance = this;
 		
 		makeContent();
@@ -53,11 +55,6 @@ public class MainFrame extends JFrame
 	{
 		Container contentPane = this.getContentPane();
 		
-		
-		//Map Panel
-		MapDraw mapPanel = MapDraw.getInstance();
-		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-
 		//Main Panel Setup
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
@@ -66,6 +63,10 @@ public class MainFrame extends JFrame
 		MenuPanel menuPanel = new MenuPanel();
 		menuPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
+		//Map Panel
+		MapDraw mapPanel = MapDraw.getInstance();
+		mapPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+
 		//Add the panels to the Main Panel
 		mainPanel.add(menuPanel, BorderLayout.WEST);
 		mainPanel.add(mapPanel, BorderLayout.CENTER);
@@ -74,6 +75,10 @@ public class MainFrame extends JFrame
 		contentPane.add(mainPanel);
 	}
 	
+	/**
+	 * The main method of the program. We initialize a MainFrame class by callings its getInstance() method.
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		MainFrame.getInstance();

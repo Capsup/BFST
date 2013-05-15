@@ -357,221 +357,236 @@ public class AddressParser
 
         String string1 = roadName;
         
-        int cutoff = string1.length();
+        int mid = -1;
         
-        while (lo <= hi) {
-            
-        	int mid = lo + (hi - lo) / 2;
+        while(lo <= hi)
+        {
+        	int searchIndex = lo + (hi - lo) / 2;
         	
-        	String string2;
+        	String string2 = a[searchIndex].getName();
         	
-        	//System.out.println("String 1: "+string1);
-        	//System.out.println("String 2: "+a[mid].getName());
-
-        	if(a[mid].getName().length() > cutoff)
+        	if      (compare(string1, string2) == -1) hi = searchIndex - 1;
+            else if (compare(string1, string2) == 1) lo = searchIndex + 1;
+            else{ mid = searchIndex; break; }
+        }
+        
+        if(mid == -1)
+        {
+	        lo = 0;
+	        hi = a.length - 1;
+	        
+	        while (lo <= hi) {
+	            
+	        	int searchIndex = lo + (hi - lo) / 2;
+	        	
+	        	String string2 = a[searchIndex].getName();
+	        	
+	        	//System.out.println("String 1: "+string1);
+	        	//System.out.println("String 2: "+a[mid].getName());
+	
+	        	
+	            if      (probabilityCompare(string1, string2) == -1) hi = searchIndex - 1;
+	            else if (probabilityCompare(string1, string2) == 1) lo = searchIndex + 1;
+	            else{ mid = searchIndex; break; }
+	        }
+        }
+        
+        if(mid != -1)
+        {
+        	if(!stringArray[4].equals(""))
         	{
-        		string2 = a[mid].getName().substring(0, cutoff);
-        	}
-        	else
-        	{
-        		string2 = a[mid].getName();
-        		//string1 = string.substring(0,string2.length());
-        	}
-        	
-            if      (probabilityCompare(string1, string2) == -1) hi = mid - 1;
-            else if (probabilityCompare(string1, string2) == 1) lo = mid + 1;
-            else
-            {
-            	if(!stringArray[4].equals(""))
-            	{
-            		int index = mid;
-            		boolean isFound = false;
-            		
-            		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
-            		{
-            			if((roads[index].getZipCode()+"").equals(stringArray[4]))
-        				{
-        					mid = index;
-        					isFound = true;
-        				}
-        				
-        				index++;
-            		}
-            		
-            		index = mid-1;
-            		
-            		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
-            		{
-        				if((roads[index].getZipCode()+"").equals(stringArray[4]))
-        				{
-        					mid = index;
-        					isFound = true;
-        				}
-        				
-        				index--;
-            		}
-            		
-            		if(!isFound)
-            			return new int[][]{{-1}};
-            	}
-            	
-            	int found = 1;
-            	
-            	ArrayList<Integer> foundIndexes = new ArrayList<Integer>();
-            	foundIndexes.add(mid);
-            	
-            	int increment = 1;
-            	
-            	while(found < count)
-            	{
-            		int index = mid;
-            		
-            		//Start by incrementing so we dont compare with ourselves
-            		index += increment;
-            		
-            		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
-            		{
-            			boolean bounce = true;
-            			
-            			for(int i=0; i<found; i++)
-            				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
-            					bounce = false;
-            			
-            			if(bounce)
-            			{
-            				foundIndexes.add(index);
-            				break;
-            			}
-            			
-            			index += increment;
-            		}
-            		
-            		increment *= -1;
-            		
-            		if(found < foundIndexes.size())
-            			found++;
-            	}
-            	
-            	/*
-            	if(!stringArray[1].equals(""))
-            	{
-            		int roadNumber = Integer.parseInt(stringArray[1]);
-            		
-            		for(int j=0; j<foundIndexes.size(); j++)
-            		{
-            			/*
-            			boolean isFound = false;
-            			
-	            		for(int i=0; i<roads[foundIndexes.get(j)].getEdges().length; i++)
-	            		{
-	            			
-	            			if(roads[foundIndexes.get(j)].getEdge(i).hasRoadNumber(roadNumber))
-	            			{
-	            				isFound = true;
-	            			}
-	            		}
-	            		
-            			if(!isFound)
-            			{
-                        	foundIndexes.remove(j);
-                        	j--;
-                        	break;
-            			}
-            			
-            			
-            			if(roads[foundIndexes.get(j)].getEdgeWithRoadNumber(roadNumber) < 0)
-            			{
-            				foundIndexes.remove(j);
-            				j--;
-                        	break;
-            			}
-            		}
-            		
-            		if(foundIndexes.size() == 0)
-            			return new int[][]{{-1}};
-            			
-            	}
-            	*/
-            	
-            	
-            	int[][] returnIndexes = new int[foundIndexes.size()][2];
-            	returnIndexes[0][0] = foundIndexes.get(0);
-            	foundIndexes.remove(0);
-            	
-            	for(int i=1; i<returnIndexes.length; i++)
-            	{
-            		cutoff = a[returnIndexes[0][0]].getName().length();
-            		
-            		boolean isfound = false;
-            		
-            		while(!isfound)
-            		{
-            			String firstResultString = a[returnIndexes[0][0]].getName().substring(0, cutoff);
-                		
-            			for(int j=0; j < foundIndexes.size(); j++)	
-            			{
-	            			String currResultString = a[foundIndexes.get(j)].getName();
-	            			
-	            			if(currResultString.length() > cutoff)	
-	            				currResultString = a[foundIndexes.get(j)].getName().substring(0, cutoff);
-	            			
-            				if(firstResultString.equals(currResultString))
-		        			{
-		        				returnIndexes[i][0] = foundIndexes.get(j);
-		        				foundIndexes.remove(j);
-		        				
-		        				isfound = true;
-		        				
-		        				break;
-		        			}
-            			}
-            			
-            			cutoff--;
-            			
-            			if(!isfound && cutoff < 0)
-            				break;
-            		}
-            		
-            		if(!isfound)
-            			break;
-            	}
-            	
-            	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
-            	{
-            		returnIndexes[i][0] = foundIndexes.get(i);
-            		foundIndexes.remove(i);
-            	}
-            	
-            	int roadNumber = 0;
-            	
-            	if(!stringArray[1].equals(""))
-            	{
-            		roadNumber = Integer.parseInt(stringArray[1]);
-            	}
-        	
-        		for(int i=0; i<returnIndexes.length; i++)
+        		boolean isFound = false;
+        		
+        		int index = mid;
+        		
+        		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
         		{
-        			int roadNumberIndex = roads[returnIndexes[i][0]].getEdgeWithRoadNumber(roadNumber, true);
-        			
-        			if(roadNumberIndex >= 0)
-        				returnIndexes[i][1] = roadNumberIndex;
+        			if((roads[index].getZipCode()+"").equals(stringArray[4]))
+    				{
+    					mid = index;
+    					isFound = true;
+    					break;
+    				}
+    				
+    				index++;
         		}
+        		
+        		index = mid-1;
+        		
+        		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
+        		{
+    				if((roads[index].getZipCode()+"").equals(stringArray[4]))
+    				{
+    					mid = index;
+    					isFound = true;
+    					break;
+    				}
+    				
+    				index--;
+        		}
+        		
+        		if(!isFound)
+        			return new int[][]{{-1}};
+    		}
+    		
+    		
         	
+        	int found = 1;
+        	
+        	ArrayList<Integer> foundIndexes = new ArrayList<Integer>();
+        	foundIndexes.add(mid);
+        	
+        	int increment = 1;
+        	
+        	while(found < count)
+        	{
+        		int index = mid;
+        		
+        		//Start by incrementing so we dont compare with ourselves
+        		index += increment;
+        		
+        		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
+        		{
+        			boolean bounce = true;
+        			
+        			for(int i=0; i<found; i++)
+        				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
+        					bounce = false;
+        			
+        			if(bounce)
+        			{
+        				foundIndexes.add(index);
+        				break;
+        			}
+        			
+        			index += increment;
+        		}
+        		
+        		increment *= -1;
+        		
+        		if(found < foundIndexes.size())
+        			found++;
+        	}
+        	
+        	/*
+        	if(!stringArray[1].equals(""))
+        	{
+        		int roadNumber = Integer.parseInt(stringArray[1]);
+        		
+        		for(int j=0; j<foundIndexes.size(); j++)
+        		{
+        			/*
+        			boolean isFound = false;
+        			
+            		for(int i=0; i<roads[foundIndexes.get(j)].getEdges().length; i++)
+            		{
+            			
+            			if(roads[foundIndexes.get(j)].getEdge(i).hasRoadNumber(roadNumber))
+            			{
+            				isFound = true;
+            			}
+            		}
+            		
+        			if(!isFound)
+        			{
+                    	foundIndexes.remove(j);
+                    	j--;
+                    	break;
+        			}
+        			
+        			
+        			if(roads[foundIndexes.get(j)].getEdgeWithRoadNumber(roadNumber) < 0)
+        			{
+        				foundIndexes.remove(j);
+        				j--;
+                    	break;
+        			}
+        		}
+        		
+        		if(foundIndexes.size() == 0)
+        			return new int[][]{{-1}};
+        			
+        	}
+        	*/
+        	
+        	
+        	int[][] returnIndexes = new int[foundIndexes.size()][2];
+        	returnIndexes[0][0] = foundIndexes.get(0);
+        	foundIndexes.remove(0);
+        	
+        	for(int i=1; i<returnIndexes.length; i++)
+        	{
+        		int cutoff = a[returnIndexes[0][0]].getName().length();
+        		
+        		boolean isfound = false;
+        		
+        		while(!isfound)
+        		{
+        			String firstResultString = a[returnIndexes[0][0]].getName().substring(0, cutoff);
+            		
+        			for(int j=0; j < foundIndexes.size(); j++)	
+        			{
+            			String currResultString = a[foundIndexes.get(j)].getName();
+            			
+            			if(currResultString.length() > cutoff)	
+            				currResultString = a[foundIndexes.get(j)].getName().substring(0, cutoff);
+            			
+        				if(firstResultString.equals(currResultString))
+	        			{
+	        				returnIndexes[i][0] = foundIndexes.get(j);
+	        				foundIndexes.remove(j);
+	        				
+	        				isfound = true;
+	        				
+	        				break;
+	        			}
+        			}
+        			
+        			cutoff--;
+        			
+        			if(!isfound && cutoff < 0)
+        				break;
+        		}
+        		
+        		if(!isfound)
+        			break;
+        	}
+        	
+        	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
+        	{
+        		returnIndexes[i][0] = foundIndexes.get(i);
+        		foundIndexes.remove(i);
+        	}
+        	
+        	int roadNumber = 0;
+        	
+        	if(!stringArray[1].equals(""))
+        	{
+        		roadNumber = Integer.parseInt(stringArray[1]);
+        	}
+    	
+    		for(int i=0; i<returnIndexes.length; i++)
+    		{
+    			int roadNumberIndex = roads[returnIndexes[i][0]].getEdgeWithRoadNumber(roadNumber, true);
+    			
+    			if(roadNumberIndex >= 0)
+    				returnIndexes[i][1] = roadNumberIndex;
+    		}
+    	
+        	
+        	return returnIndexes;
+        	//}
             	
-            	return returnIndexes;
-            	//}
-	            	
-            	/*
-            	int[] returnIndexes = new int[foundIndexes.size()];
-            	
-            	System.out.println(returnIndexes.length);
-            	
-            	for(int i=0; i<returnIndexes.length; i++)
-            	{
-            		returnIndexes[i] = foundIndexes.get(i); 
-            	}
-            	*/
-            }
+        	/*
+        	int[] returnIndexes = new int[foundIndexes.size()];
+        	
+        	System.out.println(returnIndexes.length);
+        	
+        	for(int i=0; i<returnIndexes.length; i++)
+        	{
+        		returnIndexes[i] = foundIndexes.get(i); 
+        	}
+        	*/
         }
         
         return new int[][]{{-1}};
@@ -582,6 +597,19 @@ public class AddressParser
 		string1 = string1.toLowerCase();
 		string2 = string2.toLowerCase();
 		
+		//if(string1.equals(string2))
+		//	return 0;
+		
+		int cutoff = string1.length();
+        
+		if(string2.length() > cutoff)
+    	{
+    		string2 = string2.substring(0, cutoff);
+    	}
+    	
+		//System.out.println("String 1: "+ string1);
+		//System.out.println("String 2: "+ string2);
+				
 		int length = string1.length();
 		int index = 0;
 		
@@ -602,6 +630,7 @@ public class AddressParser
 				//System.out.println("is lesser");
 				return -1;
 			}
+			
 			
 			index++;
 		}

@@ -70,6 +70,8 @@ public class SearchModule extends JPanel{
 							
 							map.getRoute(edge.getFromIndex(), edge.getToIndex());
 							
+							//ZoomLevel.getInstance().setMousePosition(null);
+							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(17);
 							
@@ -106,6 +108,8 @@ public class SearchModule extends JPanel{
 							{
 								targetZoom = (difference.y/map.getMapHeight())*2.5f;
 							}
+							
+							//ZoomLevel.getInstance().setMousePosition(null);
 							
 							Translation.getInstance().goToTranslation(tarPos.x, tarPos.y);
 							ZoomLevel.getInstance().setZoomLevel(ZoomLevel.getInstance().findIndex(targetZoom));

@@ -1,5 +1,6 @@
 package MapDraw;
 
+import java.awt.Point;
 import java.util.Observable;
 
 public class ZoomLevel extends Observable
@@ -7,6 +8,7 @@ public class ZoomLevel extends Observable
 	private static ZoomLevel instance;
 	private double[] zoomLevels;
 	private int currentZoomLevelIndex = 0;
+	private Point lastMousePosition;
 	
 	/*
 	 * ZoomLevel is a singleton that allows us to set and access data about the zoom level of the map
@@ -95,5 +97,18 @@ public class ZoomLevel extends Observable
 	public int getZoomLevelAmount()
 	{
 		return zoomLevels.length;
+	}
+	
+	public void setMousePosition(Point point)
+	{
+		lastMousePosition = point;
+	}
+	
+	public Point getLastMousePosition()
+	{
+		if(lastMousePosition == null)
+			lastMousePosition = new Point();
+		
+		return lastMousePosition;
 	}
 }

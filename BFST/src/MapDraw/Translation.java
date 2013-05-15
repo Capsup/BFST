@@ -7,6 +7,7 @@ public class Translation
 	private static Translation instance;
 	private Point2D.Double translation;
 	private Point2D.Double targetTranslation;
+	private Point2D.Double startTranslation;
 	
 	private boolean auto;
 	
@@ -108,7 +109,17 @@ public class Translation
 	 */
 	public void goToTranslation(double x, double y)
 	{
+		ZoomLevel.getInstance().setMousePosition(null);
+		startTranslation = getTranslation();
 		//We set the translation of the map directly
 		targetTranslation = new Point2D.Double(x, y);	
+	}
+	
+	public Point2D.Double getStartTranslation()
+	{
+		if(startTranslation == null)
+			startTranslation = new Point2D.Double();
+			
+		return startTranslation;
 	}
 }

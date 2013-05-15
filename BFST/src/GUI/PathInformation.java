@@ -3,23 +3,36 @@ package GUI;
 import java.beans.Visibility;
 import java.util.Observable;
 
+/**
+ * An observable singleton that contains all the information of the current path being processed.
+ * @author Jonas Kastberg
+ */
 public class PathInformation extends Observable
 {
+	//instance variable, needed for a singleton
 	private static PathInformation instance;
 	
-	private String[] searchInformation;
+	//We contain the visibility in this singleton so it is always accessible
 	private boolean isVisible;
 	
+	//Status variables that contains the different values of the current search
 	private String pathFrom;
 	private String pathTo;
 	private double length;
 	private double travelTime;
 	
+	/**
+	 * Initialize the object
+	 */
 	private PathInformation()
 	{
 		instance = this;
 	}
 	
+	/**
+	 * if the instance variable is null, the method initializes the class
+	 * @return returns the instance variable of the singleton
+	 */
 	public static PathInformation getInstance()
 	{
 		if(instance == null)
@@ -27,108 +40,127 @@ public class PathInformation extends Observable
 			
 		return instance;
 	}
-	/*
-	public void setSearchInfo(String[] searchInfo)
-	{
-		searchInformation = searchInfo;
-		
-		setChanged();
-		notifyObservers();
-	}
-	*/
-	
-	public String[] getSearchInfo()
-	{
-		return searchInformation;
-	}
-	
+
+	/**
+	 * Sets the visiblity variable. This variable is direct correlation with the InfoPanel's visibility
+	 * @param flick
+	 */
 	public void setVisible(boolean flick)
 	{
+		//We set the visibility and update our InfoPanel observer
 		isVisible = flick;
-		
 		update();
 	}
 	
+	/**
+	 * Set the departure and destination addresses
+	 * @param from: the departure address
+	 * @param to: the destination address 
+	 */
 	public void setFromAndTo(String from, String to)
 	{
 		pathFrom = from;
 		pathTo = to;
 	}
 	
+	/**
+	 * set the length of the current path
+	 * @param length
+	 */
 	public void setLength(double length)
 	{
 		this.length = length;
 	}
 	
+	/**
+	 * set the travel time of the current path
+	 * @param travelTime
+	 */
 	public void setTravelTime(double travelTime)
 	{
 		this.travelTime = travelTime;
 	}
 	
+	/**
+	 * @return the visibility variable
+	 */
 	public boolean getVisible()
 	{
 		return isVisible;
 	}
 	
+	/**
+	 * @return the departure address
+	 */
 	public String getFrom()
 	{
 		return pathFrom;
 	}
 	
+	/**
+	 * @return the destination address
+	 */
 	public String getTo()
 	{
 		return pathTo;
 	}
 	
+	/**
+	 * Get the length of the path formatted to either m or km based on the length of the path
+	 * @return get the length as a string, if the length is an invalid output (<0) "Calculating.." is returned
+	 */
 	public String getLength()
 	{
-		//Make code so length is rewritten into appropriate numbers (e.g. m or km)
-		
 		if(length >= 0)
 		{
 			double currLength = length;
 			
+			//If the length is above 1000 we recalculate it into km
 			if(currLength > 1000)
 			{
-				//Recalculate the length into km, while preserving the last digit.
+				//We divide by 100, then round and then by the last 10, in order to keep the last digit
 				currLength /= 100;
 				currLength = Math.round(currLength);
 				currLength /= 10;
 				
+				//We then return the length as well as the "km"
 				return currLength+"km";
 			}
 			else
-				return Math.round(currLength)+"m";
+				return Math.round(currLength)+"m"; 	//Otherwise we just return the length as meters
 		}
 		else
-			return "Calculating...";
+			return "Calculating...";				//If the length is below zero we return "Calculating...", this is used in a multi-thread perspective
 	}
 	
+	/**
+	 * Get the travel time as a string formatted to match the time (hours, minutes, seconds)
+	 * @return get the travel time as a string, if the travel time is an invalid output (<0) "Calculating.." is returned
+	 */
 	public String getTravelTime()
 	{
 		if(travelTime >= 0)
 		{
-			//double lengthInKM = length/1000;
-			
-			//double kmPerHour = 100;
-			
-			//double time = lengthInKM/kmPerHour;
-			
 			double time = travelTime;
 			
+			//We first allocate the hours by flooring the value.
 			int hours = (int)Math.floor(time);
 			
-			time -= Math.floor(time);
+			//We then subtract the hours from the time.
+			time -= hours;
 			
-			int minutes = (int)Math.round(60*time);
+			//Then we allocate the minutes. We know that the remaining decimals can be multiplied by 60 to get minutes
+			int minutes = (int)Math.floor(60*time);
 			
 			StringBuilder stringBuilder = new StringBuilder();
-			//String returnString = "";
 			
 			if(hours != 0)
 			{
+				//In case we it took more than an hour we append it to the string
+				
 				stringBuilder.append(hours);
 				
+				//Based on the tense of the hours we add the correct grammer
 				if(hours > 1)
 					stringBuilder.append(" hours ");
 				else 
@@ -137,6 +169,8 @@ public class PathInformation extends Observable
 			
 			if(minutes != 0)
 			{
+				//We do the same procedure with minutes
+				
 				stringBuilder.append(minutes);
 				
 				if(minutes > 1)
@@ -145,8 +179,11 @@ public class PathInformation extends Observable
 					stringBuilder.append(" minute");
 			}
 			
-			if(stringBuilder.toString().equalsIgnoreCase(""))
+			if(stringBuilder.toString().equals(""))
 			{
+				//If the string is still empty, it means that the path took less than a minute
+				//and therefore we append the time in seconds instead
+				
 				int seconds = (int)Math.round(3600*time);
 				
 				stringBuilder.append(seconds);
@@ -157,15 +194,15 @@ public class PathInformation extends Observable
 					stringBuilder.append(" second");
 			}
 			
-			//stringBuilder.append(" (100 km/h)");
-			
+			//We return the final string
 			return stringBuilder.toString();
 		
 		}
 		else
-			return "Calculating...";
+			return "Calculating...";						//If the length is below zero we return "Calculating...", this is used in a multi-thread perspective
 	}
 	
+	//This method is called whenever we need to notify our observers that we have changed our settings. In this case, our visiblity.
 	public void update()
 	{
 		setChanged();
