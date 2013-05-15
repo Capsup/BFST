@@ -1,18 +1,10 @@
 package AddressParser;
 
-import java.awt.datatransfer.StringSelection;
-import java.awt.print.Printable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-
-import javax.media.nativewindow.OffscreenLayerOption;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 import Graph.Edge;
 import QuadTree.Interval;
 import QuadTree.Interval2D;

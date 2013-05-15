@@ -38,7 +38,7 @@ public class Query{
 
 		try {
 			for(int i = 1;; i++){
-				Thread t = new Thread(new XMLParser("kdv_unload_" + i + ".xml"));
+				Thread t = new Thread(new XMLParser("data/kdv_unload_" + i + ".xml"));
 				t.start();
 				threads.add(t);
 			}
