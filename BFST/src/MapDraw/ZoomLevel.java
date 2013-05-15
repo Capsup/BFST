@@ -91,4 +91,9 @@ public class ZoomLevel extends Observable
 		}
 		return 0;
 	}
+	
+	public int getZoomLevelAmount()
+	{
+		return zoomLevels.length;
+	}
 }
