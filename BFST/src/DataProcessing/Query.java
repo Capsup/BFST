@@ -93,6 +93,14 @@ public class Query{
 	 * @param type The road type the should be queried 
 	 * @return The list of edges
 	 */
+	public List<Edge> queryEdges(int type){
+
+		return queryEdges(new Interval2D<Double>(
+			new Interval<Double>(new Double(0.0), new Double(700200050.98297)), 
+			new Interval<Double>(new Double(0.0), new Double(705000527.51786))
+			), type);	//Returns a query with the interval being the entire map
+	}
+	
 	public List<Edge> queryEdges(Interval2D<Double> rect, int type){
 
 		if(lastInterval[type].compareTo(rect) != 0){ //If this query have been made since last rect change, the old query will be return (So a new dosn't have to be made) 

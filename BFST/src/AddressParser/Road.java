@@ -6,12 +6,17 @@ import java.util.WeakHashMap;
 
 import Graph.Edge;
 
+/**
+ * Road class that is a container class for several edges that belongs to the same segment (road)
+ * @author Jonas Kastberg
+ *
+ */
 public class Road
 {
-	public Edge[] edges;
+	public Edge[] edges;		//All edges associated with the road
 	
-	private String roadName;
-	private int zipCode;
+	private String roadName;	//The name of the road
+	private int zipCode;		//The zip code of the road
 	
 	/**
 	 * Road class that is a container class for several edges that belongs to the same segment (road)
