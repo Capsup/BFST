@@ -628,10 +628,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		routeTo = to;
 		
 		GetRoute route = new GetRoute(from, to);
-		
-		if(route.hasNewPath() || route.hasNewTransport())
-			route.start();
-			
 	}
 
 	public void setRoute(Edge[] edges)
