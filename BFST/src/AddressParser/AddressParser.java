@@ -93,6 +93,7 @@ public class AddressParser
 		return instance;
 	}
 	
+	
 	public String[] parseAddress( String sAddress )
 	{
 		String[] finalStrings = new String[6];
@@ -121,31 +122,6 @@ public class AddressParser
 			else
 				break;
 		}
-		/*
-		if( finalStrings[0].equals( "" ) )
-		{
-			throw new NaughtyException( "OMG, WAT R U DOIN !?!?!" );
-		}*/
-		
-		/*
-		boolean bExists = false;
-		int lineIndex = 0;
-		for( String address : arrayStrings )
-		{
-			lineIndex++;
-			if( finalStrings[0].equalsIgnoreCase( address ) )
-			{
-				bExists = true;
-				break;
-			}
-		}
-		*/
-		/*
-		if( !bExists )
-		{
-			System.out.println( "" + finalStrings[0] );
-			throw new NaughtyException( "FUUUUUUUU Y U NO PROPER ADDRESS!?!??!?!" );
-		}*/
 
 		for( ; iProcessed < addressStrings.length; iProcessed++ )
 		{
@@ -188,6 +164,7 @@ public class AddressParser
 
 		return finalStrings;
 	}
+	
 	
 	/**
 	 * Search for an exact hit in our array of roads, and return the index (the first index of the index array is the index of the road, the second is the index of the edge in the road)
@@ -258,6 +235,9 @@ public class AddressParser
 	 */
 	public int[][] probabilitySearch(String[] stringArray, int count) 
 	{
+		for(int i=0; i<stringArray.length; i++)
+			System.out.println("String "+i+": "+stringArray[i]);
+			
 		Road[] a = roads;					//We make a reference to our road array
 		
 		//We then initialize variables used for our custom binary search
@@ -319,193 +299,110 @@ public class AddressParser
         	//We then get the adjacent indexes of the mid index
         	ArrayList<Integer> foundIndexes = getAdjacentIndexes(mid, count);
         	
+        	//We sort the indexes by importance
+        	int[] sortedIndexes = getSortedIndexes(foundIndexes);
         	
-        	int[][] returnIndexes = new int[foundIndexes.size()][2];
-        	returnIndexes[0][0] = foundIndexes.get(0);
-        	foundIndexes.remove(0);
+        	//We initialize and put in the sorted values for the final return array
+        	int[][] returnIndexes = new int[sortedIndexes.length][2];
         	
-        	for(int i=1; i<returnIndexes.length; i++)
-        	{
-        		int cutoff = a[returnIndexes[0][0]].getName().length();
-        		
-        		boolean isfound = false;
-        		
-        		while(!isfound)
-        		{
-        			String firstResultString = a[returnIndexes[0][0]].getName().substring(0, cutoff);
-            		
-        			for(int j=0; j < foundIndexes.size(); j++)	
-        			{
-            			String currResultString = a[foundIndexes.get(j)].getName();
-            			
-            			if(currResultString.length() > cutoff)	
-            				currResultString = a[foundIndexes.get(j)].getName().substring(0, cutoff);
-            			
-        				if(firstResultString.equals(currResultString))
-	        			{
-	        				returnIndexes[i][0] = foundIndexes.get(j);
-	        				foundIndexes.remove(j);
-	        				
-	        				isfound = true;
-	        				
-	        				break;
-	        			}
-        			}
-        			
-        			cutoff--;
-        			
-        			if(!isfound && cutoff < 0)
-        				break;
-        		}
-        		
-        		
-        		if(!isfound)
-        			break;
-        	}
+        	for(int i=0; i<returnIndexes.length; i++)
+        		returnIndexes[i][0] = sortedIndexes[i];
         	
-        	
-        	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
-        	{
-        		System.out.println(i);
-        		
-        		returnIndexes[i][0] = foundIndexes.get(0);
-        		foundIndexes.remove(0);
-        	}
-        	
-        	int roadNumber = 0;
+        	//We now process the road number data
+        	int roadNumber = 0;			//The road number that we wish to process, we use 0 if we dont have a parsed number
         	
         	if(!stringArray[1].equals(""))
-        	{
-        		roadNumber = Integer.parseInt(stringArray[1]);
-        	}
+        		roadNumber = Integer.parseInt(stringArray[1]);		//If the parsed address contains a road number we use this instead of 0
     	
     		for(int i=0; i<returnIndexes.length; i++)
     		{
+    			//For all the road indexes we have found we get the edge of the specific road that either contains or is closest to the road number
     			int roadNumberIndex = roads[returnIndexes[i][0]].getEdgeWithRoadNumber(roadNumber, true);
     			
+    			//If the road number search returned a valid index we put this into our return array
     			if(roadNumberIndex >= 0)
     				returnIndexes[i][1] = roadNumberIndex;
     		}
     	
-        	
+        	//We have now processed all the data of our parsed address so now we return the array of probable search hits.
         	return returnIndexes;
-        	//}
-            	
-        	/*
-        	int[] returnIndexes = new int[foundIndexes.size()];
-        	
-        	System.out.println(returnIndexes.length);
-        	
-        	for(int i=0; i<returnIndexes.length; i++)
-        	{
-        		returnIndexes[i] = foundIndexes.get(i); 
-        	}
-        	*/
         }
         else 
         	return new int[][]{{-1}};		//If we had no search hit on the road name we return an invalid output
     }
 	
+	/**
+	 * We make a probable comparison of two strings
+	 * We cut down string 2 to the length of string 2 and then we compare the two strings.
+	 * @param string1 this should be the address we are searching for
+	 * @param string2 this is the address we are currently comparing to
+	 * @return whether the two strings are equal. otherwise, which one is greater.
+	 */
 	public int probabilityCompare(String string1, String string2)
 	{
-		string1 = string1.toLowerCase();
-		string2 = string2.toLowerCase();
+		//If the second string is longer than the first string we cut it down
+		if(string2.length() > string1.length())
+    		string2 = string2.substring(0, string1.length());
 		
-		//if(string1.equals(string2))
-		//	return 0;
-		
-		int cutoff = string1.length();
-        
-		if(string2.length() > cutoff)
-    	{
-    		string2 = string2.substring(0, cutoff);
-    	}
-    	
-		//System.out.println("String 1: "+ string1);
-		//System.out.println("String 2: "+ string2);
-				
-		int length = string1.length();
-		int index = 0;
-		
-		while(index < length && index < string2.length())
-		{
-			if(string1.charAt(index) == ' ' && string2.charAt(index) != ' ')
-				return 1;
-			else if(string1.charAt(index) != ' ' && string2.charAt(index) == ' ')
-				return -1;
-				
-			if(string1.charAt(index) > string2.charAt(index))
-			{
-				//System.out.println("is greater");
-				return 1;
-			}
-			else if(string1.charAt(index) < string2.charAt(index))
-			{
-				//System.out.println("is lesser");
-				return -1;
-			}
-			
-			
-			index++;
-		}
-		
-		//System.out.println("is equal");
-		return 0;
+		//We then to a regular compare of the two strings
+		return compare(string1, string2);
 	}
 	
+	/**
+	 * Compare the two strings on a char-to-char basis. Whenever one string differs in a char it is returned
+	 * @param string1 the string we are searching for (in binary search conditions)
+	 * @param string2 the string we are comparing to
+	 * @return whether the two strings are equal. otherwise, which one is greater.
+	 */
 	public int compare(String string1, String string2)
 	{
+		//We start out by lower casing both strings
 		string1 = string1.toLowerCase();
 		string2 = string2.toLowerCase();
 		
-		//System.out.println("String 1: "+ string1);
-		//System.out.println("String 2: "+ string2);
-		
+		//If the two strings are equal by definition, we know that they are equal
 		if(string1.equals(string2))
-		{
-			//System.out.println("Is equal (0)");
 			return 0;
-		}
 		
-		int length = string1.length();
 		int index = 0;
 		
-		while(index < length && index < string2.length())
+		//As long as we dont run out of length we compare each string char by char
+		while(index < string1.length() && index < string2.length())
 		{
+			//Since the "space" char is not a part of the alphabet we need to handle it in it's own specific case
+			//If the one string has it and the other does not we differentiate them
 			if(string1.charAt(index) == ' ' && string2.charAt(index) != ' ')
 				return 1;
 			else if(string1.charAt(index) != ' ' && string2.charAt(index) == ' ')
 				return -1;
 				
+			//We compare the index value of the char we find in our string
 			if(string1.charAt(index) > string2.charAt(index))
-			{
-				//System.out.println("is greater (0)");
 				return 1;
-			}
 			else if(string1.charAt(index) < string2.charAt(index))
-			{
-				//System.out.println("is lesser (0)");
 				return -1;
-			}
 			
+			//We increment the index in order to search through all chars
 			index++;
 		}
 		
+		//If the two strings are equal up to the point where one strings is no longer we examine the length
+		//We then differentiate them based on the length
 		if(string1.length() > string2.length())
-		{
-			//System.out.println("Is greater (1)");
 			return 1;
-		}
 		else if(string2.length() > string1.length())
-		{
-			//System.out.println("Is lesser (1)");
 			return -1;
-		}
 		
-		//System.out.println("is equal (1)");
+		//If the strings did not differentiate at any point, we return that they are equal
 		return 0;
 	}
 	
+	/**
+	 * We check for all the adjacent indexes with the same name as the passed index, if any of them contains the given zip code
+	 * @param mid
+	 * @param zipCode
+	 * @return the index that holds both the mid index name and the zipcode. Returns -1 if no successful search hit was found
+	 */
 	private int matchZipCode(int mid, String zipCode)
 	{
 		int index = mid;				//We allocate the index we wish to check, starting at our search hit index
@@ -532,23 +429,101 @@ public class AddressParser
 		return -1;
 	}
 	
+	/**
+	 * Get all the adjacent indexes based on the middle index and the amount of adjacent indexes we want
+	 * @param mid
+	 * @param count
+	 * @return an arraylist of integers representing the found indexes
+	 */
 	private ArrayList<Integer> getAdjacentIndexes(int mid, int count)
 	{
-		ArrayList<Integer> adjacentIndexes = new ArrayList<Integer>();
-		adjacentIndexes.add(mid);
+		ArrayList<Integer> adjacentIndexes = new ArrayList<Integer>();			//We initialize an array list to hold the indexes
+		adjacentIndexes.add(mid);												//We add the mid since we want it to be the first index of our array list
     	
+		//We then calculate how many steps we need to go to the left and right respectively in order to reach the count
     	int leftHandLength = (int)Math.round(((count-1)/2));
     	int rightHandLength = (count)-leftHandLength;
     	
+    	//We then iterate through the part of our road array that the adjacent indexes represent, check if they exist and if they do, we add them
     	for(int i=(mid-leftHandLength); i<(mid+rightHandLength); i++)
-    	{
     		if(i != mid && i >= 0 && i <roads.length)
     			adjacentIndexes.add(i);
-    	}
     	
+    	//We then return the resulting array list
     	return adjacentIndexes;
 	}
 	
+	/**
+	 * Sorts all the indexes based on their name. The search is based on how similar the two strings are
+	 * @param foundIndexes
+	 * @return	returns an array of ints giving the indexes of the input integers in the sorted order
+	 */
+	private int[] getSortedIndexes(ArrayList<Integer> foundIndexes)
+	{
+		int[] returnIndexes = new int[foundIndexes.size()];		//We initialize an array of indexes to return
+    	returnIndexes[0] = foundIndexes.get(0);					//We put the first index to be the mid
+    	foundIndexes.remove(0);									//We then remove the index from the arraylist
+    	
+    	//We then iterate through the remaining indexes
+    	for(int i=1; i<returnIndexes.length; i++)
+    	{
+    		int cutoff = roads[returnIndexes[0]].getName().length();	//We start out by defining the cutoff as the length of the main search hit
+    		
+    		boolean isfound = false;	//Whether or not we have found the index we are looking for
+    		
+    		while(!isfound)
+    		{
+    			String firstResultString = roads[returnIndexes[0]].getName().substring(0, cutoff);		//The string we compare with is the main search hit with the cutoff applied
+        		
+    			for(int j=0; j < foundIndexes.size(); j++)	
+    			{
+    				//We then get the string we want to compare with 
+        			String currResultString = roads[foundIndexes.get(j)].getName();
+        			
+        			//If the string is longer than the cutoff we remove the excess part of the string
+        			if(currResultString.length() > cutoff)	
+        				currResultString = roads[foundIndexes.get(j)].getName().substring(0, cutoff);
+        			
+    				if(firstResultString.equals(currResultString))
+        			{
+    					//If the two cutoff strings are equal to each other we pass the result as the next most probable string to be added
+        				returnIndexes[i] = foundIndexes.get(j);
+        				foundIndexes.remove(j);				//We make sure to remove the index from the list to prevent duplicates
+        				
+        				isfound = true;					//We indicate that we have found the index
+        				
+        				break;			//and break out of the for-loop
+        			}
+    			}
+    			
+    			//We then decrement the cutoff
+    			cutoff--;
+    			
+    			//If we have reached the bottom of our main string and not found anything we break the loop
+    			if(!isfound && cutoff < 0)
+    				break;
+    		}
+    		
+    		//If we didnt find anything through a complete cut down of the main string we will not find anything in the upcoming iterations either
+    		if(!isfound)
+    			break;
+    	}
+    	
+    	//We add the rest of the strings to the return indexes by iterating through them (they have no resemblance to the main string so their order does not matter)
+    	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
+    	{
+    		//We get the last index of the found index array list and put it into our return array
+    		returnIndexes[i] = foundIndexes.get(foundIndexes.size()-1);
+    		foundIndexes.remove(foundIndexes.size()-1);
+    	}
+    	
+    	//We then return the sorted values
+    	return returnIndexes;
+	}
+	
+	/**
+	 * @return get the roads known by the address parser
+	 */
 	public Road[] getRoads()
 	{
 		return roads;
