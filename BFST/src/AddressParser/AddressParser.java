@@ -93,25 +93,43 @@ public class AddressParser
 		return instance;
 	}
 	
+	/**
+	 * This function takes an string parameter containing an address from the data set. It breaks this
+	 * string into the 6 different components that we need to know. 
+	 * 1: The street name
+	 * 2: The street number
+	 * 3: The street letter
+	 * 4: The floor number and letter
+	 * 5: The postal code
+	 * 6: The city name.
+	 * 
+	 * @param sAddress - the address string that is to be broken down into components.
+	 * @return an string array containing the information of the address given.
+	 */
 	public String[] parseAddress( String sAddress )
 	{
+		//Create the array of strings where we place the final data
 		String[] finalStrings = new String[6];
 		String[] addressStrings = sAddress.split( " " );
 
 		int iProcessed = 0;
 
+		//Initialize all the strings in the array for good measure.
 		for( int i = 0; i < finalStrings.length; i++ )
 		{
 			finalStrings[i] = "";
 		}
 
+		//For each string in the split string array, we run this until we find a string that contains digits.
 		for( ; iProcessed < addressStrings.length; iProcessed++ )
 		{
 			String curString = addressStrings[iProcessed];
+			//Aslong as the string contains a-zזרו or , or . this will keep adding the strings to the road name. As soon as we hita digit, we break the loop.
 			if( curString.matches( "[\\xC5\\xC6\\xD8\\xE5\\xE6\\xF8\\xC9\\xE9\\xC4\\xE4\\xD6\\xF6\\xDC\\xFC\\xC8\\xE8a-zA-Z,.]*" )
 			        && !curString.equals( "i" ) )
 				if( curString.contains( "," ) )
 				{
+					//Remember to remove , and also make sure we put spaces at the right places when we concatenate the string.
 					finalStrings[0] += ( iProcessed == 0 ? "" : " " ) + curString.replaceAll( ",", "" );
 					iProcessed++;
 					break;
@@ -121,49 +139,31 @@ public class AddressParser
 			else
 				break;
 		}
-		/*
-		if( finalStrings[0].equals( "" ) )
-		{
-			throw new NaughtyException( "OMG, WAT R U DOIN !?!?!" );
-		}*/
 		
-		/*
-		boolean bExists = false;
-		int lineIndex = 0;
-		for( String address : arrayStrings )
-		{
-			lineIndex++;
-			if( finalStrings[0].equalsIgnoreCase( address ) )
-			{
-				bExists = true;
-				break;
-			}
-		}
-		*/
-		/*
-		if( !bExists )
-		{
-			System.out.println( "" + finalStrings[0] );
-			throw new NaughtyException( "FUUUUUUUU Y U NO PROPER ADDRESS!?!??!?!" );
-		}*/
-
+		//This loops starts from where the other one ended. There is no reason to parse the data that we already placed into the final array.
 		for( ; iProcessed < addressStrings.length; iProcessed++ )
 		{
+			//Remove all commas since they're no longer relevant  to us.
 			addressStrings[iProcessed] = addressStrings[iProcessed].replace( ",", "" );
 			if( addressStrings[iProcessed].contentEquals( "sal" ) || addressStrings[iProcessed].contentEquals( "i" ) )
 				continue;
 
+			//If the current string is a number between 0 and 9 with 1 to 3 digits, we classify it as a road number.
 			if( addressStrings[iProcessed].matches( "[0-9]{1,3}" ) && finalStrings[1].equals( "" ) )
 				finalStrings[1] = addressStrings[iProcessed];
 
+			//If the current string has 1 to 3 digits but also a letter it is both the house number and house letter.
 			else if( addressStrings[iProcessed].matches( "[0-9]{1,3}[a-zA-Z]" ) )
 			{
-				if( addressStrings[iProcessed].matches( "\\d?\\w+" ) ) // MAGIC HAS BEEN APPLIED
+				//If there is atleast 1 letter and optionally atleast 1 digit, we need to split it up so we can put the house letter into its own place in the array.
+				if( addressStrings[iProcessed].matches( "\\d?\\w+" ) )
 				{
+					//We loop through the string to figure out where the letters are
 					for( int i = 0; i < addressStrings[iProcessed].length(); i++ )
 					{
 						if( Character.toString( addressStrings[iProcessed].charAt( i ) ).matches( "[a-zA-Z]" ) )
 						{
+							//And cut from there, putting all infront of the letters into the 'house number' and the rest into the 'house letter'.
 							finalStrings[1] = addressStrings[iProcessed].substring( 0, i );
 							finalStrings[2] = addressStrings[iProcessed].substring( i, addressStrings[iProcessed].length() );
 							break;
@@ -173,19 +173,18 @@ public class AddressParser
 				else
 					finalStrings[2] = addressStrings[iProcessed];
 			}
+			//If the address also contains a floor number, this needs to be parsed too
 			else if( addressStrings[iProcessed].contains( "." ) || addressStrings[iProcessed].matches( "[0-9]{1,3}[a-zA-Z]?" ) )
 				finalStrings[3] = addressStrings[iProcessed].replace( ".", "" );
+			//The first number that is atleast 4 digits long is considered the postal code.
 			else if( addressStrings[iProcessed].matches( "[0-9]{4,}" ) )
 				finalStrings[4] = addressStrings[iProcessed];
+			//And the last string that contains a-z and זרו is considered the city name.
 			else if( addressStrings[iProcessed].matches( "[\\xC5\\xC6\\xD8\\xE5\\xE6\\xF8\\xC9\\xE9\\xC4\\xE4\\xD6\\xF6\\xDC\\xFC\\xC8\\xE8a-zA-Z]*" ) )
 				finalStrings[5] += ( !finalStrings[5].equals( "" ) ? " " : "" ) + addressStrings[iProcessed];
 		}
 
-		//for( int i = 0; i < finalStrings.length; i++ )
-		//	System.out.println( finalStrings[i] + "#" );
-
-		//System.out.println( "Address was found at line " + lineIndex );
-
+		//Aaaand return the final array.
 		return finalStrings;
 	}
 	
