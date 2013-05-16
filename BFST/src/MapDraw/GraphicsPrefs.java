@@ -126,45 +126,7 @@ public class GraphicsPrefs {
 			intArray[i] = intList.get(i); 
 		
 		return intArray;
-		
-		
-		/*if(zoomIndex < 3)
-			return new int[] {0,1,2,3,4,30,31,40,41};
-		else if(zoomIndex < 6)
-			return new int[] {0,1,2,3,4,30,31,40,41};
-		else if(zoomIndex < 12)
-			return new int[] {0,1,2,3,4,5,30,31,40,41};
-		else if(zoomIndex < 15)
-			return new int[] {0,1,2,3,4,5,6,30,31,40,41};
-		else if(zoomIndex < 16)
-			return new int[] {0,1,2,3,4,5,6,7,30,31,40,41};
-		else {
-			int[] a = new int[100];
-			for(int i=0; i<42; i++) {
-				a[i] = i;
-			}
-			return a;
-		}*/
 	}
-	
-//	public int getMaxTypeAtCurrentZoom() {
-//		int zoomIndex = ZoomLevel.getInstance().getZoomIndex();
-//		
-//		if(zoomIndex < 3)
-//			return 5;
-//		else if(zoomIndex < 6)
-//			return 5;
-//		else if(zoomIndex < 12)
-//			return 6;
-//		else if(zoomIndex < 15)
-//			return 7;
-//		else if(zoomIndex < 16)
-//			return 8;
-//		else
-//			return 42;
-//		
-//		//return 100;
-//	}
 	
 	//Checks what type of edge has been given, then sets the gl.glLineWidth to an appropriate size
 	public void setLineWidth(Edge e) {
@@ -190,26 +152,6 @@ public class GraphicsPrefs {
 		} else {
 			gl.glLineWidth(1.5f);
 		}
-		
-		
-		
-		
-//		if(roadType == 1) {
-//			gl.glLineWidth(5f);
-//			
-//		} else if(roadType == 2) {
-//			gl.glLineWidth(3f);
-//			
-//		} else if(roadType < 5) {
-//			gl.glLineWidth(2f);
-//			
-//		} else if(roadType < 8) {
-//			gl.glLineWidth(1.7f);
-//			
-//		} else {
-//			
-//			gl.glLineWidth(1.5f);
-//		}
 	}
 	
 	//Checks what type of edge has been given, then returns true if the roadtype has a center-line
@@ -259,7 +201,6 @@ public class GraphicsPrefs {
 			gl.glLineWidth(0.8f);
 		} else {
 			gl.glLineWidth(1f);
-			System.out.println("wat");
 		}
 		
 	}
