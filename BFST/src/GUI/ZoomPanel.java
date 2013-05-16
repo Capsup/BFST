@@ -78,7 +78,7 @@ public class ZoomPanel extends JPanel implements Observer{
 		currentZoomLabel.setAlignmentX(CENTER_ALIGNMENT);	//We set the label to align to the center
 		
 		JButton zoomOutButton = new JButton("-");			//We make a button that lets us zoom out
-		zoomInButton.setActionCommand("ZoomOut");			//We set the action command of our button
+		zoomOutButton.setActionCommand("ZoomOut");			//We set the action command of our button
 		zoomOutButton.setAlignmentX(CENTER_ALIGNMENT);		//We set the label to align to the center
 		
 		//We initialize a custom listener in order to access our zoom buttons.
