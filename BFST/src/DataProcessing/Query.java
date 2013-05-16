@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import files.Node;
 
 import Graph.Edge;
 import Graph.Graph;
+import Graph.Node;
 import QuadTree.Interval;
 import QuadTree.Interval2D;
 import QuadTree.QuadTree;

@@ -16,10 +16,10 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import files.Node;
 
 
 import Graph.Edge;
+import Graph.Node;
 
 
 public class XMLParser implements Runnable{

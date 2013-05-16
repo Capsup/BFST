@@ -1,6 +1,5 @@
 package Graph;
 
-import files.Node;
 
 /**
  * This class represents Edges, which is road segments
