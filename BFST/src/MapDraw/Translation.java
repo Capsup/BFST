@@ -10,7 +10,6 @@ public class Translation
 	private static Translation instance;		//The singleton variable
 	private Point2D.Double translation;			//The current translation of the map
 	private Point2D.Double targetTranslation;	//The target translation
-	private Point2D.Double startTranslation;	//The translation we started from when we need to animate a translation
 	
 	/**
 	 * Translation is a singleton that allows us to set and access data about the translation of the map
@@ -107,21 +106,7 @@ public class Translation
 		//We nullify the relative mouse position that the zoom shall use. This is done to prevent struggling in map animation
 		ZoomLevel.getInstance().setMousePosition(null);
 		
-		//We set the start translation of the map. This is used to calculate the animation speed
-		startTranslation = getTranslation();
-		
 		//We set the translation of the map directly
 		targetTranslation = new Point2D.Double(x, y);	
-	}
-	
-	/**
-	 * @return The translation that we had when we started animating
-	 */
-	public Point2D.Double getStartTranslation()
-	{
-		if(startTranslation == null)
-			startTranslation = new Point2D.Double();
-			
-		return startTranslation;
 	}
 }

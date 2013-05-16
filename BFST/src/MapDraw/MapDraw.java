@@ -229,106 +229,133 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//We get a collected list of all edges that should be drawn in the current perspective of the map
 		List<List<Edge>> enormousListOfEdges = getDrawEdges(roadTypesToDraw);
 		
-		for(int i=1; i<roadTypesToDraw.length; i++) 
+		//We iterate through all the indexes that should be drawn on the current zoom level
+		for(int i=0; i<roadTypesToDraw.length; i++) 
 		{
-			//We iterate through all the indexes that should be drawn on the current zoom level
-			
 			//If there are any roads of the applicable road type we draw them
 			if(!enormousListOfEdges.get(i).isEmpty()) 
 			{
+				Edge testEdge = enormousListOfEdges.get(i).get(0);		//We get some edge of the current road type
+				gp.setLineWidth(testEdge);								//We set the line width to that of the edge type. (All lines of the same type has the same width)
+				float[] colors = gp.getLineColor(testEdge);				//We set the color to draw with to that of the current road type
 				
-				Edge testEdge = enormousListOfEdges.get(i).get(0);
-				gp.setLineWidth(testEdge);
-				float[] colors = gp.getLineColor(testEdge);
-				
-				transparency = -1;
+				transparency = -1;		//We set the transparency to an invalid number
 				
 				//Calculate if the line should fade in
+				//Check if the upper bound of the current zoom level is less than the zoom level to be drawn (Basically if this is the zoom level that the road is starting to be shown at)
 				if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
 				{
+					//Get the upper bound of the zoom level we are currently in between
 					zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
+					//Get the lower bound of the zoom level we are currently in between
 					zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
+					
+					//Calculate the length of the interval between the zoom levels
 					difference = zoomedOutValue - zoomedInValue;
 					
+					//Calculate how far we are into the next zoom level
 					currentRelativeZoom = zoomedOutValue-currentZoomLevel;
 					
+					//Set the transparency to be a % of how far we are into the next zoom level
 					transparency = (float)currentRelativeZoom/(float)difference;
 				}
 				
+				//Draw lines
 				gl2.glBegin( GL.GL_LINES );
-				for(Edge e: enormousListOfEdges.get(i)) {
-					
-					if(transparency < 0)
-						drawLine(e, gl2, colors[0], colors[1], colors[2]);
-					else 
+				
+				//We check whether or not there is to be applied a transparency to the line we draw, then we draw all lines as applicable.
+				if(transparency < 0)
+					for(Edge e: enormousListOfEdges.get(i))
+							drawLine(e, gl2, colors[0], colors[1], colors[2]);
+				else
+					for(Edge e: enormousListOfEdges.get(i))
 						drawLine(e, gl2, colors[0], colors[1], colors[2], transparency);
-						
-				}
+				
 				gl2.glEnd();
 			}
 		}
 		
-		for(int i=1; i<roadTypesToDraw.length; i++) {
+		//We iterate through the array again since we need to draw center lines where applicable
+		for(int i=0; i<roadTypesToDraw.length; i++) {
 			if(!enormousListOfEdges.get(i).isEmpty()) {
-				//Edge testEdge = getDrawEdges(roadTypesToDraw[i]).get(0);
-				Edge testEdge = enormousListOfEdges.get(i).get(0);
-				if(gp.hasCenterLine(testEdge)) {
+				
+				Edge testEdge = enormousListOfEdges.get(i).get(0);			//Get some edge from the current road type list
+				
+				//Check if this road type should be drawn with a center line
+				if(gp.hasCenterLine(testEdge)) 
+				{
+					//Set the with and color of the center line based on some edge of the road type
 					gp.setCenterLineWidth(testEdge);
 					float[] colors = gp.getLineCenterColor(testEdge);
 					
-					transparency = -1;
+					transparency = -1;		//We set the transparency to an invalid number
 					
 					//Calculate if the line should fade in
+					//Check if the upper bound of the current zoom level is less than the zoom level to be drawn (Basically if this is the zoom level that the road is starting to be shown at)
 					if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
 					{
+						//Get the upper bound of the zoom level we are currently in between
 						zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
+						//Get the lower bound of the zoom level we are currently in between
 						zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
+						
+						//Calculate the length of the interval between the zoom levels
 						difference = zoomedOutValue - zoomedInValue;
 						
+						//Calculate how far we are into the next zoom level
 						currentRelativeZoom = zoomedOutValue-currentZoomLevel;
 						
+						//Set the transparency to be a % of how far we are into the next zoom level
 						transparency = (float)currentRelativeZoom/(float)difference;
 					}
 					
 					gl2.glBegin(GL.GL_LINES);
 					
-					//for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
-					for(Edge e: enormousListOfEdges.get(i)) {
-						
-						if(transparency < 0)
-							drawLine(e, gl2, colors[0], colors[1], colors[2]);
-						else 
+					//We check whether or not there is to be applied a transparency to the line we draw, then we draw all lines as applicable.
+					if(transparency < 0)
+						for(Edge e: enormousListOfEdges.get(i))
+								drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					else
+						for(Edge e: enormousListOfEdges.get(i))
 							drawLine(e, gl2, colors[0], colors[1], colors[2], transparency);
-					}
+					
 					gl2.glEnd();
 				}
 			}
-		
 			
-			if(routeToDraw != null) {
+			//We check whether or not there is a route to draw, then draw it as applicable
+			if(routeToDraw != null) 
 				drawRoute(gl2, routeToDraw);
-			}
-			
 		}
 	}
 	
+	/**
+	 * Draw the route on the map
+	 * @param gl2
+	 * @param edges The edges to be drawn
+	 */
 	public void drawRoute(GL2 gl2, Edge[] edges) {
 		
-		gp.setLineWidth(3f);
-		float[] colors = new float[] {0,0,255};
+		gp.setLineWidth(3f);					//We set the line width of the edge
+		float[] colors = new float[] {0,0,255};	//We set the color of the edge
+		
 		gl2.glBegin(GL.GL_LINES);
-		/*for(Edge e: edges) {
-			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-		}*/
-		for(int i=edges.length-1; i>=currentRouteCutoff; i--) {
+		
+		//We iterate through the edge array, until we reach the route cutoff, in this way we draw to road procedually, animating it in
+		for(int i=edges.length-1; i>=currentRouteCutoff; i--)
 			drawLine(edges[i], gl2, colors[0], colors[1], colors[2]);
-		}
+		
 		gl2.glEnd();
 		
+		//If we have not drawn the whole route yet we decrement the route cutoff
 		if(currentRouteCutoff > 0)
 			currentRouteCutoff--;
 	}
 	
+	/**
+	 * Apply the zoom to the map
+	 * @param gl2
+	 */
 	private void applyZoom(GL2 gl2)
 	{
 		//Add a translation transformation to the current matrix, effectively moving the ingame 3d coordinate system by the specified amount.
@@ -342,11 +369,16 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glTranslatef( -width / 2, -height / 2, 0 );
 	}
 	
+	/**
+	 * Apply the panning to the map
+	 * @param gl2
+	 */
 	private void applyPanning(GL2 gl2)
 	{
 		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
+	//GOGO CHOLEWA!
 	private List<List<Edge>> getDrawEdges(int[] types)
 	{
 		int width = this.width;
@@ -369,14 +401,28 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	     return list;
 	}
 	
+	/**
+	 * Draws an edge on the map using the edges own position and the specified color
+	 * @param edge
+	 * @param gl2
+	 * @param r
+	 * @param g
+	 * @param b
+	 */
 	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
-	{		
-		gl2.glColor3f( (r/255), (g/255), (b/255) );
-		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
-		gl2.glColor3f( (r/255), (g/255), (b/255) );
-		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
+	{
+		drawLine(edge, gl2, r, g, b, 1);
 	}
 	
+	/**
+	 * Draws an edge on the map using the edges own position and the specified color and transparency
+	 * @param edge The edge to be drawn
+	 * @param gl2
+	 * @param r (0-255)
+	 * @param g (0-255)
+	 * @param b (0-255)
+	 * @param a The transparency of the line (0 - 1);
+	 */
 	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b, float a)
 	{		
 		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
@@ -388,81 +434,98 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void dispose( GLAutoDrawable arg0 )
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void reshape( GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4 )
 	{
-		// TODO Auto-generated method stub
-
 	}
 	
+	/**
+	 * Process any zoom animation that might be happening based on the maps state
+	 */
 	public void animateZoom()
 	{
-		if(targetZoomLevel != ZoomLevel.getInstance().getZoomLevel()) {
-			targetZoomLevel = ZoomLevel.getInstance().getZoomLevel();
-			//zoomDifference = currentZoomLevel - targetZoomLevel;
-		}
+		targetZoomLevel = ZoomLevel.getInstance().getZoomLevel();				//The zoom level we wish to animate to
 		
-		double lastZoomLevel = currentZoomLevel;
+		double lastZoomLevel = currentZoomLevel;								//The zoom level we are currently at
 		
-		double increment = 0.1*Math.abs((targetZoomLevel-currentZoomLevel));
+		double increment = 0.1*Math.abs((targetZoomLevel-currentZoomLevel));	//The speed we wish to zoom with
 		
+		//If the increment is small enough we set it to a linear value instead of an asymptote one
 		if(increment < currentZoomLevel*0.01f)
 			increment = currentZoomLevel*0.01f;
 		
 		if(targetZoomLevel > currentZoomLevel)
 		{
+			//If the target zoom is larger than the current zoom level we wish to zoom out
+			
+			//If the current zoom + the increment is less than the target zoom level we apply the increment
 			if(currentZoomLevel+increment < targetZoomLevel)
 				currentZoomLevel += increment;
 			else
-				currentZoomLevel = targetZoomLevel;
+				currentZoomLevel = targetZoomLevel;			//Otherwise we set the current zoom level to the target zoom level
 		}
 		else if(targetZoomLevel < currentZoomLevel)
 		{
+			//If the target zoom is smaller than the current zoom level we wish to zoom in
+			
 			if(currentZoomLevel-increment > targetZoomLevel)
 				currentZoomLevel -= increment;
 			else
 				currentZoomLevel = targetZoomLevel;
 		}
 		
+		//If we reach a static zoom level position we reset the mouse animator position
 		if(currentZoomLevel == lastZoomLevel)
 			ZoomLevel.getInstance().setMousePosition(null);
 		
+		//In order to animate a zoom towards the mouse properly we get the last known position of the mouse during a zoom
 		Point lastMousePoint = ZoomLevel.getInstance().getLastMousePosition();
 		
+		//If the position is a valid number we process it
 		if(lastMousePoint.x != 0 && lastMousePoint.y != 0)
 		{
+			//We get the center point of the map
 			Point centerPoint = new Point(width/2, height/2);
 			
+			//Calculate the difference between the center point and the mouse position
 			Point difference = new Point((centerPoint.x-lastMousePoint.x)/2, (centerPoint.y-lastMousePoint.y)/2);
 			
+			//Calculate the difference between the last zoom level and the current zoom level
 			double zoomLevelDifference = lastZoomLevel-currentZoomLevel;
 			
+			//We then apply the translation manually (This is an action based on a manual input (Scrolling/double clicking) so therefore we break any current translate animation)
 			Translation.getInstance().manualTranslate(difference.x*zoomLevelDifference, difference.y*zoomLevelDifference);
 		}
 	}
 	
+	/**
+	 * Process any translate animation that might be happening based on the maps state
+	 */
 	public void animatePan()
 	{
+		//We start out by making a reference to the translation and target translation
 		Point2D.Double translation = Translation.getInstance().getTranslation();
 		Point2D.Double tarTranslation = Translation.getInstance().getTargetTranslation();
-		Point2D.Double deltaTranslation = new Point2D.Double();
+		Point2D.Double deltaTranslation = new Point2D.Double();				//The translation we wish to translate by
 		
+		//We get the increment that we want to translate with
+		//We calculate it by the difference of the x coordinates and the y coordinates
 		double xIncrement = (0.075f*Math.abs(tarTranslation.x-translation.x));
 		double yIncrement = (0.075f*Math.abs(tarTranslation.y-translation.y));
 		
-		
+		//If either of the increments are small enoguh we set the translation to a linear value instead of an asymptote one
 		if(xIncrement < width*0.0001f*currentZoomLevel)
 			xIncrement = width*0.0001f*currentZoomLevel;
 		
 		if(yIncrement < width*0.0001f*currentZoomLevel)
 			yIncrement = width*0.0001f*currentZoomLevel;
 		
+		//We check if the x translation is higher or lower than the target x translation
 		if(tarTranslation.x > translation.x)
 		{
+			//We check if the increment will reach the target translation or not and assign the delta translation applicably
 			if(translation.x+xIncrement < tarTranslation.x)
 				deltaTranslation.x = xIncrement;
 			else
@@ -476,6 +539,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 				deltaTranslation.x = tarTranslation.x-translation.x;
 		}
 		
+		//We check if the y translation is higher or lower than the target y translation
 		if(tarTranslation.y > translation.y)
 		{
 			if(translation.y+yIncrement < tarTranslation.y)
@@ -491,6 +555,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 				deltaTranslation.y = tarTranslation.y-translation.y;
 		}
 		
+		//We translate the map by the calculated delta translation
 		Translation.getInstance().translate(deltaTranslation.x, deltaTranslation.y);
 	}
 	
@@ -508,6 +573,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		//Get the difference, also taking into consideration the zoom level so we don't end up translation too much.
 		double xDiff = ( ( xPos - curMousePos.x ) * getWidthFactor() ) , yDiff = ( ( yPos - curMousePos.y ) * getHeightFactor() );
 		
+		//Apply the translation
 		Translation.getInstance().manualTranslate(xDiff, yDiff);
 		
 		//Rebase the current mouse position, so that the next time we drag the mouse, we will have a new starting point to offset from.
@@ -541,36 +607,47 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mousePressed( MouseEvent e )
 	{
+		//Set the target translation to 0 in order to stop any current translation animation (because we "grab" the map)
 		Translation.getInstance().manualTranslate(0, 0);
 		
+		//We update the current mouse position
 		curMousePos.x = e.getXOnScreen();
 		curMousePos.y = e.getYOnScreen();
 		
+		//We check if it is the left or the right mouse button that is pressed
 		if(e.getButton() == e.BUTTON1)
 		{
-			//Double tap to zoom
+			//Double tap left click to zoom in
+			
+			//If the difference between the current press and the last press is less than 350 miliseconds we assume that we have a double click
 			if(System.currentTimeMillis() - lastLeftMousePressTime < 350)
 			{
+				//If we can zoom in, we zoom in and update the animation information about the current zoom
 				if(ZoomLevel.getInstance().zoomIn())
-					applyZoomTranslation(e, 1, 1);
+					applyZoomTranslation(e);
 				
+				//We reset the last time the mouse was pressed
 				lastLeftMousePressTime = 0;
 			}
 			else
-				lastLeftMousePressTime = System.currentTimeMillis();
+				lastLeftMousePressTime = System.currentTimeMillis();		//if we did not double click we update the last time the mouse was clicked
 		}
 		else if(e.getButton() == e.BUTTON3)
 		{
-			//Double tap right click to zoom
+			//Double tap right click to zoom out
+			
+			//If the difference between the current press and the last press is less than 350 miliseconds we assume that we have a double click
 			if(System.currentTimeMillis() - lastRightMousePressTime < 350)
 			{
+				//If we can zoom out, we zoom out and update the animation information about the current zoom
 				if(ZoomLevel.getInstance().zoomOut())
-					applyZoomTranslation(e, -1, 1);
+					applyZoomTranslation(e);
 				
+				//We reset the last time the mouse was pressed
 				lastRightMousePressTime = 0;
 			}
 			else
-				lastRightMousePressTime = System.currentTimeMillis();
+				lastRightMousePressTime = System.currentTimeMillis();		//if we did not double click we update the last time the mouse was clicked
 		}
 		
 	}
@@ -578,10 +655,13 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mouseReleased( MouseEvent e )
 	{
+		//We get the current translation of the map
 		Point2D.Double currTranslation = Translation.getInstance().getTranslation();
 		
+		//Check if the current translation indicates that the map is outside of view
 		if(currTranslation.x > mapOffset.x+width/1.5 || currTranslation.x < mapOffset.x-width/1.5 || currTranslation.y > mapOffset.y+height/1.25 || currTranslation.y < mapOffset.y-height/1.25)
 		{
+			//If it is, we reset the maps location and zoom level to the starting points
 			Translation.getInstance().goToTranslation(mapOffset.x, mapOffset.y);
 			ZoomLevel.getInstance().setZoomLevel(0);
 		}
@@ -590,79 +670,96 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	@Override
 	public void mouseWheelMoved( MouseWheelEvent e )
 	{
+		//We check the direction of the scroll and zoom in the given direction
 		if( e.getUnitsToScroll() < 0 )
-		{
 			if(ZoomLevel.getInstance().zoomIn())
-				applyZoomTranslation(e, 1, 1);
-		}
+				applyZoomTranslation(e);			//We update the information about the zoom in order to animate the zoom properly
 		else
-		{
-			
 			if(ZoomLevel.getInstance().zoomOut())
-				applyZoomTranslation(e, -1, 1);
-		}
-		
-		//System.out.println("Zoomlevel: " + (ZoomLevel.getInstance().getZoomIndex()) + "/30");
-
-		// width += -1 * e.getUnitsToScroll();
-		// height += -1 * e.getUnitsToScroll();
-
-		/*
-		 * double xDiff = width * e.getUnitsToScroll() / 2; double yDiff = height * e.getUnitsToScroll() / 2;
-		 * 
-		 * translation = new Point( (int) (translation.getX() + xDiff), (int) (translation.getY() + yDiff) );
-		 */
-
-		// System.out.println(scale);
+				applyZoomTranslation(e);			//We update the information about the zoom in order to animate the zoom properly
 	}
 	
-	public void applyZoomTranslation(MouseEvent e, int zoomDirection, int zoomFactor)
+	/**
+	 * Applies the current mouse position to the zoom information in order to animate the zoom properly
+	 * @param e A mouse even
+	 */
+	public void applyZoomTranslation(MouseEvent e)
 	{
-		Point convertedMousePoint = new Point((int)(Math.round(((double)e.getPoint().x/(double)getWidth())*(double)width)), (int)(Math.round(((double)e.getPoint().y/(double)getHeight())*(double)height)));
+		//Convert the mouse position into a mouse position relative to the maps base width and height
+		Point convertedMousePoint = new Point((int)(Math.round(((double)e.getPoint().x/(double)getWidth())*(double)width)), 
+				(int)(Math.round(((double)e.getPoint().y/(double)getHeight())*(double)height)));
+		
+		//Notify the Zoom Level singleton about the mouse position when we began our zoom, this is used when we animate the zoom
 		ZoomLevel.getInstance().setMousePosition(convertedMousePoint);
 	}
 	
+	/**
+	 * Calculate a route between two edges, defined by indexes of the underlying graph
+	 * @param from
+	 * @param to
+	 */
 	public void getRoute(int from, int to)
 	{
+		//Update which roads we used the last time we animated a road
 		routeFrom = from;
 		routeTo = to;
 		
-		GetRoute route = new GetRoute(from, to);
+		//Initialize the thread that calculates the route
+		new GetRoute(from, to);
 	}
 
+	/**
+	 * Sets the route that the map should draw
+	 * @param edges
+	 */
 	public void setRoute(Edge[] edges)
 	{ 
-		//routeToDraw = null;
-		
+		//Check if it is not the same route we are trying to display
 		if(edges != routeToDraw)
-			currentRouteCutoff = edges.length-1;
+			currentRouteCutoff = edges.length-1;	//if it is not we reset the animator index
 		
+		//We set the route to draw to the route that we have given
 		routeToDraw = edges;
 	}
 	
+	/**
+	 * Returns whether or not we currently have a route on the map to show
+	 * @return
+	 */
 	public boolean hasRoute()
 	{
 		return routeToDraw != null && routeFrom >= 0 && routeTo >= 0;
 	}
 	
+	/**
+	 * Refreshes the map that we searched for last
+	 */
 	public void refreshRoute()
 	{
+		//Get the route in case we already have a route to get
 		if(hasRoute())
-		{
 			getRoute(routeFrom, routeTo);
-		}
 	}
 	
+	/**
+	 * @return the relative width of the map
+	 */
 	public int getMapWidth()
 	{
 		return width;
 	}
-	
+
+	/**
+	 * @return the relative height of the map
+	 */
 	public int getMapHeight()
 	{
 		return height;
 	}
 	
+	/**
+	 * @return the base offset of the map
+	 */
 	public Point2D.Double getOffset()
 	{
 		return mapOffset;
