@@ -32,37 +32,85 @@ import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
 
+/**
+ * A JPanel that implements OpenGL capabilities in order to draw the map.
+ * The class implements listeners that is used to track input
+ *
+ */
 public class MapDraw extends JPanel implements GLEventListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
-	private static MapDraw instance;
+	private static MapDraw instance;		//The singleton variable
 	
-	private long lastLeftMousePressTime;
-	private long lastRightMousePressTime;
+	private long lastLeftMousePressTime;	//The last known time we pressed the left mouse button (used to detect double clicks)
+	private long lastRightMousePressTime;	//The last known time we pressed the left mouse button (used to detect double clicks)
 	
-	private Query q = Query.getInstance();
-	private int width;
-	private int height;
-	//private double scale = 1;
-	private Point curMousePos;
-	private GraphicsPrefs gp;
+	private Query q = Query.getInstance();	//A reference to the Query singleton
+	private int width;						//The width of the map (Note: this is not the width of the panel, but a reference point)
+	private int height;						//The height of the map (Note: this is not the height of the panel, but a reference point)
+	private Point curMousePos;				//The current position of the mouse
+	private GraphicsPrefs gp;				//Graphics Preferences used to see the preferences of how we draw the roads
 	
-	protected double currentZoomLevel = 0;
-	private double targetZoomLevel = 0;
+	protected double currentZoomLevel = 0;	//The current zoom level, this can be inbetween the preset zoom levels of the ZoomLevel singleton, since it is used in animation
+	private double targetZoomLevel = 0;		//The target zoom level
 	
-	//private Iterable<Edge> routeToDraw; 
-	private Edge[] routeToDraw; 
-	private int routeFrom = -1;
-	private int routeTo = -1;
+	private Edge[] routeToDraw; 			//An array of the edges in the current route to draw
+	private int routeFrom = -1;				//The index of the edge that the route goes from
+	private int routeTo = -1;				//The index of the edge the route goes to
 	
-	private int currentRouteIndex;
+	private int currentRouteCutoff;			//The cutoff of the drawn route. This is used to animate the drawing of the road
 	
-	private double currentRouteLength;
-	
-	private long lastTime;
+	private long lastTime;					//The system time when the map updated its frame
 
-	private int i;
+	private Point2D.Double mapOffset;		//The offset of the map in our world space
 	
-	private Point2D.Double mapOffset;
+	/**
+	 * Sets up a JPanel with OpenGL capabilities, and draws the map
+	 */
+	private MapDraw()
+	{
+		//We set the layout to border layout
+		setLayout(new BorderLayout());
+		
+		//Start translation at the place where the map is inside our 3D world.
+		mapOffset = new Point2D.Double(-266, 5940);
+		
+		//Set the translation of the map to the offset so we start out by seeing our map on start up
+		Translation.getInstance().setTranslation(mapOffset.x, mapOffset.y);
+		
+		//Initialize the mouse position
+		curMousePos = new Point( 0, 0 );
+		
+		//Tell OpenGL that we're interested in the default profile, meaning we don't get any specific properties of the gl context.
+		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
+
+		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
+		glCapabilities.setDoubleBuffered( true );
+		//Tell the context that we want it to be hardware accelerated aswell.
+		glCapabilities.setHardwareAccelerated( true );
+
+		//Create the JPanel where our OpenGL stuff will be drawn on.
+		GLJPanel panel = new GLJPanel( glCapabilities );
+		
+		//Add listeners...
+		panel.addGLEventListener( this );
+		panel.addMouseListener( this );
+		panel.addMouseMotionListener( this );
+		panel.addMouseWheelListener( this );
+		
+		add( panel, BorderLayout.CENTER);
+		
+		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
+		//The FPS animator lets us put a limit to the refresh rate of the animator.
+		FPSAnimator animator = new FPSAnimator(panel, Settings.fps);
+		animator.start();
+
+		//Sets the reference width and height of the map
+		width = 800;
+		height = 600;
+
+		//Make sure that start zoom level is 0
+		ZoomLevel.getInstance().setZoomLevel(0);
+	}
 	
 	public static MapDraw getInstance()
 	{
@@ -72,24 +120,283 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		return instance;
 	}
 	
-	public void setRoute(Edge[] edges)
-	{ 
-		//routeToDraw = null;
-		
-		if(edges != routeToDraw)
-			currentRouteIndex = edges.length-1;
-		
-		routeToDraw = edges;
-	}
-	
+	/**
+	 * The width factor is a factor that we use when checking what to draw on the map
+	 * @return The width factor
+	 */
 	public double getWidthFactor()
 	{
 		return (width/height)*getHeightFactor();
 	}
 	
+	/**
+	 * The height factor is a factor that we use when checking what to draw on the map
+	 * @return
+	 */
 	public double getHeightFactor()
 	{
 		return currentZoomLevel;
+	}
+	
+	//OpenGL Events
+	@Override
+	public void init( GLAutoDrawable arg0 )
+	{
+		//Get a OpenGL v2 context.
+		GL2 gl = arg0.getGL().getGL2();
+		
+		//initialize GraphicsPrefs
+		gp = new GraphicsPrefs(gl);
+
+		//Set the clear color of the color buffer to black, meaning we get a black screen whenever we clear the color buffer.
+		gl.glClearColor( 255, 255, 255, 0 );
+		//Set the current matrix to the projection matrix.
+		gl.glMatrixMode( gl.GL_PROJECTION );
+		//Load the identity matrix, meaning a matrix that does no transformation. 
+		gl.glLoadIdentity();
+
+		//Set the projection matrix to whatever width and height was specified of the window.
+		gl.glOrtho( 0, width, 0, height, -1, 1 );
+
+		//Set the current matrix to the modelview matrix.
+		gl.glMatrixMode( gl.GL_MODELVIEW );
+		
+		//Load the identity matrix.
+		gl.glLoadIdentity();
+
+		//Set the viewport of the window.
+		gl.glViewport( 0, 0, width, height );
+	}
+	
+	@Override
+	public void display( GLAutoDrawable arg0 )
+	{
+		long curTime = System.currentTimeMillis();
+		
+		//We check if there has gone long enough to update the map
+		if( curTime - lastTime > ( 1000 / Settings.fps ) )
+		{
+			//Get an OpenGL v2 context.
+			GL2 gl2 = arg0.getGL().getGL2();
+
+			//Clear the color buffer, setting all pixel's color on the screen to the specified color.
+			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
+			
+			//Load the identity matrix, effectively removing all transformations.
+			gl2.glLoadIdentity();
+
+			//Apply zoom
+			applyZoom(gl2);
+
+			//Add the panning translation.
+			applyPanning(gl2);
+
+			// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
+			gl2.glEnable(GL.GL_LINE_SMOOTH);
+			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+			gl2.glEnable( GL.GL_BLEND );
+			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
+			
+			//Draw the lines on the map
+			drawLines(gl2);
+			
+			//Apply any zoom and pan animation needed.
+			animateZoom();
+			animatePan();
+			
+			//Set the last time the map was updated to now
+			lastTime = curTime;
+		}
+	}
+	
+	/**
+	 * Draws all edges to be drawn on the map
+	 * @param gl2
+	 */
+	private void drawLines(GL2 gl2) {
+		
+		//Get all the types of roads that needs to be drawn for the current zoom level
+		int[] roadTypesToDraw = gp.getTypesAtCurrentZoom(currentZoomLevel);
+		
+		double zoomedOutValue;		//The value that the current zoom level will represent
+		double zoomedInValue;		//The value that the next zoom level will represent
+		double difference;			//The difference between the two zoom levels
+		
+		double currentRelativeZoom;	//How long we are between the two zoom levels
+		
+		float transparency;				//The transparency that the roads should be drawn with
+		
+		//We get a collected list of all edges that should be drawn in the current perspective of the map
+		List<List<Edge>> enormousListOfEdges = getDrawEdges(roadTypesToDraw);
+		
+		for(int i=1; i<roadTypesToDraw.length; i++) 
+		{
+			//We iterate through all the indexes that should be drawn on the current zoom level
+			
+			//If there are any roads of the applicable road type we draw them
+			if(!enormousListOfEdges.get(i).isEmpty()) 
+			{
+				
+				Edge testEdge = enormousListOfEdges.get(i).get(0);
+				gp.setLineWidth(testEdge);
+				float[] colors = gp.getLineColor(testEdge);
+				
+				transparency = -1;
+				
+				//Calculate if the line should fade in
+				if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
+				{
+					zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
+					zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
+					difference = zoomedOutValue - zoomedInValue;
+					
+					currentRelativeZoom = zoomedOutValue-currentZoomLevel;
+					
+					transparency = (float)currentRelativeZoom/(float)difference;
+				}
+				
+				gl2.glBegin( GL.GL_LINES );
+				for(Edge e: enormousListOfEdges.get(i)) {
+					
+					if(transparency < 0)
+						drawLine(e, gl2, colors[0], colors[1], colors[2]);
+					else 
+						drawLine(e, gl2, colors[0], colors[1], colors[2], transparency);
+						
+				}
+				gl2.glEnd();
+			}
+		}
+		
+		for(int i=1; i<roadTypesToDraw.length; i++) {
+			if(!enormousListOfEdges.get(i).isEmpty()) {
+				//Edge testEdge = getDrawEdges(roadTypesToDraw[i]).get(0);
+				Edge testEdge = enormousListOfEdges.get(i).get(0);
+				if(gp.hasCenterLine(testEdge)) {
+					gp.setCenterLineWidth(testEdge);
+					float[] colors = gp.getLineCenterColor(testEdge);
+					
+					transparency = -1;
+					
+					//Calculate if the line should fade in
+					if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
+					{
+						zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
+						zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
+						difference = zoomedOutValue - zoomedInValue;
+						
+						currentRelativeZoom = zoomedOutValue-currentZoomLevel;
+						
+						transparency = (float)currentRelativeZoom/(float)difference;
+					}
+					
+					gl2.glBegin(GL.GL_LINES);
+					
+					//for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
+					for(Edge e: enormousListOfEdges.get(i)) {
+						
+						if(transparency < 0)
+							drawLine(e, gl2, colors[0], colors[1], colors[2]);
+						else 
+							drawLine(e, gl2, colors[0], colors[1], colors[2], transparency);
+					}
+					gl2.glEnd();
+				}
+			}
+		
+			
+			if(routeToDraw != null) {
+				drawRoute(gl2, routeToDraw);
+			}
+			
+		}
+	}
+	
+	public void drawRoute(GL2 gl2, Edge[] edges) {
+		
+		gp.setLineWidth(3f);
+		float[] colors = new float[] {0,0,255};
+		gl2.glBegin(GL.GL_LINES);
+		/*for(Edge e: edges) {
+			drawLine(e, gl2, colors[0], colors[1], colors[2]);
+		}*/
+		for(int i=edges.length-1; i>=currentRouteCutoff; i--) {
+			drawLine(edges[i], gl2, colors[0], colors[1], colors[2]);
+		}
+		gl2.glEnd();
+		
+		if(currentRouteCutoff > 0)
+			currentRouteCutoff--;
+	}
+	
+	private void applyZoom(GL2 gl2)
+	{
+		//Add a translation transformation to the current matrix, effectively moving the ingame 3d coordinate system by the specified amount.
+		//Here, we move the system so that the bottom left point is in the middle of the screen.
+		gl2.glTranslatef( width / 2, height / 2, 0 );
+		//Then we apply the orthographic projection matrix, where we specify exactly what coordinates we're interested in viewing on our screen.
+		//Couple this with the factors that change when you scroll in and out on the mousewheel and you get a 'true' zoom feature,
+		//Where nothing is scaled but you simply see alot less on the entire screen, AKA zooming.
+		gl2.glOrtho( 0, getWidthFactor(), 0, getHeightFactor(), -1, 1 );
+		//And remove the translation again.
+		gl2.glTranslatef( -width / 2, -height / 2, 0 );
+	}
+	
+	private void applyPanning(GL2 gl2)
+	{
+		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
+	}
+	
+	private List<List<Edge>> getDrawEdges(int[] types)
+	{
+		int width = this.width;
+		int height = this.height;
+		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
+		double xs = (zoomFactor)* -1000 + 10 * -1000;
+		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 10 * -1000;
+
+		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
+		double ys = zoomFactor * 1000 - 10 * 1000;
+		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 10 * 1000;
+		
+		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
+	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
+	     
+	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
+	     LinkedList<List<Edge>> list = new LinkedList<List<Edge>>();
+	     for(int type : types)
+	    	 list.add(q.queryEdges(rect, type));
+	     return list;
+	}
+	
+	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
+	{		
+		gl2.glColor3f( (r/255), (g/255), (b/255) );
+		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
+		gl2.glColor3f( (r/255), (g/255), (b/255) );
+		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
+	}
+	
+	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b, float a)
+	{		
+		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
+		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
+		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
+		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
+	}
+	
+	@Override
+	public void dispose( GLAutoDrawable arg0 )
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void reshape( GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4 )
+	{
+		// TODO Auto-generated method stub
+
 	}
 	
 	public void animateZoom()
@@ -185,302 +492,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		}
 		
 		Translation.getInstance().translate(deltaTranslation.x, deltaTranslation.y);
-	}
-
-	private MapDraw()
-	{
-		setLayout(new BorderLayout());
-		//setSize( new Dimension( iWidth, iHeight ) );
-		
-		//Start translation at the place where the map is inside our 3D world.
-		mapOffset = new Point2D.Double(-266, 5940);
-		Translation.getInstance().setTranslation(mapOffset.x, mapOffset.y);
-		curMousePos = new Point( 0, 0 );
-		
-		//Tell OpenGL that we're interested in the default profile, meaning we don't get any specific properties of the gl context.
-		GLCapabilities glCapabilities = new GLCapabilities( GLProfile.getDefault() );
-
-		//However, tell the context that we want it to be doublebuffered, so we don't get any on-screen flimmering.
-		glCapabilities.setDoubleBuffered( true );
-		//Tell the context that we want it to be hardware accelerated aswell.
-		glCapabilities.setHardwareAccelerated( true );
-
-		//Create the JPanel where our OpenGL stuff will be drawn on.
-		GLJPanel panel = new GLJPanel( glCapabilities );
-		
-		//Add listeners...
-		panel.addGLEventListener( this );
-		panel.addMouseListener( this );
-		panel.addMouseMotionListener( this );
-		panel.addMouseWheelListener( this );
-		// panel.setDefaultCloseOperation( WindowClosingMode.DISPOSE_ON_CLOSE );
-		
-		add( panel, BorderLayout.CENTER);
-		
-
-		//Add an animator to our panel, which will start the rendering loop, repeatedly calling the display() function of our panel.
-		//The FPS animator lets us put a limit to the refresh rate of the animator.
-		FPSAnimator animator = new FPSAnimator(panel, Settings.fps);
-		animator.start();
-
-		width = 800;
-		height = 600;
-
-		ZoomLevel.getInstance().setZoomLevel(0);
-		
-		
-		//Getting route!
-		//new Route.GetRoute(this, q, 355720, 425710).start();
-	}
-
-	//OpenGL Events
-	@Override
-	public void init( GLAutoDrawable arg0 )
-	{
-		//Get a OpenGL v2 context.
-		GL2 gl = arg0.getGL().getGL2();
-		
-		//initialize GraphicsPrefs
-		gp = new GraphicsPrefs(gl);
-
-		//Set the clear color of the color buffer to black, meaning we get a black screen whenever we clear the color buffer.
-		gl.glClearColor( 255, 255, 255, 0 );
-		//Set the current matrix to the projection matrix.
-		gl.glMatrixMode( gl.GL_PROJECTION );
-		//Load the identity matrix, meaning a matrix that does no transformation. 
-		gl.glLoadIdentity();
-
-		//Set the projection matrix to whatever width and height was specified of the window.
-		gl.glOrtho( 0, width, 0, height, -1, 1 );
-
-		//Set the current matrix to the modelview matrix.
-		gl.glMatrixMode( gl.GL_MODELVIEW );
-		
-		//Load the identity matrix.
-		gl.glLoadIdentity();
-
-		//Set the viewport of the window.
-		gl.glViewport( 0, 0, width, height );
-	}
-	
-	@Override
-	public void display( GLAutoDrawable arg0 )
-	{
-		//if(tick % (60/maximumFPS) == 0) 
-		long curTime = System.currentTimeMillis();
-		if( curTime - lastTime > ( 1000 / Settings.fps ) )
-		{
-
-			//Get an OpenGL v2 context.
-			GL2 gl2 = arg0.getGL().getGL2();
-
-			//Clear the color buffer, setting all pixel's color on the screen to the specified color.
-			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
-			
-			//Load the identity matrix, effectively removing all transformations.
-			gl2.glLoadIdentity();
-
-			//Apply zoom
-			applyZoom(gl2);
-
-			//Add the panning translation.
-			applyPanning(gl2);
-
-			// Found at http://www.java-tips.org/other-api-tips/jogl/how-to-draw-anti-aliased-lines-in-jogl.html
-			gl2.glEnable(GL.GL_LINE_SMOOTH);
-			gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-			gl2.glEnable( GL.GL_BLEND );
-			gl2.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE); // GL.GL_NICEST);//
-			
-			
-			drawLines(gl2);
-			
-			animateZoom();
-			animatePan();
-			
-			lastTime = curTime;
-		}
-	}
-	
-	private void drawLines(GL2 gl2) {
-		int[] roadTypesToDraw = gp.getTypesAtCurrentZoom(currentZoomLevel);
-		
-		double zoomedOutValue;
-		double zoomedInValue;
-		double difference;
-		
-		double currentRelativeZoom;
-		
-		float opacity;
-		
-		
-		List<List<Edge>> enormousListOfEdges = getDrawEdges(roadTypesToDraw);
-		
-		for(int i=1; i<roadTypesToDraw.length; i++) {
-			if(!enormousListOfEdges.get(i).isEmpty()) {
-				Edge testEdge = enormousListOfEdges.get(i).get(0);
-				gp.setLineWidth(testEdge);
-				float[] colors = gp.getLineColor(testEdge);
-				
-				opacity = -1;
-				
-				//Calculate if the line should fade in
-				if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
-				{
-					zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
-					zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
-					difference = zoomedOutValue - zoomedInValue;
-					
-					currentRelativeZoom = zoomedOutValue-currentZoomLevel;
-					
-					opacity = (float)currentRelativeZoom/(float)difference;
-				}
-				
-				gl2.glBegin( GL.GL_LINES );
-				for(Edge e: enormousListOfEdges.get(i)) {
-					
-					if(opacity < 0)
-						drawLine(e, gl2, colors[0], colors[1], colors[2]);
-					else 
-						drawLine(e, gl2, colors[0], colors[1], colors[2], opacity);
-						
-				}
-				gl2.glEnd();
-			}
-		}
-		
-		for(int i=1; i<roadTypesToDraw.length; i++) {
-			if(!enormousListOfEdges.get(i).isEmpty()) {
-				//Edge testEdge = getDrawEdges(roadTypesToDraw[i]).get(0);
-				Edge testEdge = enormousListOfEdges.get(i).get(0);
-				if(gp.hasCenterLine(testEdge)) {
-					gp.setCenterLineWidth(testEdge);
-					float[] colors = gp.getLineCenterColor(testEdge);
-					
-					opacity = -1;
-					
-					//Calculate if the line should fade in
-					if(ZoomLevel.getInstance().findIndex(currentZoomLevel) < gp.getAllowedZoomIndex(roadTypesToDraw[i])+1)
-					{
-						zoomedOutValue = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().findIndex(currentZoomLevel));
-						zoomedInValue = ZoomLevel.getInstance().getZoomLevel(gp.getAllowedZoomIndex(roadTypesToDraw[i])+1);
-						difference = zoomedOutValue - zoomedInValue;
-						
-						currentRelativeZoom = zoomedOutValue-currentZoomLevel;
-						
-						opacity = (float)currentRelativeZoom/(float)difference;
-					}
-					
-					gl2.glBegin(GL.GL_LINES);
-					
-					//for(Edge e: getDrawEdges(roadTypesToDraw[i])) {
-					for(Edge e: enormousListOfEdges.get(i)) {
-						
-						if(opacity < 0)
-							drawLine(e, gl2, colors[0], colors[1], colors[2]);
-						else 
-							drawLine(e, gl2, colors[0], colors[1], colors[2], opacity);
-					}
-					gl2.glEnd();
-				}
-			}
-		
-			
-			if(routeToDraw != null) {
-				drawRoute(gl2, routeToDraw);
-			}
-			
-		}
-		i = 0;
-	}
-	
-	public void drawRoute(GL2 gl2, Edge[] edges) {
-		
-		gp.setLineWidth(3f);
-		float[] colors = new float[] {0,0,255};
-		gl2.glBegin(GL.GL_LINES);
-		/*for(Edge e: edges) {
-			drawLine(e, gl2, colors[0], colors[1], colors[2]);
-		}*/
-		for(int i=edges.length-1; i>=currentRouteIndex; i--) {
-			drawLine(edges[i], gl2, colors[0], colors[1], colors[2]);
-		}
-		gl2.glEnd();
-		
-		if(currentRouteIndex > 0)
-			currentRouteIndex--;
-	}
-	
-	private void applyZoom(GL2 gl2)
-	{
-		//Add a translation transformation to the current matrix, effectively moving the ingame 3d coordinate system by the specified amount.
-		//Here, we move the system so that the bottom left point is in the middle of the screen.
-		gl2.glTranslatef( width / 2, height / 2, 0 );
-		//Then we apply the orthographic projection matrix, where we specify exactly what coordinates we're interested in viewing on our screen.
-		//Couple this with the factors that change when you scroll in and out on the mousewheel and you get a 'true' zoom feature,
-		//Where nothing is scaled but you simply see alot less on the entire screen, AKA zooming.
-		gl2.glOrtho( 0, getWidthFactor(), 0, getHeightFactor(), -1, 1 );
-		//And remove the translation again.
-		gl2.glTranslatef( -width / 2, -height / 2, 0 );
-	}
-	
-	private void applyPanning(GL2 gl2)
-	{
-		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
-	}
-	
-	private List<List<Edge>> getDrawEdges(int[] types)
-	{
-		int width = this.width;
-		int height = this.height;
-		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
-		double xs = (zoomFactor)* -1000 + 10 * -1000;
-		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 10 * -1000;
-
-		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
-		double ys = zoomFactor * 1000 - 10 * 1000;
-		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 10 * 1000;
-		
-		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
-	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
-	     
-	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
-	     LinkedList<List<Edge>> list = new LinkedList<List<Edge>>();
-	     for(int type : types)
-	    	 list.add(q.queryEdges(rect, type));
-	     return list;
-	}
-	
-	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b)
-	{		
-		i++;
-		gl2.glColor3f( (r/255), (g/255), (b/255) );
-		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
-		gl2.glColor3f( (r/255), (g/255), (b/255) );
-		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
-	}
-	
-	private void drawLine(Edge edge, GL2 gl2, float r, float g, float b, float a)
-	{		
-		i++;
-		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
-		gl2.glVertex2d( edge.getXFrom() / 1000.0,  edge.getYFrom() / 1000.0 );
-		gl2.glColor4f( (r/255), (g/255), (b/255), (a));
-		gl2.glVertex2d( edge.getXTo() / 1000.0,  edge.getYTo() / 1000.0 );
-	}
-	
-	@Override
-	public void dispose( GLAutoDrawable arg0 )
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void reshape( GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4 )
-	{
-		// TODO Auto-generated method stub
-
 	}
 	
 	//Mouse events
@@ -622,6 +633,16 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 			route.start();
 			
 	}
+
+	public void setRoute(Edge[] edges)
+	{ 
+		//routeToDraw = null;
+		
+		if(edges != routeToDraw)
+			currentRouteCutoff = edges.length-1;
+		
+		routeToDraw = edges;
+	}
 	
 	public boolean hasRoute()
 	{
@@ -634,17 +655,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		{
 			getRoute(routeFrom, routeTo);
 		}
-	}
-	
-	public double getCurrentRouteLength()
-	{
-		System.out.println(currentRouteLength);
-		return currentRouteLength;
-	}
-	
-	public void setCurrentRouteLength(double length)
-	{
-		currentRouteLength = length;
 	}
 	
 	public int getMapWidth()
