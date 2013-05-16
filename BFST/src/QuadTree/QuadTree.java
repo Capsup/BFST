@@ -17,7 +17,7 @@ public class QuadTree<Key extends Comparable<Key>, Value>  {
      */
     private class Node {
         Key x, y;              
-        Node NW, NE, SE, SW;   
+        Node NW, NE, SE, SW;
         Value value;
         
         Node(Key x, Key y, Value value) {

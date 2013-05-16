@@ -3,12 +3,9 @@ package XMLCreator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
 import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -18,32 +15,18 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import XMLParser.XMLParser;
-
-import Graph.Node;
-
 public class XMLCreator 
 {
 
 	String[] sNames;
 	String[] sData;
 	private String filePath;
-	private static ArrayList<Node> nodes;
-
-
-	public static Node nodeSearch(int i){
-		ArrayList<String> s = new ArrayList<String>();
-		s.add("" + i); s.add("1"); s.add("1");
-		return nodes.get(Collections.binarySearch(nodes, new Node(s)));
-	}
 
 	public static void main( String[] args )
 	{
 		try
 		{
-			XMLParser node = new XMLParser("kdv_node_unload.xml"); nodes = node.getNodesForXMLCreator();
-			Collections.sort(nodes);
-			new XMLCreator().convertToXML( "C://Users//Jacob//Desktop//krak-data//kdv_unload" );
+			new XMLCreator().convertToXML( "Z://kdv_unload" );
 		}
 		catch( Exception e )
 		{
@@ -129,7 +112,14 @@ public class XMLCreator
 
 				for( int i = 20000 * k; i < 20000 * (k+1); i++ )
 				{
-					String[] data = sData[i].split( "," );
+					String[] data;
+					try{
+						data = sData[i].split(",(?=([^\']*\'[^\']*\')*[^\']*$)");
+					}
+					catch(Exception e){continue;}
+					
+					
+					
 
 					eventWriter.add( eventFactory.createDTD( "\t" ) );
 					configStartElement = eventFactory.createStartElement( "", "", "e" );
@@ -141,16 +131,10 @@ public class XMLCreator
 
 						if( j == 0 )
 						{
-							Node nodeFrom = nodeSearch( Integer.parseInt( data[j] ) );
-							createNode( eventWriter, "x", "" + nodeFrom.getX() );
-							createNode( eventWriter, "y", "" + nodeFrom.getY() );
 							createNode( eventWriter, "f", data[j] );
 						}
 						if( j == 1 )
 						{
-							Node nodeTo = nodeSearch( Integer.parseInt( data[j] ) );
-							createNode( eventWriter, "X", "" + nodeTo.getX() );
-							createNode( eventWriter, "Y", "" + nodeTo.getY() );
 							createNode( eventWriter, "t", data[j] );
 						}
 
@@ -188,6 +172,25 @@ public class XMLCreator
 						{
 							createNode( eventWriter, "zi", data[j] );
 						}
+						
+						if( j == 7){
+							createNode( eventWriter, "fl", data[j] );
+						}
+						
+						if( j == 8){
+							createNode( eventWriter, "tl", data[j] );
+						}
+						
+						if( j == 9){
+							createNode( eventWriter, "fr", data[j] );
+						}
+						
+						if( j == 10){
+							createNode( eventWriter, "tr", data[j] );
+						}
+						
+						
+						
 					}
 
 					eventWriter.add( eventFactory.createDTD( "\t" ) );
@@ -201,7 +204,7 @@ public class XMLCreator
 				eventWriter.close();
 				System.out.println( "done" );
 			}
-			catch(Exception e){}
+			catch(Exception e){e.printStackTrace();}
 		}
 	}
 

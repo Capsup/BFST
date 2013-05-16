@@ -1,5 +1,7 @@
 package Graph;
 
+import files.Node;
+
 /**
  * This class represents Edges, which is road segments
  */
@@ -10,9 +12,10 @@ public class Edge implements Comparable<Edge>
 	private final int v;
 	private final int w;
 
+	private final Node from, to;
 	private final int typ, zip, speedLimit;
 	private final int toRight, fromRight, toLeft, fromLeft;
-	private final double xTo, yTo, xFrom, yFrom, driveTime, length;
+	private final double driveTime, length;
 	private final String roadName, oneWay;
 	
 	/**
@@ -26,24 +29,27 @@ public class Edge implements Comparable<Edge>
 		this.id = id_count++;
 		this.v = v;
 		this.w = w;
+		
+		this.from = Node.getNode(v);
+		this.to = Node.getNode(w);
 
-		this.xFrom = Double.parseDouble(s.get(0));
-		this.yFrom = Double.parseDouble(s.get(1));
-		this.xTo = Double.parseDouble(s.get(3));
-		this.yTo = Double.parseDouble(s.get(4));
-		this.length = Double.parseDouble(s.get(6));
-		this.typ = Integer.parseInt(s.get(7));
-		this.roadName = s.get(8);
+		//this.xFrom = Double.parseDouble(s.get(0));
+		//this.yFrom = Double.parseDouble(s.get(1));
+		//this.xTo = Double.parseDouble(s.get(3));
+		//this.yTo = Double.parseDouble(s.get(4));
+		this.length = Double.parseDouble(s.get(0));
+		this.typ = Integer.parseInt(s.get(1)); 
+		this.roadName = s.get(2);
 
-		this.fromLeft = Integer.parseInt(s.get(9));
-		this.toLeft = Integer.parseInt(s.get(10));
-		this.fromRight = Integer.parseInt(s.get(11));
-		this.toRight = Integer.parseInt(s.get(12));
+		this.fromLeft = Integer.parseInt(s.get(3));
+		this.toLeft = Integer.parseInt(s.get(4));
+		this.fromRight = Integer.parseInt(s.get(5));
+		this.toRight = Integer.parseInt(s.get(6));
 
-		this.zip = Integer.parseInt(s.get(13));
-		this.speedLimit = Integer.parseInt(s.get(14));
-		this.driveTime = Double.parseDouble(s.get(15));
-		this.oneWay = s.get(16);
+		this.zip = Integer.parseInt(s.get(7));
+		this.speedLimit = Integer.parseInt(s.get(8));
+		this.driveTime = Double.parseDouble(s.get(9));
+		this.oneWay = s.get(10);
 		
 	}
 
@@ -109,10 +115,10 @@ public class Edge implements Comparable<Edge>
 	/** @return returns to vertex of the road segment */	public int getToIndex(){ return w;	}
 	/** @return returns the type of the road. goes from 1 to 99 */	public int getTyp() { return typ; }
 	/** @return returns the zip code as an integer */	public int getZip() { return zip; }
-	/** @return returns the x coordinate of the to point of the road segment as a double */	public double getXTo(){	return xTo; }
-	/** @return returns the y coordinate of the to point of the road segment as a double */	public double getYTo(){	return yTo; }
-	/** @return returns the x coordinate of the from point of the road segment as a double */	public double getXFrom(){ return xFrom;	}
-	/** @return returns the y coordinate of the from point of the road segment as a double */	public double getYFrom(){ return yFrom;	}
+	/** @return returns the x coordinate of the to point of the road segment as a double */	public double getXTo(){	return to.getX(); }
+	/** @return returns the y coordinate of the to point of the road segment as a double */	public double getYTo(){	return to.getY(); }
+	/** @return returns the x coordinate of the from point of the road segment as a double */	public double getXFrom(){ return from.getX();	}
+	/** @return returns the y coordinate of the from point of the road segment as a double */	public double getYFrom(){ return from.getY();	}
 	/** @return returns the length of the road segment */	public double getLength(){ return length; }
 	/** @return returns the speed limit of the road segment */	public double getSpeedLimit(){ return speedLimit; }
 	/** @return returns the time is takes to drive the road segment */	public double getDriveTime(){ return driveTime; }

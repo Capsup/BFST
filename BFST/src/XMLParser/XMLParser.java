@@ -16,20 +16,23 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import files.Node;
+
+
 import Graph.Edge;
-import Graph.Node;
 
 
 public class XMLParser implements Runnable{
 	private XMLEventReader input;
-	
+
 	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>(); //List to contains all edges
-	
-	/**
-	 * @param 
-	 * @return 
-	 */
-	public static ArrayList<List<Edge>> getEdgeList(){ return list; } //Method to get edges after the have been created
+
+	public static ArrayList<List<Edge>> getEdgeList(){ 
+		ArrayList<List<Edge>> newList = list;
+		newList = null;
+		return newList; 
+	} //Method to get edges after the have been created
+
 	static{	for(int i = 0; i < 100; i++) list.add(Collections.synchronizedList(new LinkedList<Edge>())); }
 
 
@@ -56,8 +59,9 @@ public class XMLParser implements Runnable{
 		}
 	}
 
-	public ArrayList<Node> getNodesForXMLCreator() throws XMLStreamException{
-		ArrayList<String> temp = new ArrayList<String>();
+	public ArrayList<Node> getNodes() throws XMLStreamException{
+		int id = 0;
+		double x = 0,y = 0;
 		ArrayList<Node> list = new ArrayList<Node>();
 
 		while( input.hasNext() )
@@ -75,16 +79,15 @@ public class XMLParser implements Runnable{
 
 				if( name.equals( "g" ) )
 					continue;
-				if( name.equals( "i" ) ) temp.add((input.nextEvent().asCharacters().getData())); 
-				else if( name.equals( "x" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
-				else if( name.equals( "y" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
+				if( name.equals( "i" ) ) id = Integer.parseInt(input.nextEvent().asCharacters().getData()); 
+				else if( name.equals( "x" ) ) x = Double.parseDouble(input.nextEvent().asCharacters().getData()); 
+				else if( name.equals( "y" ) ) y = Double.parseDouble(input.nextEvent().asCharacters().getData()); 
 			} 
 			if( event.isEndElement() )
 			{
 				EndElement element = event.asEndElement();
 				if( element.getName().getLocalPart().equals( "e" )){
-					list.add(new Node(temp)); 
-					temp = new ArrayList<String>();
+					list.add(Node.makeNode(id, x, y)); 
 				}
 			}
 		}
@@ -113,21 +116,11 @@ public class XMLParser implements Runnable{
 
 					if( name.equals( "g" ) )
 						continue;
-					if( name.equals( "x" ) ) //x
-						temp.add(input.nextEvent().asCharacters().getData());
-					else if( name.equals( "y" ) ) //y
-						temp.add(input.nextEvent().asCharacters().getData());
-					else if( name.equals( "f" ) ){ //From node
+					if( name.equals( "f" ) ){ //From node
 						f = Integer.parseInt(input.nextEvent().asCharacters().getData());
-						temp.add(f + "");
 					}
-					else if( name.equals( "X" ) ) //X
-						temp.add(input.nextEvent().asCharacters().getData());
-					else if( name.equals( "Y" ) ) //Y
-						temp.add(input.nextEvent().asCharacters().getData());
 					else if( name.equals( "t" ) ){ //To node
 						t = Integer.parseInt(input.nextEvent().asCharacters().getData());
-						temp.add(t + "");
 					}
 					else if( name.equals( "l" ) ){ //length
 						temp.add(input.nextEvent().asCharacters().getData());

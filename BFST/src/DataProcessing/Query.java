@@ -3,6 +3,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
+
+import files.Node;
+
 import Graph.Edge;
 import Graph.Graph;
 import QuadTree.Interval;
@@ -37,15 +42,20 @@ public class Query{
 		LinkedList<Thread> threads = new LinkedList<Thread>();
 
 		try {
+			new XMLParser("data/kdv_node_unload.xml").getNodes();
 			for(int i = 1;; i++){
 				Thread t = new Thread(new XMLParser("data/kdv_unload_" + i + ".xml"));
 				t.start();
 				threads.add(t);
 			}
-		} catch (FileNotFoundException e) {}
+		} catch (FileNotFoundException | XMLStreamException e) {}
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
-
-		graph = new Graph(675903, XMLParser.getEdgeList());
+		finally{
+			Node.nullNodes();
+		}
+		
+		final ArrayList<List<Edge>> list = XMLParser.getEdgeList();
+		graph = new Graph(675903, list);
 
 		Thread t = new Thread(){
 			public void run(){
@@ -53,8 +63,8 @@ public class Query{
 					quadTrees.add(new QuadTree<Double, Edge>());
 				}
 
-				for(int i = 0; i < XMLParser.getEdgeList().size(); i++){
-					List<Edge> l = XMLParser.getEdgeList().get(i);
+				for(int i = 0; i < list.size(); i++){
+					List<Edge> l = list.get(i);
 					if(l.size() == 0) continue;
 					QuadTree<Double, Edge> qt = quadTrees.get(i);
 					for(Edge e = l.remove(0);l.size() > 0; e = l.remove(0)){

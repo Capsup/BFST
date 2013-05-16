@@ -101,7 +101,7 @@ public class AddressParser
 		return instance;
 	}
 	
-/*
+
 	public static void main( String[] args )
 	{
 		String address = "Rued Langgaards Vej 75, 7. sal, 2630";
@@ -117,7 +117,7 @@ public class AddressParser
 			System.out.println( e.getMessage() );
 		}
 	}
-*/
+
 	public void loadData( String sPath ) throws NaughtyException
 	{
 		if( getClass().getResource( sPath ) != null )
