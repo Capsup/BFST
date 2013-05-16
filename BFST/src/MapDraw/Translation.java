@@ -2,16 +2,17 @@ package MapDraw;
 
 import java.awt.geom.Point2D;
 
+/**
+ * A singleton that holds information about the translation of the map
+ */
 public class Translation 
 {
-	private static Translation instance;
-	private Point2D.Double translation;
-	private Point2D.Double targetTranslation;
-	private Point2D.Double startTranslation;
+	private static Translation instance;		//The singleton variable
+	private Point2D.Double translation;			//The current translation of the map
+	private Point2D.Double targetTranslation;	//The target translation
+	private Point2D.Double startTranslation;	//The translation we started from when we need to animate a translation
 	
-	private boolean auto;
-	
-	/*
+	/**
 	 * Translation is a singleton that allows us to set and access data about the translation of the map
 	 */
 	private Translation()
@@ -26,8 +27,9 @@ public class Translation
 		return instance;
 	}
 	
-	/*
+	/**
 	 * Get the current translation of the map
+	 * @return The current translation of the map
 	 */
 	public Point2D.Double getTranslation()
 	{
@@ -38,6 +40,10 @@ public class Translation
 		return translation;
 	}
 	
+	/**
+	 * Get the target translation of the map
+	 * @return The target translation of the map
+	 */
 	public Point2D.Double getTargetTranslation()
 	{
 		//If the translation is null we initialize it before returning
@@ -47,19 +53,25 @@ public class Translation
 		return targetTranslation;
 	}
 	
-	/*
-	 * change the translation by dx and dy respectively
+	/**
+	 * Change the translation by dx and dy respectively. Use this method when it is done manually
+	 * @param dx
+	 * @param dy
 	 */
 	public void manualTranslate(double dx, double dy)
 	{
+		//We set the target translation to the translation we wish to move to. This way the map does not animate somewhere else once we dont manually move anymore
 		targetTranslation.x = translation.x+dx;
 		targetTranslation.y = translation.y+dy;
 		
+		//We then call the translate method that actually translates the map
 		translate(dx, dy);
 	}
 	
-	/*
-	 * change the translation by dx and dy respectively
+	/**
+	 * Change the translation of the map
+	 * @param dx
+	 * @param dy
 	 */
 	public void translate(double dx, double dy)
 	{
@@ -68,34 +80,15 @@ public class Translation
 			translation = new Point2D.Double( dx, dy );
 		else
 		{
-			/*
-			//double xMax = MapDraw.getInstance().getOffset().x+(MapDraw.getInstance().getMapWidth())*(ZoomLevel.getInstance().getZoomLevel()*(1.5-ZoomLevel.getInstance().getZoomLevel()));
-			double xMax = MapDraw.getInstance().getOffset().x+MapDraw.getInstance().getMapWidth()/2;
-			double rightBoundary = (translation.x+dx)+MapDraw.getInstance().getWidth()*ZoomLevel.getInstance().getZoomLevel();
-			
-			if(rightBoundary < xMax)
-				translation.x += dx;
-			
-			if(translation.x + dx < xMax && translation.x + dx >  xMin)
-				translation.x += dx;
-			
-			double xMin = MapDraw.getInstance().getOffset().x-(MapDraw.getInstance().getMapWidth())*(ZoomLevel.getInstance().getZoomLevel()*(1.5-ZoomLevel.getInstance().getZoomLevel()));
-			
-			
-			double yMax = MapDraw.getInstance().getOffset().y+(MapDraw.getInstance().getMapHeight()/ZoomLevel.getInstance().getZoomLevel());
-			double yMin = MapDraw.getInstance().getOffset().y-(MapDraw.getInstance().getMapHeight()/ZoomLevel.getInstance().getZoomLevel());
-			
-			if(translation.y + dy < yMax && translation.y + dy >  yMin)
-				translation.y += dy;
-			
-			*/
 			//Update the translation offset, so we can apply it to the stuff we draw later.
 			translation = new Point2D.Double( translation.getX() + dx, translation.getY() + dy );
 		}
 	}
 
-	/*
+	/**
 	 * Set the translation of the map directly
+	 * @param x
+	 * @param y
 	 */
 	public void setTranslation(double x, double y)
 	{
@@ -104,17 +97,26 @@ public class Translation
 		translation = new Point2D.Double(x, y);	
 	}
 	
-	/*
-	 * Set the translation of the map directly
+	/**
+	 * Defines the target translation of the map.
+	 * @param x
+	 * @param y
 	 */
 	public void goToTranslation(double x, double y)
 	{
+		//We nullify the relative mouse position that the zoom shall use. This is done to prevent struggling in map animation
 		ZoomLevel.getInstance().setMousePosition(null);
+		
+		//We set the start translation of the map. This is used to calculate the animation speed
 		startTranslation = getTranslation();
+		
 		//We set the translation of the map directly
 		targetTranslation = new Point2D.Double(x, y);	
 	}
 	
+	/**
+	 * @return The translation that we had when we started animating
+	 */
 	public Point2D.Double getStartTranslation()
 	{
 		if(startTranslation == null)
