@@ -15,13 +15,18 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+/**
+ * This class can generate edge XML files.
+ */
 public class XMLCreator 
 {
 
 	String[] sNames;
 	String[] sData;
-	private String filePath;
 
+	/**
+	 * Main method to generate the XML files
+	 */
 	public static void main( String[] args )
 	{
 		try
@@ -35,14 +40,17 @@ public class XMLCreator
 
 	}
 
+	/**
+	 * Loads the KDV file to make the XML file from
+	 * @param sPath
+	 * @throws FileNotFoundException
+	 */
 	public void loadFile( String sPath ) throws FileNotFoundException
 	{
 		File file = new File( sPath );
 		if( !file.exists() )
 			throw new FileNotFoundException();
-
-		filePath = sPath;
-
+		
 		if( !file.getPath().contains( "xml" ) )
 		{
 			Scanner scanner = new Scanner( file );
@@ -60,37 +68,54 @@ public class XMLCreator
 			}
 
 			sData = new String[i];
-
+			scanner.close();
+			
 			scanner = new Scanner( file );
 			scanner.nextLine();
 
 			while( scanner.hasNextLine() )
 				sData[--i] = scanner.nextLine();
+			
+			scanner.close();
 		}
+		
 
 	}
 
-	public void convertToXML( String sPath ) throws Exception
+	/**
+	 * Takes the file and make 41 XML data files. This is done with multithreading
+	 * @param sPath
+	 * @throws Exception
+	 */
+	private void convertToXML( String sPath ) throws Exception
 	{
 		loadFile( sPath + ".txt" );
 		for( int j = 0; j < sNames.length; j++ )
 			System.out.println( j + ": " + sNames[j] );
-		int d = 42;
+		int d = 41;
 		for(int k = 0; k < d; k++){
 			new SubTree(k, sPath).start();			
 		}
 
 	}
 
-	public class SubTree extends Thread {
+	private class SubTree extends Thread {
 		private int k;
 		private String sPath;
-
-		public SubTree(int k, String sPath){
+		
+		/**
+		 * Constructs the sSubtree
+		 * @param k - the file number
+		 * @param sPath - the KDV file name
+		 */
+		protected SubTree(int k, String sPath){
 			this.k = k;
 			this.sPath = sPath;
 		}
 
+		/**
+		 * Parses though the file and generates the XML file
+		 */
 		public void run(){
 			try{
 				// Create a XMLOutputFactory
@@ -209,7 +234,13 @@ public class XMLCreator
 	}
 
 
-
+	/**
+	 * Helper class to make XML nodes
+	 * @param eventWriter - the XML active XMLWriter
+	 * @param name - the node name
+	 * @param value - the node value
+	 * @throws XMLStreamException
+	 */
 	private void createNode( XMLEventWriter eventWriter, String name, String value ) throws XMLStreamException
 	{
 

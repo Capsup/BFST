@@ -21,7 +21,6 @@ import javax.swing.JTextField;
 import org.ietf.jgss.Oid;
 
 import AddressParser.AddressParser;
-import AddressParser.AddressParser.NaughtyException;
 import Graph.Edge;
 import MapDraw.MapDraw;
 import MapDraw.Translation;

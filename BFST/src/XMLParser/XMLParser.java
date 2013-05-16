@@ -1,6 +1,4 @@
 package XMLParser;
-
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,27 +19,41 @@ import javax.xml.stream.events.XMLEvent;
 import Graph.Edge;
 import Graph.Node;
 
-
 public class XMLParser implements Runnable{
 	private XMLEventReader input;
 
-	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>(); //List to contains all edges
-
-	public static ArrayList<List<Edge>> getEdgeList(){ 
-		ArrayList<List<Edge>> newList = list;
-		newList = null;
-		return newList; 
-	} //Method to get edges after the have been created
-
+	/**
+	 * Contains all edges
+	 */
+	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>(); 
+	
+	/**
+	 * Static to initialize a list of synchronized lists so they can be used with multithreading
+	 */
 	static{	for(int i = 0; i < 100; i++) list.add(Collections.synchronizedList(new LinkedList<Edge>())); }
+	
+	/**
+	 * Returns the list of all edges
+	 * @return all edges
+	 */
+	public static ArrayList<List<Edge>> getEdgeList(){ return list; }
 
-
+	/**
+	 * Initializes the XMLParser and makes it load the given file
+	 * @param sPath a file path
+	 * @throws FileNotFoundException
+	 */
 	public XMLParser( String sPath ) throws FileNotFoundException
 	{
 		loadFile( sPath );
 	}
 
-	public void loadFile( String sPath ) throws FileNotFoundException
+	/**
+	 * Loads the file
+	 * @param sPath the file path
+	 * @throws FileNotFoundException
+	 */
+	private void loadFile( String sPath ) throws FileNotFoundException
 	{
 		URL url = getClass().getResource( sPath );
 		if( url == null )
@@ -59,6 +71,11 @@ public class XMLParser implements Runnable{
 		}
 	}
 
+	/**
+	 * Parses the file and creates nodes. The nodes is returned as a list
+	 * @return list of nodes
+	 * @throws XMLStreamException
+	 */
 	public ArrayList<Node> getNodes() throws XMLStreamException{
 		int id = 0;
 		double x = 0,y = 0;
@@ -96,7 +113,9 @@ public class XMLParser implements Runnable{
 
 	}
 
-
+	/**
+	 * Parses a edge XML file. The Edges are saved into a synchronized list and can be accessed with getEdgeList();
+	 */
 	public void run(){
 		try{
 			ArrayList<String> temp = new ArrayList<String>();

@@ -10,39 +10,28 @@ import QuadTree.Interval;
 import QuadTree.Interval2D;
 import XMLParser.XMLParser;
 
-
+/**
+ * A class used to parse and search for addresses
+ */
 public class AddressParser
 {
-	private String[] arrayStrings;
-	Interval2D<Double> interval = new Interval2D<Double>(
-			new Interval<Double>(new Double(0.0), new Double(700200050.98297)), 
-			new Interval<Double>(new Double(0.0), new Double(705000527.51786))
-			);
+	private static AddressParser instance;		//The singleton variable
+	
+	private Road[] roads;						//An array of all the roads in our program
 
-	private static AddressParser instance;
-	
-	//private Edge[] roads;
-	private Road[] roads;
-	
-	
-	public class NaughtyException extends Exception
-	{
-		public NaughtyException( String sMessage )
-		{
-			super( sMessage );
-		}
-	}
-
+	/**
+	 * The constructor initializes the class by getting all the edges from the query and sorting them in a collected road array
+	 */
 	private AddressParser()
 	{
-		instance = this;
+		instance = this;						//We set the value of the singleton
 		
-		ArrayList<List<Edge>> edgeList = XMLParser.getEdgeList();
+		//ArrayList<List<Edge>> edgeList = XMLParser.getEdgeList();
 		ArrayList<Edge> list = new ArrayList<Edge>();
 		
-		for(int i=0; i<edgeList.size(); i++)
+		for(int i=0; i<100; i++)
 		{
-			Iterator<Edge> it = DataProcessing.Query.getInstance().queryEdges(interval, i).iterator();
+			Iterator<Edge> it = DataProcessing.Query.getInstance().queryEdges(i).iterator();
 			
 			while(it.hasNext())
 			{
@@ -93,6 +82,9 @@ public class AddressParser
 		roadList.toArray(roads);
 	}
 	
+	/**
+	 * @return returns the singleton, if the singleton is null we initialize it.
+	 */
 	public static AddressParser getInstance()
 	{
 		if(instance == null)
@@ -101,53 +93,7 @@ public class AddressParser
 		return instance;
 	}
 	
-
-	public static void main( String[] args )
-	{
-		String address = "Rued Langgaards Vej 75, 7. sal, 2630";
-
-		AddressParser adressParser = new AddressParser();
-
-		try
-		{
-			adressParser.parseAddress( address );
-		}
-		catch( NaughtyException e )
-		{
-			System.out.println( e.getMessage() );
-		}
-	}
-
-	public void loadData( String sPath ) throws NaughtyException
-	{
-		if( getClass().getResource( sPath ) != null )
-		{
-			Scanner scanner = new Scanner( getClass().getResourceAsStream( sPath ) );
-			int i = 0;
-
-			while( scanner.hasNextLine() )
-			{
-				scanner.nextLine();
-				i++;
-			}
-
-			arrayStrings = new String[i];
-			scanner = new Scanner( getClass().getResourceAsStream( sPath ) );
-
-			while( scanner.hasNextLine() )
-			{
-				arrayStrings[--i] = scanner.nextLine();
-			}
-			
-			Arrays.sort(arrayStrings);
-		}
-		else
-		{
-			throw new NaughtyException( "Road data could not be loaded." );
-		}
-	}
-
-	public String[] parseAddress( String sAddress ) throws NaughtyException
+	public String[] parseAddress( String sAddress )
 	{
 		String[] finalStrings = new String[6];
 		String[] addressStrings = sAddress.split( " " );
@@ -243,122 +189,87 @@ public class AddressParser
 		return finalStrings;
 	}
 	
-	/*
-	public int[] search(String string) 
-	{
-		int[] result = new int[2];
-		
-		result[0] = -1;
-		
-        for(int i=0; i<roads.length; i++)
-        {
-        	result[0] = search(string, roads[i]);
-        	
-        	if(result[0] >= 0)
-        	{
-        		result[1] = i;
-        		return result;
-        	}
-        }
-        
-        return new int[]{-1,-1};
-	}
-	*/
-	
+	/**
+	 * Search for an exact hit in our array of roads, and return the index (the first index of the index array is the index of the road, the second is the index of the edge in the road)
+	 * @param a stringArray. This should in any case be a product of a parsed address, since it has the correct indexation
+	 * @return	returns an array of ints. The first index of the array is the index of the road we find, the second index is the index of the edge in that road. We use an array of size one with the value -1 as an invalid return value
+	 */
 	public int[] search(String[] stringArray) 
 	{
-		Road[] a = roads;
+		Road[] a = roads;					//We start out by making a reference to our road array
 		
-		for(int i=0; i<stringArray.length; i++)
-			System.out.println("Index "+i+": "+stringArray[i]);
-		
+		//We then initialize variables used for our custom binary search
         int lo = 0;
         int hi = a.length - 1;
         
+        //We start out by matching the parsed road name with those in our array
         String string1 = stringArray[0];
         
         while (lo <= hi) 
         {
-            
         	int mid = lo + (hi - lo) / 2;
         	
+        	//We get the road name of the current search hit
         	String string2 = a[mid].getName();
 	        
+        	//We compare the two names
             if      (compare(string1, string2) == -1) hi = mid - 1;
             else if (compare(string1, string2) == 1) lo = mid + 1;
             else
             {
+            	//We might have multiple roads with the same name so we proceed to process the search hit
+            	
+            	//If we have a zipcode in our parsed array we use this is process our data
             	if(!stringArray[4].equals(""))
             	{
-            		int index = mid;
-            		boolean isFound = false;
+            		mid = matchZipCode(mid, stringArray[4]);
             		
-            		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
-            		{
-            			if((roads[index].getZipCode()+"").equals(stringArray[4]))
-        				{
-            				mid = index;
-        					isFound = true;
-        					
-        				}
-        				
-        				index++;
-            		}
-            		
-            		index = mid-1;
-            		
-            		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
-            		{
-            			if((roads[index].getZipCode()+"").equals(stringArray[4]))
-        				{
-        					mid = index;
-        					isFound = true;
-        				}
-        				
-        				index--;
-            		}
-            		
-            		if(!isFound)
-            		{
-                		System.out.println("(1)");
+            		if(mid < 0)
             			return new int[]{-1};
-            		}
             	}
             	
-            	int roadNumber = 0;
+            	//We then process the input of the road number
+            	int roadNumber = 0;		//The roadnumber we wish to search for (if none is input we search for 0)
             	
+            	//If we have a road number in our parsed address we set the road number to search for accordingly
             	if(!stringArray[1].equals(""))
-            	{
             		roadNumber = Integer.parseInt(stringArray[1]);
-            	}
             	
+            	//We then search through our road and find the edge that either contains the number or is closest to it.
         		int indexWithNumber = a[mid].getEdgeWithRoadNumber(roadNumber, false);
         		
+        		//If we did not get an invalid number from the road number search we return the resulting road and edge indexes
         		if(indexWithNumber >= 0)
         			return new int[]{mid,indexWithNumber};
-        		
-            	
-            	return new int[]{mid,0};
+        		else
+        			return new int[]{mid,0};	//Otherwise we return the road search hit and the index of the first edge in the road
             }
         }
         
-		System.out.println("(3)");
-        return new int[]{-1};
+        return new int[]{-1};			//If we dont find any thing during our binary search we return an invalid output
     }
 	
+	/**
+	 * Get a probability search for probable hits of the address you have parsed in. Note that the probability search does not always give the exact hit, even when searched for directly.
+	 * Use the search method for direct hit purposes. The probability search only finds the most probable addresses
+	 * @param an array of strings. This should in any case be a product of the parseAddress method
+	 * @param the amount of search hits we wish to output
+	 * @return	returns the index of a number of probable search hits
+	 */
 	public int[][] probabilitySearch(String[] stringArray, int count) 
 	{
-		Road[] a = roads;
+		Road[] a = roads;					//We make a reference to our road array
 		
-		String roadName = stringArray[0];
-		
-        int lo = 0;
+		//We then initialize variables used for our custom binary search
+		int lo = 0;
         int hi = a.length - 1;
-
-        String string1 = roadName;
         
+        String string1 = stringArray[0];
+        
+        //We let mid be the resulting index of our search
         int mid = -1;
         
+        //We first make a regular binary search in order to find our address
         while(lo <= hi)
         {
         	int searchIndex = lo + (hi - lo) / 2;
@@ -370,10 +281,13 @@ public class AddressParser
             else{ mid = searchIndex; break; }
         }
         
+        //If we had no direct hit on our search, we proceed to make a probability search instead.
         if(mid == -1)
         {
+        	//We reset the search variables
 	        lo = 0;
 	        hi = a.length - 1;
+	        
 	        
 	        while (lo <= hi) {
 	            
@@ -381,133 +295,29 @@ public class AddressParser
 	        	
 	        	String string2 = a[searchIndex].getName();
 	        	
-	        	//System.out.println("String 1: "+string1);
-	        	//System.out.println("String 2: "+a[mid].getName());
-	
-	        	
+	        	//Note that we use probability compare rather than compare
 	            if      (probabilityCompare(string1, string2) == -1) hi = searchIndex - 1;
 	            else if (probabilityCompare(string1, string2) == 1) lo = searchIndex + 1;
 	            else{ mid = searchIndex; break; }
 	        }
         }
         
+        //If we had a hit with either of our searches we proceed to process the remaining input
         if(mid != -1)
         {
+        	//First we start out by processing the zipcode
         	if(!stringArray[4].equals(""))
         	{
-        		boolean isFound = false;
+        		//If the input zip code is not empty we match it with the roads in our array to find a new search hit
+        		mid = matchZipCode(mid, stringArray[4]);
         		
-        		int index = mid;
-        		
-        		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
-        		{
-        			if((roads[index].getZipCode()+"").equals(stringArray[4]))
-    				{
-    					mid = index;
-    					isFound = true;
-    					break;
-    				}
-    				
-    				index++;
-        		}
-        		
-        		index = mid-1;
-        		
-        		while(roads[mid].getName().equals(roads[index].getName()) && !isFound)
-        		{
-    				if((roads[index].getZipCode()+"").equals(stringArray[4]))
-    				{
-    					mid = index;
-    					isFound = true;
-    					break;
-    				}
-    				
-    				index--;
-        		}
-        		
-        		if(!isFound)
+        		//If the new mid index is invalid we return an invalid output
+        		if(mid < 0)
         			return new int[][]{{-1}};
     		}
-    		
-    		
         	
-        	int found = 1;
-        	
-        	ArrayList<Integer> foundIndexes = new ArrayList<Integer>();
-        	foundIndexes.add(mid);
-        	
-        	int increment = 1;
-        	
-        	while(found < count)
-        	{
-        		int index = mid;
-        		
-        		//Start by incrementing so we dont compare with ourselves
-        		index += increment;
-        		
-        		while((index >= 0 && index < a.length) && found >= foundIndexes.size())
-        		{
-        			boolean bounce = true;
-        			
-        			for(int i=0; i<found; i++)
-        				if(a[foundIndexes.get(i)].getAddress().equals(a[index].getAddress()))
-        					bounce = false;
-        			
-        			if(bounce)
-        			{
-        				foundIndexes.add(index);
-        				break;
-        			}
-        			
-        			index += increment;
-        		}
-        		
-        		increment *= -1;
-        		
-        		if(found < foundIndexes.size())
-        			found++;
-        	}
-        	
-        	/*
-        	if(!stringArray[1].equals(""))
-        	{
-        		int roadNumber = Integer.parseInt(stringArray[1]);
-        		
-        		for(int j=0; j<foundIndexes.size(); j++)
-        		{
-        			/*
-        			boolean isFound = false;
-        			
-            		for(int i=0; i<roads[foundIndexes.get(j)].getEdges().length; i++)
-            		{
-            			
-            			if(roads[foundIndexes.get(j)].getEdge(i).hasRoadNumber(roadNumber))
-            			{
-            				isFound = true;
-            			}
-            		}
-            		
-        			if(!isFound)
-        			{
-                    	foundIndexes.remove(j);
-                    	j--;
-                    	break;
-        			}
-        			
-        			
-        			if(roads[foundIndexes.get(j)].getEdgeWithRoadNumber(roadNumber) < 0)
-        			{
-        				foundIndexes.remove(j);
-        				j--;
-                    	break;
-        			}
-        		}
-        		
-        		if(foundIndexes.size() == 0)
-        			return new int[][]{{-1}};
-        			
-        	}
-        	*/
+        	//We then get the adjacent indexes of the mid index
+        	ArrayList<Integer> foundIndexes = getAdjacentIndexes(mid, count);
         	
         	
         	int[][] returnIndexes = new int[foundIndexes.size()][2];
@@ -548,14 +358,18 @@ public class AddressParser
         				break;
         		}
         		
+        		
         		if(!isfound)
         			break;
         	}
         	
+        	
         	for(int i=returnIndexes.length-foundIndexes.size(); i<returnIndexes.length; i++)
         	{
-        		returnIndexes[i][0] = foundIndexes.get(i);
-        		foundIndexes.remove(i);
+        		System.out.println(i);
+        		
+        		returnIndexes[i][0] = foundIndexes.get(0);
+        		foundIndexes.remove(0);
         	}
         	
         	int roadNumber = 0;
@@ -588,8 +402,8 @@ public class AddressParser
         	}
         	*/
         }
-        
-        return new int[][]{{-1}};
+        else 
+        	return new int[][]{{-1}};		//If we had no search hit on the road name we return an invalid output
     }
 	
 	public int probabilityCompare(String string1, String string2)
@@ -690,6 +504,49 @@ public class AddressParser
 		
 		//System.out.println("is equal (1)");
 		return 0;
+	}
+	
+	private int matchZipCode(int mid, String zipCode)
+	{
+		int index = mid;				//We allocate the index we wish to check, starting at our search hit index
+		int searchDirection = 1;		//The direction we are currently searching
+		
+		//We need to search both forward and backwards in the array, so we do this during 2 while loops
+		for(int i=0; i<2; i++)
+		{
+    			//while the road we are comparing with still has the same name as the search hit, and we have not found a valid string we will search
+        		while(roads[mid].getName().equals(roads[index].getName()) && index >= 0 && index < roads.length)
+        		{
+        			if((roads[index].getZipCode()+"").equals(zipCode))
+        				return index;	//If the road we are comparing with as the same zipcode as the one we parsed we return the new index
+        			else
+        				index += searchDirection;	//If the search hit did not match we continue our search in the current direction
+        		}
+		
+    		//If we do not find the road going forward in our array we go backwards instead
+    		index = mid-1;
+    		searchDirection = -1;
+		}
+    	
+		//If we did not find any addresses with a matching zipcode we return our invalid output
+		return -1;
+	}
+	
+	private ArrayList<Integer> getAdjacentIndexes(int mid, int count)
+	{
+		ArrayList<Integer> adjacentIndexes = new ArrayList<Integer>();
+		adjacentIndexes.add(mid);
+    	
+    	int leftHandLength = (int)Math.round(((count-1)/2));
+    	int rightHandLength = (count)-leftHandLength;
+    	
+    	for(int i=(mid-leftHandLength); i<(mid+rightHandLength); i++)
+    	{
+    		if(i != mid && i >= 0 && i <roads.length)
+    			adjacentIndexes.add(i);
+    	}
+    	
+    	return adjacentIndexes;
 	}
 	
 	public Road[] getRoads()

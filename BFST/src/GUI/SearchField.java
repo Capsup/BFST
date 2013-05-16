@@ -25,7 +25,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import AddressParser.AddressParser;
-import AddressParser.AddressParser.NaughtyException;
 import Graph.Edge;
 import MapDraw.MapDraw;
 import MapDraw.Translation;
@@ -191,18 +190,10 @@ public class SearchField extends JTextField
 	 */
 	private void getSuggestions()
 	{
-		//We start out by initiating a string array
-		String[] parsedAdress = new String[6];
+		//We start out by initiating a string array and parse the addres in our search field using our address parser
+		String[] parsedAdress = AddressParser.getInstance().parseAddress(getText());
 		
-		//We then parse the current text of our searchField using our Adress Parser
-		try {
-			parsedAdress = AddressParser.getInstance().parseAddress(getText());
-		} catch (NaughtyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//We then make a probability search based on the parsed addres to get an array of results 
+		//We then make a probability search based on the parsed address to get an array of results 
 		int[][] ints = intProbabilitySearch(parsedAdress);
 		
 		//We check whether the results are valid
@@ -235,16 +226,8 @@ public class SearchField extends JTextField
 	 */
 	public Edge edgeSearch()
 	{
-		//We initiate a string array ready to be parsed
-		String[] parsedAdress = new String[6];
-		
-		//We parse the string array
-		try {
-			parsedAdress = AddressParser.getInstance().parseAddress(getText());
-		} catch (NaughtyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//We initiate a string array and parse it
+		String[] parsedAdress = AddressParser.getInstance().parseAddress(getText());;
 		
 		//We make an search for the integer representing the edge we wish to find based on the parsed adress
 		int[] searchIndex = intSearch(parsedAdress);

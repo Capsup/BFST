@@ -228,9 +228,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 		ZoomLevel.getInstance().setZoomLevel(0);
 		
-		
-		//Getting route!
-		//new Route.GetRoute(this, q, 355720, 425710).start();
 	}
 
 	//OpenGL Events
@@ -616,11 +613,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		routeFrom = from;
 		routeTo = to;
 		
-		GetRoute route = new GetRoute(this, from, to);
-		
-		if(route.hasNewPath() || route.hasNewTransport())
-			route.start();
-			
+		new GetRoute(from, to);
 	}
 	
 	public boolean hasRoute()
