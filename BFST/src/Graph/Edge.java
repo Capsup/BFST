@@ -1,49 +1,42 @@
 package Graph;
 
+
 /**
  * This class represents Edges, which is road segments
  */
 public class Edge implements Comparable<Edge>
 {
 	private static int id_count = 0;
-	private final int id;
-	private final int v;
-	private final int w;
-
-	private final int typ, zip, speedLimit;
-	private final int toRight, fromRight, toLeft, fromLeft;
-	private final double xTo, yTo, xFrom, yFrom, driveTime, length;
+	private final Node from, to;
+	private final int id, typ, zip, speedLimit, toRight, fromRight, toLeft, fromLeft;
+	private final double driveTime, length;
 	private final String roadName, oneWay;
 	
 	/**
 	 * Constructs a new Edge
-	 * @param v the from reference
-	 * @param w the to reference
+	 * @param v - the from reference
+	 * @param w - the to reference
 	 * @param s An ArrayList<String> containing following in following order(xFrom, yFrom, v, xTo, yTo, w, length, type, roadName, fromLeft, toLeft, fromRight, toRight, zip, speedLimit, driveTime, oneWay)
 	 */
 	public Edge( int v, int w, java.util.ArrayList<String> s )
 	{
 		this.id = id_count++;
-		this.v = v;
-		this.w = w;
+		this.from = Node.getNode(v);
+		this.to = Node.getNode(w);
 
-		this.xFrom = Double.parseDouble(s.get(0));
-		this.yFrom = Double.parseDouble(s.get(1));
-		this.xTo = Double.parseDouble(s.get(3));
-		this.yTo = Double.parseDouble(s.get(4));
-		this.length = Double.parseDouble(s.get(6));
-		this.typ = Integer.parseInt(s.get(7));
-		this.roadName = s.get(8);
+		this.length = Double.parseDouble(s.get(0));
+		this.typ = Integer.parseInt(s.get(1)); 
+		this.roadName = s.get(2);
 
-		this.fromLeft = Integer.parseInt(s.get(9));
-		this.toLeft = Integer.parseInt(s.get(10));
-		this.fromRight = Integer.parseInt(s.get(11));
-		this.toRight = Integer.parseInt(s.get(12));
+		this.fromLeft = Integer.parseInt(s.get(3));
+		this.toLeft = Integer.parseInt(s.get(4));
+		this.fromRight = Integer.parseInt(s.get(5));
+		this.toRight = Integer.parseInt(s.get(6));
 
-		this.zip = Integer.parseInt(s.get(13));
-		this.speedLimit = Integer.parseInt(s.get(14));
-		this.driveTime = Double.parseDouble(s.get(15));
-		this.oneWay = s.get(16);
+		this.zip = Integer.parseInt(s.get(7));
+		this.speedLimit = Integer.parseInt(s.get(8));
+		this.driveTime = Double.parseDouble(s.get(9));
+		this.oneWay = s.get(10);
 		
 	}
 
@@ -83,40 +76,56 @@ public class Edge implements Comparable<Edge>
 	 * returns the from reference
 	 * @return v as an integer
 	 */
-	public int either(){ return v; }
+	public int either(){ return from.getID(); }
 	
 	/**
 	 * If the from vertex is given, returns the to vertex and vice versa
-	 * @param ve the vertex
+	 * @param ve - the vertex
 	 * @return vertex as a int
 	 */
-	public int other(int ve){ return ve == w ? v : w ; }
+	public int other(int ve){ return ve == to.getID() ? from.getID() : to.getID() ; }
 
 
 
 	/**
 	 * Checks if the edge contains a given road number
-	 * @param i the road number you wish to check for
+	 * @param i - the road number you wish to check for
 	 * @return true if the egde contains the given road number
 	 */
 	public boolean hasRoadNumber(int i){ return ((i <= toRight) && (i >= fromRight)) || ((i <= toLeft) && (i >= fromLeft)); }
 
-	/** @return returns the lowest road numbers of the segment in the right side of the road */	public int getFromRight(){ return fromRight; }
-	/** @return returns the highest road numbers of the segment in the right side of the road */	public int getToRight(){ return toRight;	}
-	/** @return returns the lowest road numbers of the segment in the left side of the road */	public int getFromLeft(){ return fromLeft;	}
-	/** @return returns the highest road numbers of the segment in the left side of the road */	public int getToLeft(){ return toLeft;	}
-	/** @return returns the from vertex of the road segment */	public int getFromIndex(){ return v;	}
-	/** @return returns to vertex of the road segment */	public int getToIndex(){ return w;	}
-	/** @return returns the type of the road. goes from 1 to 99 */	public int getTyp() { return typ; }
-	/** @return returns the zip code as an integer */	public int getZip() { return zip; }
-	/** @return returns the x coordinate of the to point of the road segment as a double */	public double getXTo(){	return xTo; }
-	/** @return returns the y coordinate of the to point of the road segment as a double */	public double getYTo(){	return yTo; }
-	/** @return returns the x coordinate of the from point of the road segment as a double */	public double getXFrom(){ return xFrom;	}
-	/** @return returns the y coordinate of the from point of the road segment as a double */	public double getYFrom(){ return yFrom;	}
-	/** @return returns the length of the road segment */	public double getLength(){ return length; }
-	/** @return returns the speed limit of the road segment */	public double getSpeedLimit(){ return speedLimit; }
-	/** @return returns the time is takes to drive the road segment */	public double getDriveTime(){ return driveTime; }
-	/** @return returns the road name of the edge */	public String getName(){ return roadName; }
+	/** @return returns the lowest road numbers of the segment in the right side of the road */	
+	public int getFromRight(){ return fromRight; }
+	/** @return returns the highest road numbers of the segment in the right side of the road */	
+	public int getToRight(){ return toRight;	}
+	/** @return returns the lowest road numbers of the segment in the left side of the road */	
+	public int getFromLeft(){ return fromLeft;	}
+	/** @return returns the highest road numbers of the segment in the left side of the road */	
+	public int getToLeft(){ return toLeft;	}
+	/** @return returns the from vertex of the road segment */	
+	public int getFromIndex(){ return from.getID();	}
+	/** @return returns to vertex of the road segment */	
+	public int getToIndex(){ return to.getID();	}
+	/** @return returns the type of the road. goes from 1 to 99 */	
+	public int getTyp() { return typ; }
+	/** @return returns the zip code as an integer */	
+	public int getZip() { return zip; }
+	/** @return returns the x coordinate of the to point of the road segment as a double */	
+	public double getXTo(){	return to.getX(); }
+	/** @return returns the y coordinate of the to point of the road segment as a double */	
+	public double getYTo(){	return to.getY(); }
+	/** @return returns the x coordinate of the from point of the road segment as a double */	
+	public double getXFrom(){ return from.getX();	}
+	/** @return returns the y coordinate of the from point of the road segment as a double */	
+	public double getYFrom(){ return from.getY();	}
+	/** @return returns the length of the road segment */	
+	public double getLength(){ return length; }
+	/** @return returns the speed limit of the road segment */	
+	public double getSpeedLimit(){ return speedLimit; }
+	/** @return returns the time is takes to drive the road segment */	
+	public double getDriveTime(){ return driveTime; }
+	/** @return returns the road name of the edge */	
+	public String getName(){ return roadName; }
 	
 	/** @return if the edge is oneWay ('' is no, 'tf' is from w to v, 'ft' is from v to w and 'n' in no driving */
 	public String getOneWay(){ return oneWay; }
@@ -133,7 +142,7 @@ public class Edge implements Comparable<Edge>
 	}
 
 	/**
-	 * @param e the edge to compare with
+	 * @param e - the edge to compare with
 	 * @return returns 
 	 */
 	public int compareTo(Edge e) 

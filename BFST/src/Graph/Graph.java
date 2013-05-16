@@ -1,9 +1,13 @@
 package Graph;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This is not entirely our class! We made modifications, but it originates from http://algs4.cs.princeton.edu/
+ */
 public class Graph {
 	private final int V;
 	private int E;
@@ -12,8 +16,9 @@ public class Graph {
 	/**
 	 * Create an empty edge-weighted digraph with V vertices.
 	 */
+	
+	@SuppressWarnings("unchecked")
 	public Graph(int V) {
-		if (V < 0) throw new IllegalArgumentException("Number of vertices in a Digraph must be nonnegative");
 		this.V = V;
 		this.E = 0;
 		adj = (LinkedList<Edge>[]) new LinkedList[V];
@@ -21,8 +26,26 @@ public class Graph {
 			adj[v] = new LinkedList<Edge>();
 	}
 
-	public Graph(int V, ArrayList<List<Edge>> list) {
-		this(V);
+	/**
+	 * Constructs a graph from a list of list of Edges 
+	 * @param V
+	 * @param list
+	 */
+	@SuppressWarnings("unchecked")
+	public Graph(ArrayList<List<Edge>> list) {
+		int V = 0;
+		for(Iterable<Edge> l : list)
+			for (Edge e : l)
+				V++;
+		
+		this.V = V;
+		
+		this.E = 0;
+		adj = (LinkedList<Edge>[]) new LinkedList[V];
+		for (int v = 0; v < V; v++)
+			adj[v] = new LinkedList<Edge>();
+		
+		
 		for(Iterable<Edge> l : list)
 			for(Edge e : l)
 				addEdge(e);

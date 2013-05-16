@@ -7,20 +7,28 @@ import MapDraw.MapDraw;
 
 public class GetRoute extends Thread {
 	private int from, to;
-	private MapDraw map;
+	private static int lastFrom = -1;
+	private static int lastTo = -1;
+	private static int lastPathSetting = -1;
+	private static int lastTransportSetting = -1;
+	private static int lastFerrySetting = -1;
 	
-	public static int lastFrom = -1;
-	public static int lastTo = -1;
-	public static int lastPathSetting = -1;
-	public static int lastTransportSetting = -1;
-	public static int lastFerrySetting = -1;
-	
-	public GetRoute(MapDraw map, int from, int to){
-		this.map = map;
+	/**
+	 * Computes the shortest route from node 'from' to node 'to' in the current road graph. The data is pushed back to the current instance of MapDraw
+	 * @param from - the from vertex
+	 * @param to - the to vertex
+	 */
+	public GetRoute(int from, int to){
 		this.from = from;
 		this.to = to;
+		
+		if(hasNewPath() || hasNewTransport())
+			this.start();
 	}
 	
+	/**
+	 * runs the shortest path algorithm and pushed the path, if any, back to the current instance of MapDraw
+	 */
 	public void run()
 	{
 		if(hasNewPath())
@@ -35,7 +43,7 @@ public class GetRoute extends Thread {
 		Edge[] edges = d.pathTo(to);
 		
 		if(hasNewPath())
-			map.setRoute(edges);
+			MapDraw.getInstance().setRoute(edges);
 		
 		if(hasNewPath())
 			GUI.PathInformation.getInstance().setLength(d.getCurrentPathLength());
@@ -50,11 +58,19 @@ public class GetRoute extends Thread {
 		lastFerrySetting = Settings.ferryAllowed();
 	}
 	
+	/**
+	 * Checks if it route last calculated is the same as now
+	 * @return boolean
+	 */
 	public boolean hasNewPath()
 	{
 		return from != lastFrom || to != lastTo || Settings.routeProfile() != lastPathSetting || Settings.meansOfTransport() != lastTransportSetting || Settings.ferryAllowed() != lastFerrySetting;
 	}
 	
+	/**
+	 * Checks if the means of transportation have changed
+	 * @return boolean
+	 */
 	public boolean hasNewTransport()
 	{
 		return Settings.meansOfTransport() != lastTransportSetting;

@@ -627,7 +627,7 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		routeFrom = from;
 		routeTo = to;
 		
-		GetRoute route = new GetRoute(this, from, to);
+		GetRoute route = new GetRoute(from, to);
 		
 		if(route.hasNewPath() || route.hasNewTransport())
 			route.start();

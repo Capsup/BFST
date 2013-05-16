@@ -1,10 +1,13 @@
 package Route;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import Graph.Edge;
 import Graph.Graph;
+
+/**
+ *  This is not entirely our class! We made modifications, but it originates from http://algs4.cs.princeton.edu/
+ */
 
 public class Dijkstra {
     private double[] distTo;          // distTo[v] = distance  of shortest s->v path
@@ -14,6 +17,12 @@ public class Dijkstra {
     private double currentPathLength = 0;
     private double currentPathTravelTime  = 0;
     
+    /**
+     * Initializes Dijkstra's algorithm so you can search from s to any other Vertex in Graph G and see if there is a path, and if so, find the shortest path
+     * @param G - the graph
+     * @param s - the vertex
+     * @throws IllegalArgumentException
+     */
     public Dijkstra(Graph G, int s) {
         for (Edge e : G.edges()) {
             if (e.weight() < 0)
@@ -50,20 +59,30 @@ public class Dijkstra {
         }
     }
 
-    // length of shortest path from s to v
+    /**
+     * length of shortest path from s to v
+     * @param v - vertex
+     * @return length
+     */
     public double distTo(int v) {
         return distTo[v];
     }
-
-    // is there a path from s to v?
+    /**
+     * Is there a path from s to v?
+     * @param v - vertex
+     * @return boolean
+     */ 
     public boolean hasPathTo(int v) {
         return distTo[v] < Double.POSITIVE_INFINITY;
     }
 
-    // shortest path from s to v as an Iterable, null if no such path
+    /**
+     * shortest path from s to v as an Iterable, null if no such path
+     * @param v
+     * @return Iterable<Edge>
+     */
     public Edge[] pathTo(int v) {
         if (!hasPathTo(v)) return null;
-        //Stack<Edge> path = new Stack<Edge>();
         ArrayList<Edge> path = new ArrayList<Edge>();
         
         currentPathLength = 0;
@@ -81,8 +100,6 @@ public class Dijkstra {
         		currentPathTravelTime += (e.getLength()/1000)/18;
         	else 
         		currentPathTravelTime += (e.getLength()/1000)/5;
-        	
-            //path.push(e);
         	path.add(e);
         }
         
@@ -92,10 +109,14 @@ public class Dijkstra {
         return returnArray;
     }
 
-
-    // check optimality conditions:
-    // (i) for all edges e:            distTo[e.to()] <= distTo[e.from()] + e.weight()
-    // (ii) for all edge e on the SPT: distTo[e.to()] == distTo[e.from()] + e.weight()
+    /**
+     * check optimality conditions:
+     * (i) for all edges e:            distTo[e.to()] <= distTo[e.from()] + e.weight()
+     * (ii) for all edge e on the SPT: distTo[e.to()] == distTo[e.from()] + e.weight()
+     * @param G - the graph
+     * @param s - the start vertex
+     * @return
+     */
     private boolean check(Graph G, int s) {
 
         // check that edge weights are nonnegative
@@ -144,11 +165,19 @@ public class Dijkstra {
         return true;
     }
     
+    /**
+     * returns the length of the last path called from pathTo()
+     * @return double
+     */
     public double getCurrentPathLength()
     {
     	return currentPathLength;
     }
     
+    /**
+     * returns the travel time of the last path called from pathTo()
+     * @return double
+     */
     public double getTravelTime()
     {
     	return currentPathTravelTime;

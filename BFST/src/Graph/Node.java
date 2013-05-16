@@ -1,41 +1,75 @@
 package Graph;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Node implements Comparable<Node>
-{
+/**
+ * This class handles nodes
+ */
+public class Node{
+	private static HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
 	private int id;
 	private double xCoord;
 	private double yCoord;
-
-	public Node( ArrayList<String> s )
-	{
-		init(s);
+	
+	
+	/**
+	 * Constructs a new node
+	 * @param id - nodes id
+	 * @param xCoord - nodes x-coordinate
+	 * @param yCoord - nodes y-coordinate
+	 * @return the created node
+	 */
+	public static Node makeNode(int id, double xCoord, double yCoord){
+		return nodes.put(id, new Node(id, xCoord, yCoord));
 	}
 	
-	protected void init(ArrayList<String> s){
-		this.id = Integer.parseInt(s.get(0));
-		this.xCoord = Double.parseDouble(s.get(1));
-		this.yCoord = Double.parseDouble(s.get(2));
+	/**
+	 * A HashMap of every node is saved, this void deletes that list. This can be used if the map is no longer needed
+	 */
+	public static void nullNodes(){ nodes = null; }
+	
+	/**
+	 * Returns a given node
+	 * @param id
+	 * @return the node with given id
+	 */
+	public static Node getNode(int id){ return nodes.get(id); }
+
+	/**
+	 * Constructs a new node
+	 * @param id - the nodes id
+	 * @param xCoord - the nodes x-coordinate
+	 * @param yCoord - the nodes y-coordinate
+	 */
+	private Node( int id, double xCoord, double yCoord )
+	{
+		this.id = id;
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
 	}
 	
-	public int compareTo( Node a )
-	{
-		return getID() == a.getID() ? 0 : ( getID() > a.getID() ? 1 : -1 );
-	}
-
-	// ID
+	/**
+	 * Returns the nodes ID
+	 * @return id
+	 */
 	public int getID()
 	{
 		return id;
 	}
 
-	// Coordinates
+	/**
+	 * Returns the x-coordinate
+	 * @return x
+	 */
 	public double getX()
 	{
 		return xCoord;
 	}
-
+	
+	/**
+	 * Returns the y-coordinate
+	 * @return y
+	 */
 	public double getY()
 	{
 		return yCoord;

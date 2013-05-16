@@ -1,6 +1,4 @@
 package XMLParser;
-
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
@@ -16,29 +14,46 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+
+
 import Graph.Edge;
 import Graph.Node;
 
-
 public class XMLParser implements Runnable{
 	private XMLEventReader input;
-	
-	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>(); //List to contains all edges
+
+	/**
+	 * Contains all edges
+	 */
+	private static ArrayList<List<Edge>> list = new ArrayList<List<Edge>>(); 
 	
 	/**
-	 * @param 
-	 * @return 
+	 * Static to initialize a list of synchronized lists so they can be used with multithreading
 	 */
-	public static ArrayList<List<Edge>> getEdgeList(){ return list; } //Method to get edges after the have been created
 	static{	for(int i = 0; i < 100; i++) list.add(Collections.synchronizedList(new LinkedList<Edge>())); }
+	
+	/**
+	 * Returns the list of all edges
+	 * @return all edges
+	 */
+	public static ArrayList<List<Edge>> getEdgeList(){ return list; }
 
-
+	/**
+	 * Initializes the XMLParser and makes it load the given file
+	 * @param sPath a file path
+	 * @throws FileNotFoundException
+	 */
 	public XMLParser( String sPath ) throws FileNotFoundException
 	{
 		loadFile( sPath );
 	}
 
-	public void loadFile( String sPath ) throws FileNotFoundException
+	/**
+	 * Loads the file
+	 * @param sPath the file path
+	 * @throws FileNotFoundException
+	 */
+	private void loadFile( String sPath ) throws FileNotFoundException
 	{
 		URL url = getClass().getResource( sPath );
 		if( url == null )
@@ -56,8 +71,14 @@ public class XMLParser implements Runnable{
 		}
 	}
 
-	public ArrayList<Node> getNodesForXMLCreator() throws XMLStreamException{
-		ArrayList<String> temp = new ArrayList<String>();
+	/**
+	 * Parses the file and creates nodes. The nodes is returned as a list
+	 * @return list of nodes
+	 * @throws XMLStreamException
+	 */
+	public ArrayList<Node> getNodes() throws XMLStreamException{
+		int id = 0;
+		double x = 0,y = 0;
 		ArrayList<Node> list = new ArrayList<Node>();
 
 		while( input.hasNext() )
@@ -75,16 +96,15 @@ public class XMLParser implements Runnable{
 
 				if( name.equals( "g" ) )
 					continue;
-				if( name.equals( "i" ) ) temp.add((input.nextEvent().asCharacters().getData())); 
-				else if( name.equals( "x" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
-				else if( name.equals( "y" ) ) temp.add( input.nextEvent().asCharacters().getData() ); 
+				if( name.equals( "i" ) ) id = Integer.parseInt(input.nextEvent().asCharacters().getData()); 
+				else if( name.equals( "x" ) ) x = Double.parseDouble(input.nextEvent().asCharacters().getData()); 
+				else if( name.equals( "y" ) ) y = Double.parseDouble(input.nextEvent().asCharacters().getData()); 
 			} 
 			if( event.isEndElement() )
 			{
 				EndElement element = event.asEndElement();
 				if( element.getName().getLocalPart().equals( "e" )){
-					list.add(new Node(temp)); 
-					temp = new ArrayList<String>();
+					list.add(Node.makeNode(id, x, y)); 
 				}
 			}
 		}
@@ -93,7 +113,9 @@ public class XMLParser implements Runnable{
 
 	}
 
-
+	/**
+	 * Parses a edge XML file. The Edges are saved into a synchronized list and can be accessed with getEdgeList();
+	 */
 	public void run(){
 		try{
 			ArrayList<String> temp = new ArrayList<String>();
@@ -113,21 +135,11 @@ public class XMLParser implements Runnable{
 
 					if( name.equals( "g" ) )
 						continue;
-					if( name.equals( "x" ) ) //x
-						temp.add(input.nextEvent().asCharacters().getData());
-					else if( name.equals( "y" ) ) //y
-						temp.add(input.nextEvent().asCharacters().getData());
-					else if( name.equals( "f" ) ){ //From node
+					if( name.equals( "f" ) ){ //From node
 						f = Integer.parseInt(input.nextEvent().asCharacters().getData());
-						temp.add(f + "");
 					}
-					else if( name.equals( "X" ) ) //X
-						temp.add(input.nextEvent().asCharacters().getData());
-					else if( name.equals( "Y" ) ) //Y
-						temp.add(input.nextEvent().asCharacters().getData());
 					else if( name.equals( "t" ) ){ //To node
 						t = Integer.parseInt(input.nextEvent().asCharacters().getData());
-						temp.add(t + "");
 					}
 					else if( name.equals( "l" ) ){ //length
 						temp.add(input.nextEvent().asCharacters().getData());
