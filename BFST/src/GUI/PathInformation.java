@@ -139,6 +139,15 @@ public class PathInformation extends Observable
 	 */
 	public String getTravelTime()
 	{
+		return buildTravelTimeString(travelTime);
+	}
+	
+	/**
+	 * Builds the travel time string
+	 * @return get the travel time as a string, if the travel time is an invalid output (<0) "Calculating.." is returned
+	 */
+	private String buildTravelTimeString(double travelTime)
+	{
 		if(travelTime >= 0)
 		{
 			double time = travelTime;
