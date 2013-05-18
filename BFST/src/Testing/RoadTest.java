@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import AddressParser.Road;
@@ -12,11 +13,11 @@ import Graph.Edge;
 
 public class RoadTest {
 
-	Road road;
+	static Road road;
 	
-	@Before
-	public void setUp()
-	{
+	@BeforeClass
+    public static void setUpClass() throws Exception {
+		
 		Edge[] edges = new Edge[10];
 		
 		edges[0] = addEdge(0, 6);
@@ -30,10 +31,10 @@ public class RoadTest {
 		edges[8] = addEdge(64, 68);
 		edges[9] = addEdge(68, 70);
 		
-		road = new Road(edges);
-	}
+		RoadTest.road = new Road(edges);
+    }
 	
-	public Edge addEdge(int fromRight, int toRight)
+	public static Edge addEdge(int fromRight, int toRight)
 	{
 		ArrayList<String> createList = new ArrayList<String>();
 		

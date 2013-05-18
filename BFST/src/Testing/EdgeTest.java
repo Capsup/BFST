@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import Graph.Edge;
+import Route.Settings;
 
 public class EdgeTest {
 
@@ -44,11 +45,13 @@ public class EdgeTest {
 		
 		createList.add("1750");
 		createList.add("20");
-		createList.add("0.15");
+		createList.add("0.0125");
 		createList.add("1");
 		
 		return new Edge(0, 0, createList);
 	}
+	
+	//Compare
 	
 	@Test
 	public void testCompareGreaterLength() {
@@ -85,5 +88,40 @@ public class EdgeTest {
 	public void testCompareEquals() {
 		
 		assertEquals(0, edge1.compareTo(edge1));
+	}
+	
+	//Weight
+	
+	@Test
+	public void testWeightCarShortest(){
+		
+		Route.Settings.setMeansOfTransport(Route.Settings.car);
+		Route.Settings.setRouteProfile(Route.Settings.shortest_route);
+		
+		assertEquals(true, edge1.weight() == edge1.getLength());
+	}
+	
+	@Test
+	public void testWeightCarFastest(){
+		
+		Route.Settings.setMeansOfTransport(Route.Settings.car);
+		Route.Settings.setRouteProfile(Route.Settings.fastest_route);
+		
+		assertEquals(true, edge1.weight() == edge1.getDriveTime());
+	}
+	
+	@Test
+	public void testSpeedWeighting(){
+		
+		Route.Settings.setRouteProfile(Route.Settings.fastest_route);
+		
+		Route.Settings.setMeansOfTransport(Route.Settings.car);
+		double carTime = edge1.weight();
+		Route.Settings.setMeansOfTransport(Route.Settings.bike);
+		double bikeTime = edge1.weight();
+		Route.Settings.setMeansOfTransport(Route.Settings.foot);
+		double footTime = edge1.weight();
+		
+		assertEquals(true, (carTime < bikeTime) && (bikeTime < footTime));
 	}
 }

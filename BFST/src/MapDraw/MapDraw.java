@@ -378,27 +378,40 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 		gl2.glTranslated( Translation.getInstance().getTranslation().x, -Translation.getInstance().getTranslation().y, 0 );
 	}
 	
-	//GOGO CHOLEWA!
+	/**
+	 * Get the edges to be drawn on the map in the current field of view and zoom level
+	 * @param types The road types to be drawn (defined by zoom level)
+	 * @return	Returns a list of all the edges to be draw on the current screen
+	 */
 	private List<List<Edge>> getDrawEdges(int[] types)
 	{
 		int width = this.width;
 		int height = this.height;
+		
+		//Calculate the start and end x positions of the map
 		double zoomFactor = ((Translation.getInstance().getTranslation().getX()) - (width-(width*getWidthFactor())/2)/2 );
 		double xs = (zoomFactor)* -1000 + 10 * -1000;
 		double xe = (((zoomFactor) - width*getWidthFactor()/2)*-1000) - 10 * -1000;
 
+		//Calculate the start and end y positions of the map
 		zoomFactor = ((Translation.getInstance().getTranslation().getY()) + (height-(height*getHeightFactor())/2)/2);
 		double ys = zoomFactor * 1000 - 10 * 1000;
 		double ye = (((zoomFactor) + height*getHeightFactor()/2)*1000) + 10 * 1000;
 		
-		 Interval<Double> xAxis = new Interval<Double>(xs, xe);
-	     Interval<Double> yAxis = new Interval<Double>(ys, ye);
-	     
-	     Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
-	     LinkedList<List<Edge>> list = new LinkedList<List<Edge>>();
-	     for(int type : types)
-	    	 list.add(q.queryEdges(rect, type));
-	     return list;
+		//Convert the boundaries to intervals
+		Interval<Double> xAxis = new Interval<Double>(xs, xe);
+	    Interval<Double> yAxis = new Interval<Double>(ys, ye);
+	    Interval2D<Double> rect = new Interval2D<Double>(xAxis, yAxis);
+	    
+	    //Initialize a list to contain the edges
+	    LinkedList<List<Edge>> list = new LinkedList<List<Edge>>();
+	    
+	    //Add all the list of edges to the return list
+	    for(int type : types)
+	    	list.add(q.queryEdges(rect, type));
+	   
+	    //Return the list
+	    return list;
 	}
 	
 	/**
@@ -595,7 +608,6 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 	public void mouseEntered( MouseEvent e )
 	{
 		
-
 	}
 
 	@Override

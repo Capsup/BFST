@@ -59,13 +59,13 @@ public class Edge implements Comparable<Edge>
 
 		if(Route.Settings.meansOfTransport() == Route.Settings.bike)
 			if(Route.Settings.routeProfile() == Route.Settings.fastest_route)
-				return typ != 80 ? length/1000*18 : driveTime;
+				return typ != 80 ? (length/1000)/18 : driveTime;
 			else if(Route.Settings.routeProfile() == Route.Settings.shortest_route)
 				return length;
 
 		if(Route.Settings.meansOfTransport() == Route.Settings.foot)
 			if(Route.Settings.routeProfile() == Route.Settings.fastest_route)
-				return typ != 80 ? length/1000*5 : driveTime;
+				return typ != 80 ? (length/1000)/5 : driveTime;
 			else if(Route.Settings.routeProfile() == Route.Settings.shortest_route)
 				return length;
 
@@ -84,15 +84,6 @@ public class Edge implements Comparable<Edge>
 	 * @return vertex as a int
 	 */
 	public int other(int ve){ return ve == to.getID() ? from.getID() : to.getID() ; }
-
-
-
-	/**
-	 * Checks if the edge contains a given road number
-	 * @param i - the road number you wish to check for
-	 * @return true if the egde contains the given road number
-	 */
-	public boolean hasRoadNumber(int i){ return ((i <= toRight) && (i >= fromRight)) || ((i <= toLeft) && (i >= fromLeft)); }
 
 	/** @return returns the lowest road numbers of the segment in the right side of the road */	
 	public int getFromRight(){ return fromRight; }

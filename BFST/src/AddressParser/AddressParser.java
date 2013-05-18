@@ -442,7 +442,7 @@ public class AddressParser
 	 * @param zipCode
 	 * @return the index that holds both the mid index name and the zipcode. Returns -1 if no successful search hit was found
 	 */
-	private int matchZipCode(int mid, String zipCode)
+	public int matchZipCode(int mid, String zipCode)
 	{
 		int index = mid;				//We allocate the index we wish to check, starting at our search hit index
 		int searchDirection = 1;		//The direction we are currently searching
@@ -474,7 +474,7 @@ public class AddressParser
 	 * @param count
 	 * @return an arraylist of integers representing the found indexes
 	 */
-	private ArrayList<Integer> getAdjacentIndexes(int mid, int count)
+	public ArrayList<Integer> getAdjacentIndexes(int mid, int count)
 	{
 		ArrayList<Integer> adjacentIndexes = new ArrayList<Integer>();			//We initialize an array list to hold the indexes
 		adjacentIndexes.add(mid);												//We add the mid since we want it to be the first index of our array list
@@ -482,6 +482,11 @@ public class AddressParser
 		//We then calculate how many steps we need to go to the left and right respectively in order to reach the count
     	int leftHandLength = (int)Math.round(((count-1)/2));
     	int rightHandLength = (count)-leftHandLength;
+    	
+    	if(mid-leftHandLength < 0)
+    		rightHandLength += -(mid-leftHandLength);
+    	else if (mid+rightHandLength >= getRoads().length)
+    		leftHandLength += (mid+rightHandLength)-getRoads().length;
     	
     	//We then iterate through the part of our road array that the adjacent indexes represent, check if they exist and if they do, we add them
     	for(int i=(mid-leftHandLength); i<(mid+rightHandLength); i++)
@@ -497,7 +502,7 @@ public class AddressParser
 	 * @param foundIndexes
 	 * @return	returns an array of ints giving the indexes of the input integers in the sorted order
 	 */
-	private int[] getSortedIndexes(ArrayList<Integer> foundIndexes)
+	public int[] getSortedIndexes(ArrayList<Integer> foundIndexes)
 	{
 		int[] returnIndexes = new int[foundIndexes.size()];		//We initialize an array of indexes to return
     	returnIndexes[0] = foundIndexes.get(0);					//We put the first index to be the mid

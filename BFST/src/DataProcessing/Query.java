@@ -1,4 +1,5 @@
 package DataProcessing;
+import java.awt.print.Printable;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -141,6 +142,7 @@ public class Query{
 	 * @return The list of edges
 	 */
 	public List<Edge> queryEdges(Interval2D<Double> rect, int type){
+		
 		if(lastInterval[type].compareTo(rect) != 0){ //If this query have been made since last rect change, the old query will be return (So a new dosn't have to be made) 
 			lastInterval[type] = rect; //Saves the last rect
 			List<Edge> edgesToDraw = quadTrees.get(type).query2D(rect); //Fetches the data from the QuadTree
