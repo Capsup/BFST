@@ -116,7 +116,7 @@ public class PathInformation extends Observable
 			double currLength = length;
 			
 			//If the length is above 1000 we recalculate it into km
-			if(currLength > 1000)
+			if(currLength >= 1000)
 			{
 				//We divide by 100, then round and then by the last 10, in order to keep the last digit
 				currLength /= 100;
@@ -171,15 +171,19 @@ public class PathInformation extends Observable
 				
 				//Based on the tense of the hours we add the correct grammer
 				if(hours > 1)
-					stringBuilder.append(" hours ");
+					stringBuilder.append(" hours");
 				else 
-					stringBuilder.append(" hour ");
+					stringBuilder.append(" hour");
 			}
 			
 			if(minutes != 0)
 			{
 				//We do the same procedure with minutes
 				
+				//If we have hours we need to make a space between the two strings
+				if(hours != 0)
+					stringBuilder.append(" ");
+					
 				stringBuilder.append(minutes);
 				
 				if(minutes > 1)

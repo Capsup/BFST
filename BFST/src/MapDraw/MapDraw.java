@@ -669,14 +669,18 @@ public class MapDraw extends JPanel implements GLEventListener, MouseListener, M
 
 	@Override
 	public void mouseWheelMoved( MouseWheelEvent e )
-	{
+	{		
 		//We check the direction of the scroll and zoom in the given direction
 		if( e.getUnitsToScroll() < 0 )
+		{
 			if(ZoomLevel.getInstance().zoomIn())
 				applyZoomTranslation(e);			//We update the information about the zoom in order to animate the zoom properly
+		}
 		else
+		{
 			if(ZoomLevel.getInstance().zoomOut())
 				applyZoomTranslation(e);			//We update the information about the zoom in order to animate the zoom properly
+		}
 	}
 	
 	/**

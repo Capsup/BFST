@@ -1,12 +1,10 @@
 /MSTParse
 *.class
-/.gitignore
 /GUI
-/AddressParser
-/DataProcessing
-/MapDraw
-/XMLCreator
-/XMLParser
 /Graph
+/MapDraw
 /QuadTree
 /Route
+/AddressParser
+/DataProcessing
+/Testing
