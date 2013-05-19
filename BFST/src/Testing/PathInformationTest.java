@@ -31,6 +31,14 @@ public class PathInformationTest {
 	}
 	
 	@Test
+	public void testGetLength0() {
+		
+		GUI.PathInformation.getInstance().setLength(0);
+		
+		assertEquals("0m", GUI.PathInformation.getInstance().getLength());
+	}
+	
+	@Test
 	public void testGetLengthFailure() {
 		
 		GUI.PathInformation.getInstance().setLength(-1);

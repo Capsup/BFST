@@ -76,7 +76,6 @@ public class PathfindingTest {
 		Graph graph = new Graph(edges);
 		
 		assertEquals(true, new Dijkstra(graph, 0).hasPathTo(2));
-		
 	}
 	
 	@Test
@@ -169,9 +168,9 @@ public class PathfindingTest {
 	public void testOneWayWithPath() {
 		
 		//Adds three edges
-		addEdge(0, 1, 3, 0, 0.25, "'ft'");
-		addEdge(1, 2, 4, 0, 0.25, "'ft'");
-		addEdge(0, 2, 5, 0, 1, "'ft'");
+		addEdge(0, 1, 0, 0, 0, "'ft'");
+		addEdge(1, 2, 0, 0, 0, "'ft'");
+		addEdge(0, 2, 0, 0, 0, "'ft'");
 		
 		Graph graph = new Graph(edges);
 		
@@ -182,12 +181,12 @@ public class PathfindingTest {
 	public void testOneWayWithoutPath() {
 		
 		//Adds three edges
-		addEdge(0, 1, 3, 0, 0.25, "'tf'");
-		addEdge(1, 2, 4, 0, 0.25, "'tf'");
-		addEdge(0, 2, 5, 0, 1, "'tf'");
+		addEdge(0, 1, 0, 0, 0, "'ft'");
+		addEdge(1, 2, 0, 0, 0, "'ft'");
+		addEdge(0, 2, 0, 0, 0, "'ft'");
 		
 		Graph graph = new Graph(edges);
 		
-		assertEquals(false, new Dijkstra(graph, 0).hasPathTo(2));
+		assertEquals(false, new Dijkstra(graph, 2).hasPathTo(0));
 	}
 }

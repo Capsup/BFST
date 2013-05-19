@@ -123,6 +123,10 @@ public class ZoomLevel extends Observable
 	 */
 	public int findIndex(double zoomLevel)
 	{
+		//If the zoom level breaks the boundary of which we can zoom out we return the highest zoom level index
+		if(zoomLevel > zoomLevels[0])
+			return 0;
+			
 		for(int i=0; i<zoomLevels.length; i++)
 		{
 			//We iterate through all zoom levels
@@ -136,7 +140,7 @@ public class ZoomLevel extends Observable
 				return i-1;
 		}
 		
-		//if we dont find a search hit during iteration we iterate the first zoom level
+		//if we dont find a search hit during iteration we return the first zoom level
 		return 0;
 	}
 	
