@@ -100,4 +100,36 @@ public class ZoomLevelTest {
 		
 		assertEquals(targetIndex, ZoomLevel.getInstance().findIndex(testZoomLevel));
 	}
+	
+	@Test
+	public void testFindZoomBelowLowerBoundary() {
+		
+		double testZoomLevel = 2;
+		
+		assertEquals(0, ZoomLevel.getInstance().findIndex(testZoomLevel));
+	}
+	
+	@Test
+	public void testFindZoomAtLowerBoundary() {
+		
+		double testZoomLevel = 1.5;
+		
+		assertEquals(0, ZoomLevel.getInstance().findIndex(testZoomLevel));
+	}
+	
+	@Test
+	public void testFindZoomAboveUpperBoundary() {
+		
+		double testZoomLevel = -1;
+		
+		assertEquals(ZoomLevel.getInstance().getZoomLevelAmount()-1, ZoomLevel.getInstance().findIndex(testZoomLevel));
+	}
+	
+	@Test
+	public void testFindZoomAtUpperBoundary() {
+		
+		double testZoomLevel = ZoomLevel.getInstance().getZoomLevel(ZoomLevel.getInstance().getZoomLevelAmount()-1);
+		
+		assertEquals(ZoomLevel.getInstance().getZoomLevelAmount()-1, ZoomLevel.getInstance().findIndex(testZoomLevel));
+	}
 }
