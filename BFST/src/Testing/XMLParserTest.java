@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
 
 import Graph.Edge;
-import Graph.Node;
 
 import XMLParser.XMLParser;
 
@@ -32,20 +30,15 @@ public class XMLParserTest
 			}
 		} catch (FileNotFoundException | XMLStreamException e) {}
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
-		finally{
-			//Node.nullNodes();
-		}
 
 		ArrayList<Edge> e = new ArrayList<Edge>();
 		ArrayList<Edge> edges = new ArrayList<Edge>();
 		
 		for(List<Edge> l : XMLParser.getEdgeList())
-			for(Edge ee : l)
-				e.add(ee);
+			for(Edge edge : l)
+				e.add(edge);
 
 		
-
-
 		ArrayList<String> s = new ArrayList<String>();
 		int v = 546404;
 		int w = 546334;
