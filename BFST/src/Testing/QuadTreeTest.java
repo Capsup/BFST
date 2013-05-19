@@ -18,7 +18,7 @@ public class QuadTreeTest
 	public void testRectQueryContains()
 	{
 		Interval<Double> intervalX = new Interval<Double>(new Double(700000), new Double(740000));
-		Interval<Double> intervalY = new Interval<Double>(new Double(6150000), new Double(620000));
+		Interval<Double> intervalY = new Interval<Double>(new Double(6150000), new Double(6200000));
 		Interval2D<Double> interval2D = new Interval2D<Double>(intervalX, intervalY);
 		
 		List<Edge> edgeList = Query.getInstance().queryEdges(interval2D, 5);
@@ -31,15 +31,9 @@ public class QuadTreeTest
 		{
 			Edge edge = iterator.next();
 			
-			if(!interval2D.contains(edge.getXFrom(), edge.getYFrom()))
-				test = false;
-			
-			if(!interval2D.contains(edge.getXTo(), edge.getYTo()))
+			if(!interval2D.contains(edge.getXFrom(), edge.getYFrom()) && !interval2D.contains(edge.getXTo(), edge.getYTo()))
 				test = false;
 		}
-		
-
-		System.out.println(edgeList.size());
 		
 		assertEquals(true, test && edgeList.size() > 0);
 	}
@@ -49,11 +43,11 @@ public class QuadTreeTest
 	{
 		//Make two rectangles
 		Interval<Double> intervalX1 = new Interval<Double>(new Double(700000), new Double(740000));
-		Interval<Double> intervalY1 = new Interval<Double>(new Double(6150000), new Double(620000));
+		Interval<Double> intervalY1 = new Interval<Double>(new Double(6150000), new Double(6200000));
 		Interval2D<Double> interval2D1 = new Interval2D<Double>(intervalX1, intervalY1);
 		
 		Interval<Double> intervalX2 = new Interval<Double>(new Double(745000), new Double(800000));
-		Interval<Double> intervalY2 = new Interval<Double>(new Double(6150000), new Double(620000));
+		Interval<Double> intervalY2 = new Interval<Double>(new Double(6150000), new Double(6200000));
 		Interval2D<Double> interval2D2 = new Interval2D<Double>(intervalX2, intervalY2);
 		
 		//Get a list of edges from first interval
@@ -73,11 +67,8 @@ public class QuadTreeTest
 			
 			if(interval2D2.contains(edge.getXTo(), edge.getYTo()))
 				test = false;
-			
-			
 		}
 		
-		System.out.println(edgeList.size());
 		assertEquals(true, test && edgeList.size() > 0);
 	}
 }

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.jogamp.common.util.IntIntHashMap;
+import com.jogamp.newt.awt.NewtCanvasAWT;
+
 import AddressParser.AddressParser;
 import AddressParser.Road;
 import Graph.Edge;
@@ -333,9 +336,79 @@ public class AddressParserSearchTest {
 	//Match zip code
 	
 	@Test
-	
-	public void testMatchZipCode()
+	public void testMatchZipCodeIsExact()
 	{
+
+		//Through exhaustive methods we have found that index 985 is "Ahornvænget, 5771"
 		
+		int matchedIndex = AddressParser.getInstance().matchZipCode(985, "5771");
+		
+		assertEquals(985, matchedIndex);
+	}
+	
+	@Test
+	public void testMatchZipCodeIsAbove()
+	{
+		//Through exhaustive methods we have found that index 985 is "Ahornvænget, 5771" and index 990 is "Ahornvænget, 6710"
+		
+		int matchedIndex = AddressParser.getInstance().matchZipCode(985, "6710");
+		
+		assertEquals(990, matchedIndex);
+	}
+	
+	@Test
+	public void testMatchZipCodeIsBelow()
+	{
+		//Through exhaustive methods we have found that index 985 is "Ahornvænget, 5771" and index 979 is "Ahornvænget, 3200"
+		
+		int matchedIndex = AddressParser.getInstance().matchZipCode(985, "3200");
+		
+		assertEquals(979, matchedIndex);
+	}
+	
+	@Test
+	public void testMatchZipCodeIsNotFound()
+	{
+		//Through exhaustive methods we have found that index 985 is "Ahornvænget, 5771" and that there are no "Ahornvænget" with the zipcode 3300
+		
+				int matchedIndex = AddressParser.getInstance().matchZipCode(985, "3300");
+				
+				assertEquals(-1, matchedIndex);
+	}
+	
+	@Test
+	public void testMatchZipCodeIsInvalid()
+	{
+		//Through exhaustive methods we have found that index 985 is "Ahornvænget, 5771" 
+		
+		int matchedIndex = AddressParser.getInstance().matchZipCode(985, "-'*s123z");
+		
+		assertEquals(-1, matchedIndex);
+	}
+	
+	//Get sorted indexes
+	
+	@Test
+	public void testGetSortedIndexes()
+	{
+		//Through exhaustive methods we have found a line up of indexes that is suitable for a sort test
+		//Index 388: Adolfsvej, 8850
+		//Index 389: Adolf Andersens Vej, 2690
+		//Index 390: Adolf Fredriksgatan, 21774
+		//Index 391: Adolphsvej, 2820
+		//Index 392: Adolph Meyers Vej, 8000
+		
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		indexes.add(388);
+		indexes.add(389);
+		indexes.add(390);
+		indexes.add(391);
+		indexes.add(392);
+		
+		int[] sortedIntegers = AddressParser.getInstance().getSortedIndexes(indexes);
+		
+		//int[] 
+				
+		//assertEquals(expected, actual)
 	}
 }
