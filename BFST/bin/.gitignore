@@ -1,10 +1,2 @@
 /MSTParse
 *.class
-/GUI
-/Graph
-/MapDraw
-/QuadTree
-/Route
-/AddressParser
-/DataProcessing
-/Testing

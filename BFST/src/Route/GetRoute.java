@@ -12,7 +12,7 @@ public class GetRoute extends Thread {
 	private static int lastPathSetting = -1;
 	private static int lastTransportSetting = -1;
 	private static int lastFerrySetting = -1;
-	
+
 	/**
 	 * Computes the shortest route from node 'from' to node 'to' in the current road graph. The data is pushed back to the current instance of MapDraw
 	 * @param from - the from vertex
@@ -21,11 +21,11 @@ public class GetRoute extends Thread {
 	public GetRoute(int from, int to){
 		this.from = from;
 		this.to = to;
-		
+
 		if(hasNewPath() || hasNewTransport())
 			this.start();
 	}
-	
+
 	/**
 	 * runs the shortest path algorithm and pushed the path, if any, back to the current instance of MapDraw
 	 */
@@ -33,31 +33,40 @@ public class GetRoute extends Thread {
 	{
 		if(hasNewPath())
 			GUI.PathInformation.getInstance().setLength(-1);
-		
+
 		GUI.PathInformation.getInstance().setTravelTime(-1);
 		GUI.PathInformation.getInstance().update();
-		
+
 		Dijkstra d = new Dijkstra(Query.getInstance().getGraph(), from);
-		
+
 		//Iterable<Edge> edges = d.pathTo(to);
-		Edge[] edges = d.pathTo(to);
-		
-		if(hasNewPath())
-			MapDraw.getInstance().setRoute(edges);
-		
-		if(hasNewPath())
-			GUI.PathInformation.getInstance().setLength(d.getCurrentPathLength());
-		
-		GUI.PathInformation.getInstance().setTravelTime(d.getTravelTime());
-		GUI.PathInformation.getInstance().update();
-		
-		lastFrom = from;
-		lastTo = to;
-		lastPathSetting = Settings.routeProfile();
-		lastTransportSetting = Settings.meansOfTransport();
-		lastFerrySetting = Settings.ferryAllowed();
+		if(d.hasPathTo(to)){
+			Edge[] edges = d.pathTo(to);
+
+			if(hasNewPath())
+				MapDraw.getInstance().setRoute(edges);
+
+			if(hasNewPath())
+				GUI.PathInformation.getInstance().setLength(d.getCurrentPathLength());
+
+			GUI.PathInformation.getInstance().setTravelTime(d.getTravelTime());
+			GUI.PathInformation.getInstance().update();
+
+			lastFrom = from;
+			lastTo = to;
+			lastPathSetting = Settings.routeProfile();
+			lastTransportSetting = Settings.meansOfTransport();
+			lastFerrySetting = Settings.ferryAllowed();
+		}
+		else
+		{
+			GUI.PathInformation.getInstance().setLength(-2);
+
+			GUI.PathInformation.getInstance().setTravelTime(-2);
+			GUI.PathInformation.getInstance().update();
+		}
 	}
-	
+
 	/**
 	 * Checks if it route last calculated is the same as now
 	 * @return boolean
@@ -66,7 +75,7 @@ public class GetRoute extends Thread {
 	{
 		return from != lastFrom || to != lastTo || Settings.routeProfile() != lastPathSetting || Settings.meansOfTransport() != lastTransportSetting || Settings.ferryAllowed() != lastFerrySetting;
 	}
-	
+
 	/**
 	 * Checks if the means of transportation have changed
 	 * @return boolean
