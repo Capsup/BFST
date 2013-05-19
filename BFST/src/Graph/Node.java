@@ -75,4 +75,8 @@ public class Node{
 		return yCoord;
 	}
 
+	public static int size() {
+		return nodes.size();
+	}
+
 }

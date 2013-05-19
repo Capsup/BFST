@@ -31,7 +31,7 @@ public class XMLCreator
 	{
 		try
 		{
-			new XMLCreator().convertToXML( "Z://kdv_unload" );
+			new XMLCreator().convertToXML( "Z://kdv_unload_test" );
 		}
 		catch( Exception e )
 		{
