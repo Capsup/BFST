@@ -44,7 +44,7 @@ public class XMLParserTest
 				e.add(ee);
 
 		
-
+		//We input the edges to be compared by manually examining the input xml file
 
 		ArrayList<String> s = new ArrayList<String>();
 		int v = 546404;
@@ -136,7 +136,7 @@ public class XMLParserTest
 
 		edges.add(new Edge(v,w,s));
 
-
+		
 		for(int i = 0; i < edges.size(); i++){		
 			assertEquals(edges.get(i).getFromIndex(), e.get(i).getFromIndex());
 			assertEquals(edges.get(i).getToIndex(), e.get(i).getToIndex());

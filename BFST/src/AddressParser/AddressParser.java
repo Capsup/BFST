@@ -54,6 +54,23 @@ public class AddressParser
 		//and sort it
 		Arrays.sort(edges);
 		
+		//We then convert the road list to an array of roads
+		roads = convertToRoads(edges);
+	}
+	
+	/**
+	 * @return returns the singleton, if the singleton is null we initialize it.
+	 */
+	public static AddressParser getInstance()
+	{
+		if(instance == null)
+			new AddressParser();
+		
+		return instance;
+	}
+	
+	public static Road[] convertToRoads(Edge[] edges)
+	{
 		//We allocate a road list to contain all the roads
 		ArrayList<Road> roadList = new ArrayList<Road>();
 		
@@ -68,48 +85,41 @@ public class AddressParser
 		{
 			//We iterate through all the edges
 			
-			if(roadName.equals(edges[i].getName()) && zipCode == edges[i].getZip())
+			if(i != edges.length-1)
 			{
-				//If the edge still has the same name and zipcode as the current road, we add it to the list
-				currEdgeList.add(edges[i]);
-			}
-			else
-			{
-				//Once we get an edge with a new road name or new zipcode, we know that we have reached a new road
-				
-				//We change the compare variables to match the new road
-				roadName = edges[i].getName();
-				zipCode = edges[i].getZip();
-				
-				//We convert our array list to an edge array
-				Edge[] edgeArray = new Edge[currEdgeList.size()];
-				currEdgeList.toArray(edgeArray);
-				
-				//we create a new road based on the edge array and add it to the road list
-				roadList.add(new Road(edgeArray));
-				
-				//We reset the current edge list
-				currEdgeList = new ArrayList<Edge>();
-				
-				//And add the first edge to the list
-				currEdgeList.add(edges[i]);
+				if(roadName.equals(edges[i].getName()) && zipCode == edges[i].getZip())
+				{
+					//If the edge still has the same name and zipcode as the current road, we add it to the list
+					currEdgeList.add(edges[i]);
+				}
+				else
+				{
+					//Once we get an edge with a new road name or new zipcode, we know that we have reached a new road
+					
+					//We change the compare variables to match the new road
+					roadName = edges[i].getName();
+					zipCode = edges[i].getZip();
+					
+					//We convert our array list to an edge array
+					Edge[] edgeArray = new Edge[currEdgeList.size()];
+					currEdgeList.toArray(edgeArray);
+					
+					//we create a new road based on the edge array and add it to the road list
+					roadList.add(new Road(edgeArray));
+					
+					//We reset the current edge list
+					currEdgeList = new ArrayList<Edge>();
+					
+					//And add the first edge to the list
+					currEdgeList.add(edges[i]);
+				}
 			}
 		}
 		
-		//We then convert the road list to an array of roads
-		roads = new Road[roadList.size()];
-		roadList.toArray(roads);
-	}
-	
-	/**
-	 * @return returns the singleton, if the singleton is null we initialize it.
-	 */
-	public static AddressParser getInstance()
-	{
-		if(instance == null)
-			new AddressParser();
+		Road[] roadArray = new Road[roadList.size()];
+		roadList.toArray(roadArray);
 		
-		return instance;
+		return roadArray;
 	}
 	
 	/**
