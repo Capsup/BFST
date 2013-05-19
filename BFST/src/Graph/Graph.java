@@ -98,7 +98,14 @@ public class Graph {
 
 		LinkedList<Edge> newAdj = new LinkedList<Edge>();
 
-		if(Route.Settings.meansOfTransport() == Route.Settings.car){
+		if(Route.Settings.meansOfTransport() == Route.Settings.bike || Route.Settings.meansOfTransport() == Route.Settings.foot){
+			for(Edge e : adj[v])
+				if(e.getTyp() != 1 && e.getTyp() != 2 && e.getTyp() != 31 && e.getTyp() != 32 && e.getTyp() != 41 && e.getTyp() != 42)
+					newAdj.add(e);
+			return newAdj;
+		}
+
+		else if(Route.Settings.meansOfTransport() == Route.Settings.car){
 
 			for(Edge e : adj[v])
 				if(Route.Settings.ferryAllowed() == 0 ? (e.getTyp() != 8) : (e.getTyp() != 8 && (e.getTyp() != 80)))
