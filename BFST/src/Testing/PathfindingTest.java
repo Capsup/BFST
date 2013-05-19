@@ -73,7 +73,7 @@ public class PathfindingTest {
 		addEdge(1, 2, 4, 0, 0, "''");
 		addEdge(0, 2, 5, 0, 0, "''");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(true, new Dijkstra(graph, 0).hasPathTo(2));
 	}
@@ -91,7 +91,7 @@ public class PathfindingTest {
 		addEdge(3, 5, 5, 0, 0, "''");
 		addEdge(4, 5, 5, 0, 0, "''");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(false, new Dijkstra(graph, 0).hasPathTo(3));
 	}
@@ -108,7 +108,7 @@ public class PathfindingTest {
 		//Adds a ferry type edge
 		addEdge(0, 2, 5, 80, 0, "''");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(2, new Dijkstra(graph, 0).pathTo(2).length);
 	}
@@ -125,7 +125,7 @@ public class PathfindingTest {
 		//Adds a ferry type edge
 		addEdge(0, 2, 5, 80, 0, "''");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(1, new Dijkstra(graph, 0).pathTo(2).length);
 	}
@@ -142,7 +142,7 @@ public class PathfindingTest {
 		addEdge(1, 2, 4, 0, 0.25, "''");
 		addEdge(0, 2, 5, 0, 1, "''");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(2, new Dijkstra(graph, 0).pathTo(2).length);
 	}
@@ -159,7 +159,7 @@ public class PathfindingTest {
 		addEdge(1, 2, 4, 0, 0.25, "''");
 		addEdge(0, 2, 5, 0, 1, "''");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(1, new Dijkstra(graph, 0).pathTo(2).length);
 	}
@@ -172,7 +172,7 @@ public class PathfindingTest {
 		addEdge(1, 2, 0, 0, 0, "'ft'");
 		addEdge(0, 2, 0, 0, 0, "'ft'");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(true, new Dijkstra(graph, 0).hasPathTo(2));
 	}
@@ -185,7 +185,7 @@ public class PathfindingTest {
 		addEdge(1, 2, 0, 0, 0, "'ft'");
 		addEdge(0, 2, 0, 0, 0, "'ft'");
 		
-		Graph graph = new Graph(edges);
+		Graph graph = new Graph(edges, 6);
 		
 		assertEquals(false, new Dijkstra(graph, 2).hasPathTo(0));
 	}

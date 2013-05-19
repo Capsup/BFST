@@ -1,7 +1,6 @@
 package Graph;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,21 +30,8 @@ public class Graph {
 	 * @param V
 	 * @param list
 	 */
-	@SuppressWarnings("unchecked")
-	public Graph(ArrayList<List<Edge>> list) {
-		int V = 0;
-		for(Iterable<Edge> l : list)
-			for (Edge e : l)
-				V++;
-		
-		this.V = V;
-		
-		this.E = 0;
-		adj = (LinkedList<Edge>[]) new LinkedList[V];
-		for (int v = 0; v < V; v++)
-			adj[v] = new LinkedList<Edge>();
-		
-		
+	public Graph(ArrayList<List<Edge>> list, int v) {
+		this(v);
 		for(Iterable<Edge> l : list)
 			for(Edge e : l)
 				addEdge(e);

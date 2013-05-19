@@ -1,5 +1,4 @@
 package DataProcessing;
-import java.awt.print.Printable;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,7 +17,7 @@ import XMLParser.XMLParser;
  * This class handles map data, and  you can query the map data. 
  */
 public class Query{
-
+	private static int numberOfNodes;
 	private static Query instance; //For the singleton implementation
 	private Graph graph; //The road graph
 
@@ -38,7 +37,7 @@ public class Query{
 	private Query(){
 		getData();
 		final ArrayList<List<Edge>> list = XMLParser.getEdgeList();
-		graph = new Graph(list);
+		graph = new Graph(list, numberOfNodes + 1);
 		makeQuadTree(list);
 	}
 	
@@ -93,6 +92,7 @@ public class Query{
 		} catch (FileNotFoundException | XMLStreamException e) {}
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
 		finally{
+			numberOfNodes = Node.size();
 			Node.nullNodes();
 		}
 	}
