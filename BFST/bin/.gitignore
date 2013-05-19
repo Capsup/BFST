@@ -1,2 +1,5 @@
 /MSTParse
 *.class
+/GUI
+/Route
+/Testing
