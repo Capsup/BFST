@@ -57,8 +57,8 @@ public class Graph {
 	 * Add the directed edge e to this digraph.
 	 */
 	public void addEdge(Edge e)  {
-		if(e.getOneWay().equals("'n'"));
-
+		if(e.getOneWay().equals("'n'")) return;
+		
 		int v = e.either();
 		int w = e.other(v);
 

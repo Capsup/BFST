@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
 
 import Graph.Edge;
+import Graph.Node;
 
 import XMLParser.XMLParser;
 
@@ -31,6 +33,7 @@ public class XMLParserTest
 		} catch (FileNotFoundException | XMLStreamException e) {}
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
 
+
 		ArrayList<Edge> e = new ArrayList<Edge>();
 		ArrayList<Edge> edges = new ArrayList<Edge>();
 		
@@ -39,6 +42,8 @@ public class XMLParserTest
 				e.add(edge);
 
 		
+		//We input the edges to be compared by manually examining the input xml file
+
 		ArrayList<String> s = new ArrayList<String>();
 		int v = 546404;
 		int w = 546334;
@@ -129,7 +134,7 @@ public class XMLParserTest
 
 		edges.add(new Edge(v,w,s));
 
-
+		
 		for(int i = 0; i < edges.size(); i++){		
 			assertEquals(edges.get(i).getFromIndex(), e.get(i).getFromIndex());
 			assertEquals(edges.get(i).getToIndex(), e.get(i).getToIndex());

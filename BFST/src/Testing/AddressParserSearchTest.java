@@ -3,6 +3,7 @@ package Testing;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -248,12 +249,24 @@ public class AddressParserSearchTest {
 		{
 			int index = adjacentIndexes.get(i);
 			
-			if(index < baseIndex-Math.ceil(count/2) && index > baseIndex+Math.ceil(count/2))
+			if(index < 0 || index >= AddressParser.getInstance().getRoads().length)
 				test = false;
 		}
 		
 		if(adjacentIndexes.size() != count)
 			test = false;
+		
+		int[] indexArray = new int[adjacentIndexes.size()];
+		
+		for(int i=0; i<indexArray.length; i++)
+			indexArray[i] = adjacentIndexes.get(i);
+		
+		Arrays.sort(indexArray);
+		
+		for(int i=0; i<indexArray.length; i++)
+			if(i != 0)
+				if(indexArray[i] != indexArray[i-1]+1)
+					test = false;
 		
 		assertEquals(true, test);
 	}
@@ -271,12 +284,25 @@ public class AddressParserSearchTest {
 		{
 			int index = adjacentIndexes.get(i);
 			
-			if(index < baseIndex-Math.ceil(count/2) && index > baseIndex+Math.ceil(count/2))
+			if(index < 0 || index >= AddressParser.getInstance().getRoads().length)
 				test = false;
 		}
 		
 		if(adjacentIndexes.size() != count)
 			test = false;
+		
+
+		int[] indexArray = new int[adjacentIndexes.size()];
+		
+		for(int i=0; i<indexArray.length; i++)
+			indexArray[i] = adjacentIndexes.get(i);
+		
+		Arrays.sort(indexArray);
+		
+		for(int i=0; i<indexArray.length; i++)
+			if(i != 0)
+				if(indexArray[i] != indexArray[i-1]+1)
+					test = false;
 		
 		assertEquals(true, test);
 	}
@@ -294,9 +320,6 @@ public class AddressParserSearchTest {
 		{
 			int index = adjacentIndexes.get(i);
 			
-			if(index < baseIndex-Math.ceil(count/2) && index > baseIndex+Math.ceil(count/2))
-				test = false;
-			
 			if(index < 0 || index >= AddressParser.getInstance().getRoads().length)
 				test = false;
 		}
@@ -304,6 +327,19 @@ public class AddressParserSearchTest {
 		if(adjacentIndexes.size() != count)
 			test = false;
 			
+
+		int[] indexArray = new int[adjacentIndexes.size()];
+		
+		for(int i=0; i<indexArray.length; i++)
+			indexArray[i] = adjacentIndexes.get(i);
+		
+		Arrays.sort(indexArray);
+		
+		for(int i=0; i<indexArray.length; i++)
+			if(i != 0)
+				if(indexArray[i] != indexArray[i-1]+1)
+					test = false;
+		
 		assertEquals(true, test);
 	}
 	
@@ -320,9 +356,6 @@ public class AddressParserSearchTest {
 		{
 			int index = adjacentIndexes.get(i);
 			
-			if(index < baseIndex-Math.ceil(count/2) && index > baseIndex+Math.ceil(count/2))
-				test = false;
-			
 			if(index < 0 || index >= AddressParser.getInstance().getRoads().length)
 				test = false;
 		}
@@ -330,6 +363,19 @@ public class AddressParserSearchTest {
 		if(adjacentIndexes.size() != count)
 			test = false;
 			
+
+		int[] indexArray = new int[adjacentIndexes.size()];
+		
+		for(int i=0; i<indexArray.length; i++)
+			indexArray[i] = adjacentIndexes.get(i);
+		
+		Arrays.sort(indexArray);
+		
+		for(int i=0; i<indexArray.length; i++)
+			if(i != 0)
+				if(indexArray[i] != indexArray[i-1]+1)
+					test = false;
+		
 		assertEquals(true, test);
 	}
 	
@@ -371,9 +417,9 @@ public class AddressParserSearchTest {
 	{
 		//Through exhaustive methods we have found that index 985 is "Ahornvænget, 5771" and that there are no "Ahornvænget" with the zipcode 3300
 		
-				int matchedIndex = AddressParser.getInstance().matchZipCode(985, "3300");
-				
-				assertEquals(-1, matchedIndex);
+		int matchedIndex = AddressParser.getInstance().matchZipCode(985, "3300");
+		
+		assertEquals(-1, matchedIndex);
 	}
 	
 	@Test
@@ -392,23 +438,92 @@ public class AddressParserSearchTest {
 	public void testGetSortedIndexes()
 	{
 		//Through exhaustive methods we have found a line up of indexes that is suitable for a sort test
-		//Index 388: Adolfsvej, 8850
-		//Index 389: Adolf Andersens Vej, 2690
-		//Index 390: Adolf Fredriksgatan, 21774
-		//Index 391: Adolphsvej, 2820
-		//Index 392: Adolph Meyers Vej, 8000
+		//Index 173: Abevej, 8400
+		//Index 174: Abigaelsvej, 5000
+		//Index 175: Abildager, 2605
+		//Index 176: Abildbak, 9362
+		//Index 177: Abildgaardsgade, 2100
 		
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		indexes.add(388);
-		indexes.add(389);
-		indexes.add(390);
-		indexes.add(391);
-		indexes.add(392);
+		indexes.add(177);
+		indexes.add(176);
+		indexes.add(175);
+		indexes.add(174);
+		indexes.add(173);
 		
 		int[] sortedIntegers = AddressParser.getInstance().getSortedIndexes(indexes);
 		
-		//int[] 
-				
-		//assertEquals(expected, actual)
+		//The expected sorted outcome of this search
+		int[] expectedIntegers = new int[]{177, 176, 175, 174, 173};
+		
+		boolean test = true;
+		
+		for(int i=0; i<sortedIntegers.length; i++)
+			if(sortedIntegers[i] != expectedIntegers[i] )
+				test = false;
+		
+		assertEquals(true, test);
+	}
+	
+	@Test
+	public void testGetSortedIndexesSomeResemblance()
+	{
+		//Through exhaustive methods we have found that each of these indexes has the following names and has some resemblence
+		//Index 173: Abevej, 8400
+		//Index 174: Abigaelsvej, 5000
+		//Index 177: Abildgaardsgade, 2100
+		//Index 5771: Bellevue Haveforening, 2700
+		//Index 5772: Belle Møllebanke, 7140
+		
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		indexes.add(174);
+		indexes.add(177);
+		indexes.add(5771);
+		indexes.add(173);
+		indexes.add(5772);
+		
+		int[] sortedIntegers = AddressParser.getInstance().getSortedIndexes(indexes);
+		
+		//The expected sorted outcome of this search
+		int[] expectedIntegers = new int[]{174, 177, 173, 5771, 5772};
+		
+		boolean test = true;
+		
+		for(int i=0; i<sortedIntegers.length; i++)
+			if(sortedIntegers[i] != expectedIntegers[i] )
+				test = false;
+		
+		assertEquals(true, test);
+	}
+	
+	@Test
+	public void testGetSortedIndexesNoResemblance()
+	{
+		//Through exhaustive methods we have found that each of these indexes has the following names and has no resemblence
+		//Index 5234: Barrvägen, 26371
+		//Index 50536: Kirkegade, 7080
+		//Index 20123: Ellekrattet, 2950
+		//Index 15450: Dahlbergsgatan
+		//Index 123: Aarøsundvej, 6100
+		
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		indexes.add(20123);
+		indexes.add(123);
+		indexes.add(15450);
+		indexes.add(5234);
+		indexes.add(50536);
+		
+		int[] sortedIntegers = AddressParser.getInstance().getSortedIndexes(indexes);
+		
+		//The expected sorted outcome of this search
+		int[] expectedIntegers = new int[]{20123, 123, 15450, 5234, 50536};
+		
+		boolean test = true;
+		
+		for(int i=0; i<sortedIntegers.length; i++)
+			if(sortedIntegers[i] != expectedIntegers[i] )
+				test = false;
+		
+		assertEquals(true, test);
 	}
 }
