@@ -129,8 +129,10 @@ public class PathInformation extends Observable
 			else
 				return Math.round(currLength)+"m"; 	//Otherwise we just return the length as meters
 		}
-		else
+		else if(length == -1)
 			return "Calculating...";				//If the length is below zero we return "Calculating...", this is used in a multi-thread perspective
+		else
+			return "No route found...";
 	}
 	
 	/**
@@ -211,8 +213,10 @@ public class PathInformation extends Observable
 			return stringBuilder.toString();
 		
 		}
-		else
+		else if(travelTime == -1)
 			return "Calculating...";						//If the length is below zero we return "Calculating...", this is used in a multi-thread perspective
+		else
+			return "No route found...";
 	}
 	
 	//This method is called whenever we need to notify our observers that we have changed our settings. In this case, our visiblity.
