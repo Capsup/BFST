@@ -59,13 +59,13 @@ public class Edge implements Comparable<Edge>
 
 		if(Route.Settings.meansOfTransport() == Route.Settings.bike)
 			if(Route.Settings.routeProfile() == Route.Settings.fastest_route)
-				return typ != 80 ? (length/1000)/18 : driveTime;
+				return getTyp() != 80 ? (getLength()/1000)/18 : (getSpeedLimit() != 0 ? (getLength()/1000)/getSpeedLimit(): (getLength()/1000)/50);
 			else if(Route.Settings.routeProfile() == Route.Settings.shortest_route)
 				return length;
 
 		if(Route.Settings.meansOfTransport() == Route.Settings.foot)
 			if(Route.Settings.routeProfile() == Route.Settings.fastest_route)
-				return typ != 80 ? (length/1000)/5 : driveTime;
+				return getTyp() != 80 ? (getLength()/1000)/5 : (getSpeedLimit() != 0 ? (getLength()/1000)/getSpeedLimit(): (getLength()/1000)/50);
 			else if(Route.Settings.routeProfile() == Route.Settings.shortest_route)
 				return length;
 

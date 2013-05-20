@@ -1,10 +1,2 @@
 /MSTParse
 *.class
-/GUI
-/Route
-/Testing
-/XMLParser
-/DataProcessing
-/Graph
-/XMLCreator
-/AddressParser

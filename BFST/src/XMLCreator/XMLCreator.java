@@ -135,7 +135,7 @@ public class XMLCreator
 				eventWriter.add( configStartElement );
 				eventWriter.add( end );
 
-				for( int i = 20000 * k; i < 20000 * (k+1); i++ )
+				for( int i = 2 * k; i < 2 * (k+1); i++ )
 				{
 					String[] data;
 					try{

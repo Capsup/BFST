@@ -33,16 +33,14 @@ public class XMLParserTest
 			}
 		} catch (FileNotFoundException | XMLStreamException e) {}
 		try { for(Thread t : threads) t.join();	} catch (InterruptedException e) { e.printStackTrace(); }
-		finally{
-			//Node.nullNodes();
-		}
+
 
 		ArrayList<Edge> e = new ArrayList<Edge>();
 		ArrayList<Edge> edges = new ArrayList<Edge>();
 		
 		for(List<Edge> l : XMLParser.getEdgeList())
-			for(Edge ee : l)
-				e.add(ee);
+			for(Edge edge : l)
+				e.add(edge);
 
 		
 		//We input the edges to be compared by manually examining the input xml file

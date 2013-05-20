@@ -97,9 +97,10 @@ public class Dijkstra {
 	        	else
 	        		currentPathTravelTime += (e.getLength()/1000)/50;
         	else if(Settings.meansOfTransport() == Settings.bike)
-        		currentPathTravelTime += (e.getLength()/1000)/18;
+         		currentPathTravelTime += e.getTyp() != 80 ? (e.getLength()/1000)/18 : (e.getSpeedLimit() != 0 ? (e.getLength()/1000)/e.getSpeedLimit(): (e.getLength()/1000)/50);
+        	
         	else 
-        		currentPathTravelTime += (e.getLength()/1000)/5;
+        		currentPathTravelTime += e.getTyp() != 80 ? (e.getLength()/1000)/5 : (e.getSpeedLimit() != 0 ? (e.getLength()/1000)/e.getSpeedLimit(): (e.getLength()/1000)/50);
         	path.add(e);
         }
         
