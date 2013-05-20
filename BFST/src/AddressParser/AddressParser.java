@@ -70,9 +70,9 @@ public class AddressParser
 	}
 	
 	/**
-	 * Convert an array of edges into an array of roads. Each road is created by collecting all individual edges with the same name and zipcode
+	 * Converts an array of edges to an array of roads
 	 * @param edges
-	 * @return New Road array
+	 * @return The array of roads
 	 */
 	public static Road[] convertToRoads(Edge[] edges)
 	{
