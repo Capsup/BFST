@@ -1,83 +1,92 @@
+package Testing;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import AddressParser.AddressParser;
 
-public class AddressParserTest {
-	
-	private AddressParser ap = AddressParser.getInstance();
-/*
-	//Test Case A
-	@Test 
-	public void a() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{""}, ap.parseAddress(""));
-	}
-
-	//Test Case B
-	@Test (expected = AddressParser.NaughtyException.class) 
-	public void b() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"A","","","","",""}, ap.parseAddress("A"));
+public class AddressParserTest
+{
+	@BeforeClass
+    public static void setUpClass() throws Exception {
+		
+		AddressParser.getInstance();
 	}
 	
-	//Test Case C
-	@Test (expected = AddressParser.NaughtyException.class) 
-	public void c() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"ABCDE","","","","",""}, ap.parseAddress("ABCDE"));
-		}
-	
-	//Test Case D
-	@Test (expected = AddressParser.NaughtyException.class) 
-	public void d() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"RuedLanggaards","","","","",""}, ap.parseAddress("RuedLanggaards"));
-		}
-	
-	/Test Case E
-	@Test (expected = AddressParser.NaughtyException.class) 
-	public void e() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{""}, ap.parseAddress("RuedLanggaards3"));
-		}
-	
-	//Test Case F
-	@Test 
-	public void f() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"Rued Langgaards Vej","7","","5","",""}, ap.parseAddress("Rued Langgaards Vej, 7 5. sal"));
-		}
-	
-	//Test Case F2
-	@Test 
-	public void f2() throws AddressParser.NaughtyException {assertArrayEquals(new String[]{"Rued Langgaards Vej","7","","5","",""}, ap.parseAddress("Rued Langgaards Vej, 7 5 sal"));}
-	
-	//Test Case F3
-	@Test 
-	public void f3() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"Rued Langgaards Vej","7","","5","",""}, ap.parseAddress("Rued Langgaards Vej, 7, 5 sal"));
-		}
-	
-	//Test Case G
-	@Test 
-	public void g() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"Rued Langgaards Vej","123","A","","",""}, ap.parseAddress("Rued Langgaards Vej, 123A"));
-		}
+	@Test
+	public void testA()
+	{
+		String input = "";
+		
+		String[] output = AddressParser.getInstance().parseAddress(input);
+		
+		assertEquals("", output[0]);
+		assertEquals("", output[1]);
+		assertEquals("", output[2]);
+		assertEquals("", output[3]);
+		assertEquals("", output[4]);
+		assertEquals("", output[5]);
+	}
 
-	//Test Case H
-	@Test 
-	public void h() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"Rued Langgaards Vej","","","","2650","Hvidovre"}, ap.parseAddress("Rued Langgaards Vej, 2650 Hvidovre"));
-		}
+	@Test
+	public void testB()
+	{
+		String input = "A1";
+		
+		String[] output = AddressParser.getInstance().parseAddress(input);
+		
+		assertEquals("", output[0]);
+		assertEquals("", output[1]);
+		assertEquals("", output[2]);
+		assertEquals("", output[3]);
+		assertEquals("", output[4]);
+		assertEquals("", output[5]);
+	}
 	
-	//Test Case I
-	@Test 
-	public void i() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"Rued Langgaards Vej","","","","","Hvidovre"}, ap.parseAddress("Rued Langgaards Vej, Hvidovre"));
-		}
+	@Test
+	public void testC()
+	{
+		String input = "A B C 123";
+		
+		String[] output = AddressParser.getInstance().parseAddress(input);
+		
+		assertEquals("A B C", output[0]);
+		assertEquals("123", output[1]);
+		assertEquals("", output[2]);
+		assertEquals("", output[3]);
+		assertEquals("", output[4]);
+		assertEquals("", output[5]);
+	}
 	
-	//Test Case J
-	@Test 
-	public void j() throws AddressParser.NaughtyException {
-		assertArrayEquals(new String[]{"Rued Langgaards Vej","7","A","5","2650","Hvidovre"}, ap.parseAddress("Rued Langgaards Vej, 5. sal, 7A, , Hvidovre, 2650"));
-		}
-
+	@Test
+	public void testD()
+	{
+		String input = "Rued Langgaards Vej";
+		
+		String[] output = AddressParser.getInstance().parseAddress(input);
+		
+		assertEquals("Rued Langgaards Vej", output[0]);
+		assertEquals("", output[1]);
+		assertEquals("", output[2]);
+		assertEquals("", output[3]);
+		assertEquals("", output[4]);
+		assertEquals("", output[5]);
+	}
 	
-*/
+	@Test
+	public void testE()
+	{
+		String input = "Rued Langgaards Vej 123 1. sal, 2630 Taastrup";
+		
+		String[] output = AddressParser.getInstance().parseAddress(input);
+		
+		assertEquals("Rued Langgaards Vej", output[0]);
+		assertEquals("123", output[1]);
+		assertEquals("", output[2]);
+		assertEquals("1", output[3]);
+		assertEquals("2630", output[4]);
+		assertEquals("Taastrup", output[5]);
+	}
 }
