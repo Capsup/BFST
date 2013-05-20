@@ -1,2 +1,8 @@
 /MSTParse
 *.class
+/XMLParser
+/Graph
+/QuadTree
+/Route
+/Testing
+/XMLCreator
