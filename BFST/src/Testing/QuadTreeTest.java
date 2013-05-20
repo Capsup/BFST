@@ -5,10 +5,12 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import DataProcessing.Query;
 import Graph.Edge;
+import Graph.Node;
 import QuadTree.Interval;
 import QuadTree.Interval2D;
 
@@ -71,4 +73,10 @@ public class QuadTreeTest
 		
 		assertEquals(true, test && edgeList.size() > 0);
 	}
+	
+	@AfterClass
+    public static void tearDownClass() throws Exception {
+        Node.nullNodes();
+       //Query.getInstance() = null;
+    }
 }

@@ -26,7 +26,7 @@ public class Node{
 	/**
 	 * A HashMap of every node is saved, this void deletes that list. This can be used if the map is no longer needed
 	 */
-	public static void nullNodes(){ nodes = null; }
+	public static void nullNodes(){ nodes = new HashMap<Integer, Node>(); }
 	
 	/**
 	 * Returns a given node

@@ -4,10 +4,12 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
 import Graph.Edge;
+import Graph.Node;
 import Route.Settings;
 
 public class EdgeTest {
@@ -124,4 +126,9 @@ public class EdgeTest {
 		
 		assertEquals(true, (carTime < bikeTime) && (bikeTime < footTime));
 	}
+
+	@AfterClass
+    public static void tearDownClass() throws Exception {
+        Node.nullNodes();
+    }
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.jws.Oneway;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class PathfindingTest {
 
 	static Graph graph;
 	static ArrayList<List<Edge>> edges;
-	
+
 	@Before
 	public void setUp()
 	{	
@@ -189,4 +190,41 @@ public class PathfindingTest {
 		
 		assertEquals(false, new Dijkstra(graph, 2).hasPathTo(0));
 	}
+	
+	@Test
+	public void testBicycleAvoidsHighways() {
+		
+		Route.Settings.setMeansOfTransport(Route.Settings.bike);
+		Route.Settings.setRouteProfile(Route.Settings.shortest_route);
+		
+		//Adds three edges
+		addEdge(0, 1, 3, 20, 0, "''");
+		addEdge(1, 2, 4, 20, 0, "''");
+		addEdge(0, 2, 5, 1, 0, "''");
+		
+		Graph graph = new Graph(edges, 6);
+		
+		assertEquals(2, new Dijkstra(graph, 0).pathTo(2).length);
+	}
+	
+	@Test
+	public void testFeetAvoidsHighways() {
+		
+		Route.Settings.setMeansOfTransport(Route.Settings.foot);
+		Route.Settings.setRouteProfile(Route.Settings.shortest_route);
+		
+		//Adds three edges
+		addEdge(0, 1, 3, 20, 0, "''");
+		addEdge(1, 2, 4, 20, 0, "''");
+		addEdge(0, 2, 5, 1, 0, "''");
+		
+		Graph graph = new Graph(edges, 6);
+		
+		assertEquals(2, new Dijkstra(graph, 0).pathTo(2).length);
+	}
+	
+	@AfterClass
+    public static void tearDownClass() throws Exception {
+        Node.nullNodes();
+    }
 }

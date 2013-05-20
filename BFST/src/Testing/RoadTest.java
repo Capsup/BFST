@@ -4,12 +4,14 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import AddressParser.Road;
 import Graph.Edge;
+import Graph.Node;
 
 public class RoadTest {
 
@@ -72,7 +74,7 @@ public class RoadTest {
 	}
 	
 	@Test
-	public void testOnlyOneNumberOnEdge() {
+	public void testSameStartAndEndOnEdge() {
 		
 		assertEquals(3, road.getEdgeWithRoadNumber(21, false));
 		
@@ -115,4 +117,8 @@ public class RoadTest {
 		
 	}
 	
+	@AfterClass
+    public static void tearDownClass() throws Exception {
+        Node.nullNodes();
+    }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import Graph.Edge;
@@ -154,4 +155,8 @@ public class XMLParserTest
 		}
 	}
 
+	@AfterClass
+    public static void tearDownClass() throws Exception {
+        Node.nullNodes();
+    }
 }

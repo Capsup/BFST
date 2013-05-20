@@ -69,6 +69,11 @@ public class AddressParser
 		return instance;
 	}
 	
+	/**
+	 * Convert an array of edges into an array of roads. Each road is created by collecting all individual edges with the same name and zipcode
+	 * @param edges
+	 * @return New Road array
+	 */
 	public static Road[] convertToRoads(Edge[] edges)
 	{
 		//We allocate a road list to contain all the roads
@@ -85,34 +90,41 @@ public class AddressParser
 		{
 			//We iterate through all the edges
 			
-			if(i != edges.length-1)
+			if(roadName.equals(edges[i].getName()) && zipCode == edges[i].getZip())
 			{
-				if(roadName.equals(edges[i].getName()) && zipCode == edges[i].getZip())
-				{
-					//If the edge still has the same name and zipcode as the current road, we add it to the list
-					currEdgeList.add(edges[i]);
-				}
-				else
-				{
-					//Once we get an edge with a new road name or new zipcode, we know that we have reached a new road
-					
-					//We change the compare variables to match the new road
-					roadName = edges[i].getName();
-					zipCode = edges[i].getZip();
-					
-					//We convert our array list to an edge array
-					Edge[] edgeArray = new Edge[currEdgeList.size()];
-					currEdgeList.toArray(edgeArray);
-					
-					//we create a new road based on the edge array and add it to the road list
-					roadList.add(new Road(edgeArray));
-					
-					//We reset the current edge list
-					currEdgeList = new ArrayList<Edge>();
-					
-					//And add the first edge to the list
-					currEdgeList.add(edges[i]);
-				}
+				//If the edge still has the same name and zipcode as the current road, we add it to the list
+				currEdgeList.add(edges[i]);
+			}
+			else
+			{
+				//Once we get an edge with a new road name or new zipcode, we know that we have reached a new road
+				
+				//We change the compare variables to match the new road
+				roadName = edges[i].getName();
+				zipCode = edges[i].getZip();
+				
+				//We convert our array list to an edge array
+				Edge[] edgeArray = new Edge[currEdgeList.size()];
+				currEdgeList.toArray(edgeArray);
+				
+				//we create a new road based on the edge array and add it to the road list
+				roadList.add(new Road(edgeArray));
+				
+				//We reset the current edge list
+				currEdgeList = new ArrayList<Edge>();
+				
+				//And add the first edge to the list
+				currEdgeList.add(edges[i]);
+			}
+			
+			if(i == edges.length-1)
+			{
+				//We convert our array list to an edge array
+				Edge[] edgeArray = new Edge[currEdgeList.size()];
+				currEdgeList.toArray(edgeArray);
+				
+				//we create a new road based on the edge array and add it to the road list
+				roadList.add(new Road(edgeArray));
 			}
 		}
 		
