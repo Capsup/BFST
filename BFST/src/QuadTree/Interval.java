@@ -19,11 +19,6 @@ public class Interval<Key extends Comparable<Key>> implements Comparable<Interva
         return (left.compareTo(x) <= 0) && (right.compareTo(x) >= 0);
     }
 
-    // string representation of this interval        
-    public String toString() {
-        return "[" + left + ", " + right + "]";
-    }
-    
     public int compareTo(Interval<Key> i){
     	return (i.low().compareTo(low()) == 0 && i.high().compareTo(high()) == 0) ? 0 : 1;
     }
